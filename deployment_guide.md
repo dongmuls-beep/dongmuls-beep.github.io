@@ -17,7 +17,7 @@
 
 ## 2. GitHub에 코드 올리기
 1.  GitHub에 로그인하고 우측 상단 `+` 버튼 -> **New repository** 클릭.
-2.  **Repository name**에 `etf-comparison` 입력.
+2.  **Repository name**에 `dongmuls-beep.github.io` 입력.
 3.  **Public** 체크 (무료 호스팅을 위해 필수).
 4.  **Create repository** 클릭.
 5.  생성된 화면에서 `...or create a new repository on the command line` 아래의 명령어들을 복사해둡니다.
@@ -28,7 +28,7 @@
     git add .
     git commit -m "First commit"
     git branch -M main
-    git remote add origin https://github.com/dongmuls-beep/etf-comparison.git
+    git remote add origin https://github.com/dongmuls-beep/dongmuls-beep.github.io.git
     # (위 주소는 아까 복사한 본인 주소로 바꾸세요!)
     git push -u origin main
     ```
@@ -63,8 +63,7 @@
 1.  [구글 애드센스 홈페이지](https://adsense.google.com/start/)에 접속합니다.
 2.  **시작하기** 버튼을 클릭하고 기존 구글 계정으로 로그인합니다.
 3.  **내 사이트** 입력란에 방금 만든 GitHub Pages 주소를 입력합니다.
-    -   예시: `https://your-username.github.io/etf-comparison/` (맨 뒤의 `/`는 빼고 입력해보세요)
-    -   만약 "상위 도메인만 입력라"고 하면 `your-username.github.io`만 입력합니다.
+    -   예시: `https://dongmuls-beep.github.io/` (맨 뒤의 `/`는 빼고 입력해보세요)
 4.  국가/지역을 **대한민국**으로 선택하고 약관 동의 후 **애드센스 사용 시작** 클릭.
 
 ### 5-2. 본인 확인 및 수취인 주소 입력
