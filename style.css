@@ -212,6 +212,19 @@ tr:hover td {
     color: var(--text-secondary);
 }
 
+/* Stock Links */
+.stock-link {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
+
+.stock-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
 /* Clickable Cells */
 .clickable {
     cursor: pointer;
