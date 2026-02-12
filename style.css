@@ -643,9 +643,9 @@ tr:hover td {
     td:nth-child(2) {
         text-align: right;
         white-space: normal;
-        /* Ensure value wraps if needed */
-        word-break: break-word;
-        max-width: 65%;
-        /* Limit width of name to prevent squeezing label too much */
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        align-items: flex-start;
+        max-width: 100%;
     }
 }
