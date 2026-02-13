@@ -9,7 +9,73 @@ let currentCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchData();
+    initNavigation();
+    handleRouting(); // Handle initial load
 });
+
+function initNavigation() {
+    // Hamburger Menu Toggle
+    const hamburger = document.querySelector('.hamburger-menu');
+    const nav = document.querySelector('.main-nav');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    if (hamburger && nav) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+    }
+
+    // Close menu when a link is clicked (Mobile UX)
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            nav.classList.remove('active');
+        });
+    });
+
+    // Handle Hash Change
+    window.addEventListener('hashchange', handleRouting);
+}
+
+function handleRouting() {
+    const hash = window.location.hash || '#home';
+    const cleanHash = hash.replace('#', '');
+
+    // Map hash to view ID
+    const viewId = cleanHash === 'home' ? 'home-view' : `${cleanHash}-view`;
+
+    // Hide all views
+    document.querySelectorAll('.view-section').forEach(section => {
+        section.style.display = 'none';
+        section.classList.remove('active');
+    });
+
+    // Show target view
+    const targetView = document.getElementById(viewId);
+    if (targetView) {
+        targetView.style.display = 'block';
+        setTimeout(() => targetView.classList.add('active'), 10); // Small delay for animation if needed
+    } else {
+        // Fallback to home if invalid hash
+        const homeView = document.getElementById('home-view');
+        if (homeView) {
+            homeView.style.display = 'block';
+            homeView.classList.add('active');
+        }
+    }
+
+    // Update Nav Link Active State
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === hash || (hash === '#home' && link.getAttribute('href') === '#home')) {
+            link.classList.add('active');
+        }
+    });
+
+    // Scroll to top
+    window.scrollTo(0, 0);
+}
 
 async function fetchData() {
     const tbody = document.getElementById('tableBody');
