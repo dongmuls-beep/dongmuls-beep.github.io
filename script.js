@@ -120,7 +120,8 @@ function renderTable(data) {
 
         // Formatting numbers
         const formatPercent = (num) => {
-            return (parseFloat(num) || 0).toFixed(4) + '%';
+            // 최대 4자리까지 표시하되, 불필요한 0은 제거 (예: 1.2000 -> 1.2)
+            return parseFloat((parseFloat(num) || 0).toFixed(4)) + '%';
         };
 
         // Removed '구분' column
