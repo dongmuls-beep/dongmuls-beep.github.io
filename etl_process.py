@@ -267,18 +267,13 @@ def process_data(managed_df, file_path):
             
             col_sell = next((c for c in df.columns if '매매' in c and '수수료' in c), None) # 매매·중계수수료율(D)
             
-            col_ter = next((c for c in df.columns if 'TER' in c), None) # TER(A+B)
-
             # Extract Values
             total = p_float(row.get(col_total, 0)) if col_total else 0
             other = p_float(row.get(col_other, 0)) if col_other else 0
             sell = p_float(row.get(col_sell, 0)) if col_sell else 0
             
-            # TER logic
-            if col_ter:
-                ter = p_float(row.get(col_ter, 0))
-            else:
-                ter = total + other
+            # TER = 총보수 + 기타비용
+            ter = total + other
             
             # Final Real Cost
             real_cost = ter + sell
@@ -293,7 +288,7 @@ def process_data(managed_df, file_path):
                 '총보수': total,
                 '기타비용': other,
                 '매매중계수수료': sell,
-                '실부담비용': round(real_cost, 4)
+                '실부담비용': real_cost
             })
             
         print(f"Processed {len(results)} items.")
