@@ -72,7 +72,7 @@ function updateLanguage(lang) {
 
     // Re-render table to update data-labels used in Mobile View
     if (allData.length > 0) {
-        renderTabs(allData); // Update 'All' tab text
+        renderTabs(allData); // Update tabs and re-render table
         filterAndRenderTable();
     }
 }
