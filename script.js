@@ -1,17 +1,78 @@
 // Replace with your actual GAS Web App URL
 // Use local static JSON for GitHub Pages/Netlify hosting (Unlimited Traffic)
 const GAS_API_URL = "./data.json";
-// const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwx4Bee14DASyNTMz5CrYsb4C4TtNldAcWU3ccj1UJaV1uQAF3lYEJQGaAavfXwpVcJ/exec";
 
 // Global State
 let allData = [];
 let currentCategory = 'all';
+let currentLanguage = 'ko'; // Default language
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize Language
+    initLanguage();
+
+    // 2. Fetch Data
     fetchData();
+
+    // 3. Init UI
     initNavigation();
-    handleRouting(); // Handle initial load
+    handleRouting();
 });
+
+function initLanguage() {
+    const savedLang = localStorage.getItem('site_language');
+    const browserLang = navigator.language.slice(0, 2);
+
+    // Supported languages
+    const supportedLangs = ['ko', 'vi', 'zh', 'en', 'ja', 'th', 'tl', 'km'];
+
+    if (savedLang && supportedLangs.includes(savedLang)) {
+        currentLanguage = savedLang;
+    } else if (supportedLangs.includes(browserLang)) {
+        currentLanguage = browserLang;
+    }
+
+    // Set Selector Value
+    const selector = document.getElementById('languageSelect');
+    if (selector) {
+        selector.value = currentLanguage;
+        selector.addEventListener('change', (e) => {
+            updateLanguage(e.target.value);
+        });
+    }
+
+    // Apply translations
+    updateLanguage(currentLanguage);
+}
+
+function updateLanguage(lang) {
+    if (!translations[lang]) return;
+
+    currentLanguage = lang;
+    localStorage.setItem('site_language', lang);
+    document.documentElement.lang = lang;
+
+    // Update simple text elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+            // Using innerHTML to support keys with HTML tags (like <br> or <strong>)
+            el.innerHTML = translations[lang][key];
+        }
+    });
+
+    // Re-render table to update data-labels used in Mobile View
+    if (allData.length > 0) {
+        renderTabs(allData); // Update 'All' tab text
+        filterAndRenderTable();
+    }
+}
+
+function getTranslation(key) {
+    return (translations[currentLanguage] && translations[currentLanguage][key])
+        ? translations[currentLanguage][key]
+        : key;
+}
 
 function initNavigation() {
     // Hamburger Menu Toggle
@@ -26,7 +87,7 @@ function initNavigation() {
         });
     }
 
-    // Close menu when a link is clicked (Mobile UX)
+    // Close menu when a link is clicked
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             hamburger.classList.remove('active');
@@ -41,23 +102,18 @@ function initNavigation() {
 function handleRouting() {
     const hash = window.location.hash || '#home';
     const cleanHash = hash.replace('#', '');
-
-    // Map hash to view ID
     const viewId = cleanHash === 'home' ? 'home-view' : `${cleanHash}-view`;
 
-    // Hide all views
     document.querySelectorAll('.view-section').forEach(section => {
         section.style.display = 'none';
         section.classList.remove('active');
     });
 
-    // Show target view
     const targetView = document.getElementById(viewId);
     if (targetView) {
         targetView.style.display = 'block';
-        setTimeout(() => targetView.classList.add('active'), 10); // Small delay for animation if needed
+        setTimeout(() => targetView.classList.add('active'), 10);
     } else {
-        // Fallback to home if invalid hash
         const homeView = document.getElementById('home-view');
         if (homeView) {
             homeView.style.display = 'block';
@@ -65,7 +121,6 @@ function handleRouting() {
         }
     }
 
-    // Update Nav Link Active State
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('href') === hash || (hash === '#home' && link.getAttribute('href') === '#home')) {
@@ -73,7 +128,6 @@ function handleRouting() {
         }
     });
 
-    // Scroll to top
     window.scrollTo(0, 0);
 }
 
@@ -81,17 +135,16 @@ async function fetchData() {
     const tbody = document.getElementById('tableBody');
     const updateTime = document.getElementById('lastUpdated');
 
-    if (!tbody) { console.error("tbody not found"); return; }
+    if (!tbody) return;
 
-    // Show loading state
-    tbody.innerHTML = '<tr><td colspan="6" class="loading-text">데이터를 불러오는 중입니다...</td></tr>';
-    if (updateTime) updateTime.textContent = '업데이트 중...';
+    tbody.innerHTML = `<tr><td colspan="6" class="loading-text">${getTranslation('table_loading')}</td></tr>`;
+    if (updateTime) updateTime.textContent = getTranslation('last_updated') + '...';
 
     try {
         const response = await fetch(GAS_API_URL);
         const data = await response.json();
 
-        console.log("Fetched Data:", data);
+        // console.log("Fetched Data:", data);
 
         if (Array.isArray(data)) {
             allData = data;
@@ -101,7 +154,7 @@ async function fetchData() {
             if (updateTime) {
                 const now = new Date();
                 const formattedDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
-                updateTime.textContent = `최근 업데이트: ${formattedDate}`;
+                updateTime.textContent = `${getTranslation('last_updated')} ${formattedDate}`;
             }
         } else {
             throw new Error("Invalid data format");
@@ -109,8 +162,8 @@ async function fetchData() {
 
     } catch (error) {
         console.error('Error fetching data:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading-text" style="color: red;">데이터를 불러오지 못했습니다. <br> 잠시 후 다시 시도해주세요.</td></tr>';
-        if (updateTime) updateTime.textContent = '업데이트 실패';
+        tbody.innerHTML = `<tr><td colspan="6" class="loading-text" style="color: red;">${getTranslation('table_error')}</td></tr>`;
+        if (updateTime) updateTime.textContent = 'Update Failed';
     }
 }
 
@@ -118,48 +171,50 @@ function renderTabs(data) {
     const tabsContainer = document.getElementById('categoryTabs');
     if (!tabsContainer) return;
 
-    // Get unique categories with robust trimming
     const rawCategories = data.map(item => item['구분'] ? String(item['구분']).trim() : 'Uncategorized');
-    // Remove 'all', just get unique categories
     const categories = [...new Set(rawCategories)];
 
-    tabsContainer.innerHTML = ''; // Clear existing
+    tabsContainer.innerHTML = '';
 
-    // Set default category to the first one if currentCategory is 'all' or invalid
-    if ((currentCategory === 'all' || !currentCategory) && categories.length > 0) {
-        currentCategory = categories[0];
-    }
+    // 'All' button with translation
+    const allBtn = document.createElement('button');
+    allBtn.className = `tab-button ${currentCategory === 'all' ? 'active' : ''}`;
+    allBtn.textContent = getTranslation('tab_all') || '전체';
+    allBtn.dataset.category = 'all';
+    allBtn.addEventListener('click', () => {
+        setCategory('all', allBtn);
+    });
+    tabsContainer.appendChild(allBtn);
 
     categories.forEach(cat => {
         const btn = document.createElement('button');
         btn.className = `tab-button ${cat === currentCategory ? 'active' : ''}`;
-        btn.textContent = cat; // No 'All' translation needed
+        btn.textContent = cat;
         btn.dataset.category = cat;
 
         btn.addEventListener('click', () => {
-            // Update active state
-            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            currentCategory = cat;
-            filterAndRenderTable();
+            setCategory(cat, btn);
         });
 
         tabsContainer.appendChild(btn);
     });
 }
 
+function setCategory(cat, btnElement) {
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    currentCategory = cat;
+    filterAndRenderTable();
+}
+
 function filterAndRenderTable() {
     let filteredData = allData;
-
-    // Always filter by currentCategory (no 'all' option)
-    if (currentCategory) {
+    if (currentCategory && currentCategory !== 'all') {
         filteredData = allData.filter(item => {
             const cat = item['구분'] ? String(item['구분']).trim() : 'Uncategorized';
             return cat === currentCategory;
         });
     }
-
     renderTable(filteredData);
 }
 
@@ -170,11 +225,10 @@ function renderTable(data) {
     tbody.innerHTML = '';
 
     if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading-text">표시할 데이터가 없습니다.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="6" class="loading-text">${getTranslation('table_empty')}</td></tr>`;
         return;
     }
 
-    // Sort by Total Cost (Real Cost) Ascending
     data.sort((a, b) => {
         const costA = parseFloat(a['실부담비용']) || 0;
         const costB = parseFloat(b['실부담비용']) || 0;
@@ -183,41 +237,32 @@ function renderTable(data) {
 
     data.forEach(item => {
         const row = document.createElement('tr');
-
-        // Formatting numbers
-        const formatPercent = (num) => {
-            // 최대 4자리까지 표시하되, 불필요한 0은 제거 (예: 1.2000 -> 1.2)
-            return parseFloat((parseFloat(num) || 0).toFixed(4)) + '%';
-        };
-
-        // Removed '구분' column
+        const formatPercent = (num) => parseFloat((parseFloat(num) || 0).toFixed(4)) + '%';
         const naverUrl = item['종목코드'] ? `https://finance.naver.com/item/main.naver?code=${item['종목코드']}` : '#';
 
+        // Use localized labels for mobile view
         row.innerHTML = `
-            <td class="clickable" data-label="종목코드" onclick="copyToClipboard('${item['종목코드']}')" title="클릭하여 종목코드 복사">${item['종목코드'] || '-'}</td>
-            <td data-label="종목명" style="font-weight: 500;"><a href="${naverUrl}" target="_blank" rel="noopener noreferrer" class="stock-link" title="네이버 금융에서 보기">${item['종목명'] || '-'}</a></td>
-            <td class="text-right" data-label="총보수">${formatPercent(item['총보수'])}</td>
-            <td class="text-right" data-label="기타비용">${formatPercent(item['기타비용'])}</td>
-            <td class="text-right" data-label="매매중개">${formatPercent(item['매매중개수수료'])}</td>
-            <td class="text-right highlight" data-label="실부담비용(%)">${formatPercent(item['실부담비용'])}</td>
+            <td class="clickable" data-label="${getTranslation('table_code')}" onclick="copyToClipboard('${item['종목코드']}')" title="Copy Code">${item['종목코드'] || '-'}</td>
+            <td data-label="${getTranslation('table_name')}" style="font-weight: 500;">
+                <a href="${naverUrl}" target="_blank" rel="noopener noreferrer" class="stock-link">${item['종목명'] || '-'}</a>
+            </td>
+            <td class="text-right" data-label="${getTranslation('table_fee')}">${formatPercent(item['총보수'])}</td>
+            <td class="text-right" data-label="${getTranslation('table_other')}">${formatPercent(item['기타비용'])}</td>
+            <td class="text-right" data-label="${getTranslation('table_trade')}">${formatPercent(item['매매중개수수료'])}</td>
+            <td class="text-right highlight" data-label="${getTranslation('table_real')}">${formatPercent(item['실부담비용'])}</td>
         `;
 
         tbody.appendChild(row);
     });
 }
 
-// Clipboard Copy Function
 function copyToClipboard(text) {
     if (!text || text === '-') return;
-
     navigator.clipboard.writeText(text).then(() => {
-        showToast(`복사되었습니다: ${text}`);
-    }).catch(err => {
-        console.error('복사 실패:', err);
-    });
+        showToast(`Copied: ${text}`);
+    }).catch(err => console.error('Copy failed:', err));
 }
 
-// Toast Message Function
 function showToast(message) {
     let toast = document.getElementById('toast');
     if (!toast) {
@@ -225,11 +270,7 @@ function showToast(message) {
         toast.id = 'toast';
         document.body.appendChild(toast);
     }
-
     toast.textContent = message;
     toast.className = 'toast show';
-
-    setTimeout(() => {
-        toast.className = toast.className.replace('show', '');
-    }, 3000);
+    setTimeout(() => toast.className = toast.className.replace('show', ''), 3000);
 }
