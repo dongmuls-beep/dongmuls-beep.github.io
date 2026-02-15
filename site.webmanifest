@@ -1,0 +1,21 @@
+{
+  "name": "ETFSAVE",
+  "short_name": "ETFSAVE",
+  "lang": "ko-KR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#e8edf5",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon/etfsave_favicon_trimmed_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon/etfsave_favicon_trimmed_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
