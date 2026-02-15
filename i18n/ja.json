@@ -250,5 +250,11 @@
   "seo_methodology_title": "Data Methodology | etfsave.life",
   "seo_methodology_description": "See data source, formula and update policy.",
   "seo_changelog_title": "ETF Cost Changelog | etfsave.life",
-  "seo_changelog_description": "Track ETF cost field changes."
+  "seo_changelog_description": "Track ETF cost field changes.",
+  "common_close": "閉じる",
+  "modal_policy_title": "プライバシーポリシーと利用規約",
+  "modal_policy_privacy": "<h4>1. プライバシーポリシー</h4> <p>最終改定日: 2026年2月15日</p> <p>etfsave.life は関連法令を遵守し、利用者のプライバシー保護を最優先とします。</p> <p><strong>収集原則</strong><br>会員登録・コメント・掲示板・ニュースレター機能はなく、個人を直接識別できる情報を直接収集しません。</p> <p><strong>自動生成情報</strong><br>IP、Cookie/セッション、ブラウザ/OS、アクセスログ、端末識別情報が自動収集される場合があります。</p> <p><strong>処理目的</strong></p> <ul><li>サービス安定性とセキュリティ</li><li>不正トラフィック/不正クリック防止</li><li>アクセス分析とUX改善</li><li>広告配信と効果測定</li></ul> <p><strong>連絡先</strong><br><a class='contact-email' href='mailto:dongmuls@gmail.com'>dongmuls@gmail.com</a></p>",
+  "modal_policy_terms": "<h4>2. 利用規約</h4> <p>最終改定日: 2026年2月15日</p> <p><strong>目的</strong><br>本規約は etfsave.life 情報サービスの利用条件と責任範囲を定めます。</p> <p><strong>サービスの性格</strong><br>ETF・資産配分に関する一般情報を提供し、金融商品の仲介・販売・助言・推奨は行いません。</p> <p><strong>情報の限界</strong><br>掲載情報は参考目的であり、正確性・完全性・適時性を保証しません。</p> <p><strong>投資責任</strong><br>投資判断と結果は利用者本人の責任です。</p>",
+  "modal_policy_disclaimer": "<h4>3. 投資情報に関する免責</h4> <p>本サイトの情報は一般的な教育・情報提供目的です。</p> <ul><li>本サイトは投資助言業者ではありません</li><li>特定商品の売買を勧誘しません</li><li>過去実績は将来成果を保証しません</li><li>投資には元本損失リスクがあります</li></ul> <p>投資結果による直接・間接損失について運営者は法的責任を負いません。</p>",
+  "modal_policy_cookie": "<h4>4. Cookieポリシー</h4> <p>本サイトは広告配信とアクセス分析のため Cookie または類似技術を使用する場合があります。</p> <p>ブラウザ設定で Cookie を拒否または削除できますが、一部機能や広告サービスが制限される場合があります。</p> <p>Google 広告設定: <a href='https://adssettings.google.com/' target='_blank' rel='noopener noreferrer'>https://adssettings.google.com/</a></p>"
 }

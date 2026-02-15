@@ -250,5 +250,11 @@
   "seo_methodology_title": "Data Methodology | etfsave.life",
   "seo_methodology_description": "See data source, formula and update policy.",
   "seo_changelog_title": "ETF Cost Changelog | etfsave.life",
-  "seo_changelog_description": "Track ETF cost field changes."
+  "seo_changelog_description": "Track ETF cost field changes.",
+  "common_close": "关闭",
+  "modal_policy_title": "隐私政策与服务条款",
+  "modal_policy_privacy": "<h4>1. 隐私政策</h4> <p>最后修订：2026年2月15日</p> <p>etfsave.life 遵守相关法律，并将用户隐私保护置于首位。</p> <p><strong>收集原则</strong><br>网站不提供注册、评论、论坛、订阅功能，不直接收集可识别个人身份的信息。</p> <p><strong>自动生成信息</strong><br>可能自动收集 IP、Cookie/会话、浏览器/系统、访问日志、设备标识等。</p> <p><strong>处理目的</strong></p> <ul><li>维持服务稳定与安全</li><li>防止异常流量与无效点击</li><li>访问统计与体验优化</li><li>广告展示与效果衡量</li></ul> <p><strong>联系</strong><br><a class='contact-email' href='mailto:dongmuls@gmail.com'>dongmuls@gmail.com</a></p>",
+  "modal_policy_terms": "<h4>2. 服务条款</h4> <p>最后修订：2026年2月15日</p> <p><strong>目的</strong><br>规定 etfsave.life 信息服务的使用条件与责任范围。</p> <p><strong>服务性质</strong><br>仅提供 ETF 与资产配置的一般信息，不进行金融产品中介、销售、投资建议或推荐。</p> <p><strong>信息限制</strong><br>网站内容仅供参考，不保证准确性、完整性与时效性。</p> <p><strong>投资责任</strong><br>投资判断与结果由用户自行负责。</p>",
+  "modal_policy_disclaimer": "<h4>3. 投资免责声明</h4> <p>本网站信息仅用于一般教育与信息提供目的。</p> <ul><li>本网站不是持牌投资顾问机构</li><li>不劝诱买卖特定产品</li><li>历史业绩不代表未来表现</li><li>投资存在本金损失风险</li></ul> <p>运营方不对投资导致的直接或间接损失承担法律责任。</p>",
+  "modal_policy_cookie": "<h4>4. Cookie 政策</h4> <p>网站可能使用 Cookie 或类似技术进行广告展示与流量分析。</p> <p>用户可在浏览器中拒绝或删除 Cookie，但部分功能或广告服务可能受限。</p> <p>Google 广告设置：<a href='https://adssettings.google.com/' target='_blank' rel='noopener noreferrer'>https://adssettings.google.com/</a></p>"
 }

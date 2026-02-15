@@ -6,7 +6,6 @@ const I18N_DIR = "/i18n";
 const SUPPORTED_LANGS = ["ko", "vi", "zh", "en", "ja", "th", "tl", "km"];
 const DEFAULT_LANG = "ko";
 const SITE_URL = "https://etfsave.life";
-const ALL_CATEGORY_TOKEN = "__ALL__";
 
 const LEGACY_HASH_ROUTES = {
     "#home": "/",
@@ -577,18 +576,18 @@ function renderTabs(data) {
         currentCategory = categoryFromUrl;
     }
 
-    if (!currentCategory || (!categories.includes(currentCategory) && currentCategory !== ALL_CATEGORY_TOKEN)) {
-        currentCategory = ALL_CATEGORY_TOKEN;
+    if (!currentCategory || !categories.includes(currentCategory)) {
+        currentCategory = categories[0] || "";
     }
 
-    const options = [ALL_CATEGORY_TOKEN, ...categories];
+    const options = categories;
 
     options.forEach((category) => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = `tab-button ${category === currentCategory ? "active" : ""}`;
         button.dataset.category = category;
-        button.textContent = category === ALL_CATEGORY_TOKEN ? getTranslation("tab_all") : category;
+        button.textContent = category;
 
         button.addEventListener("click", () => {
             currentCategory = category;
@@ -618,7 +617,7 @@ function filterAndRenderTable() {
     }
 
     const normalizedCurrent = String(currentCategory || "").trim();
-    const filtered = (normalizedCurrent === "" || normalizedCurrent === ALL_CATEGORY_TOKEN)
+    const filtered = (normalizedCurrent === "")
         ? allData
         : allData.filter((item) => String(item[dataKeys.category] || "").trim() === normalizedCurrent);
 
@@ -715,7 +714,7 @@ function buildShareUrl() {
     const url = new URL(window.location.href);
 
     if (hasDataTable() && !getCategoryPreset()) {
-        if (currentCategory && currentCategory !== ALL_CATEGORY_TOKEN) {
+        if (currentCategory) {
             url.searchParams.set("category", currentCategory);
         } else {
             url.searchParams.delete("category");
@@ -1053,7 +1052,7 @@ function syncCategoryParam(category) {
 
     const url = new URL(window.location.href);
 
-    if (category && category !== ALL_CATEGORY_TOKEN) {
+    if (category) {
         url.searchParams.set("category", category);
     } else {
         url.searchParams.delete("category");

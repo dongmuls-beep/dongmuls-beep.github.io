@@ -597,6 +597,22 @@ h1 {
     font-size: 0.86rem;
 }
 
+.policy-section ul {
+    margin: 0 0 0.55rem;
+    padding-left: 1.1rem;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    line-height: 1.6;
+}
+
+.policy-section li {
+    margin-bottom: 0.22rem;
+}
+
+.policy-section li:last-child {
+    margin-bottom: 0;
+}
+
 .policy-section a {
     color: var(--primary);
 }
