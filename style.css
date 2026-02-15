@@ -240,6 +240,27 @@ h1 {
     font-size: 1rem;
 }
 
+.seo-lead {
+    margin: 0.9rem 0 0;
+    max-width: 72ch;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+.seo-metrics {
+    margin: 0.85rem 0 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.32rem;
+}
+
+.seo-metrics li {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 1.58;
+}
+
 .noscript-panel,
 .glass-panel,
 .content-panel {
@@ -263,6 +284,10 @@ h1 {
 
 .content-panel {
     margin-top: var(--space-3);
+}
+
+.seo-content-panel {
+    margin-top: var(--space-6);
 }
 
 .content-panel h2 {
@@ -292,6 +317,10 @@ h1 {
 .content-body ol {
     margin: 0.5rem 0 0;
     padding-left: 1.1rem;
+}
+
+.howto-list {
+    margin-top: 0;
 }
 
 .content-body li {

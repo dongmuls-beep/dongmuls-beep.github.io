@@ -248,6 +248,7 @@ async function updateLanguage(lang, options = {}) {
 
     applyTranslations();
     applySeoTranslations();
+    updateHomeCoverageMetric();
 
     const selector = document.getElementById("languageSelect");
     if (selector && selector.value !== currentLanguage) {
@@ -426,7 +427,97 @@ function updateStructuredData({ language, url, pageName, description }) {
         structuredData.push(breadcrumbData);
     }
 
+    const faqData = buildHomeFaqStructuredData(language);
+    if (faqData) {
+        structuredData.push(faqData);
+    }
+
+    const howToData = buildHomeHowToStructuredData(language, url);
+    if (howToData) {
+        structuredData.push(howToData);
+    }
+
     structuredDataScript.textContent = JSON.stringify(structuredData);
+}
+
+function buildHomeFaqStructuredData(language) {
+    if (getPageType() !== "home") return null;
+
+    const faqPairs = [
+        { question: getTranslation("home_faq_q1"), answer: getTranslation("home_faq_a1") },
+        { question: getTranslation("home_faq_q2"), answer: getTranslation("home_faq_a2") },
+        { question: getTranslation("home_faq_q3"), answer: getTranslation("home_faq_a3") },
+    ];
+
+    const mainEntity = faqPairs
+        .map(({ question, answer }) => ({
+            question: stripHtmlTags(question),
+            answer: stripHtmlTags(answer),
+        }))
+        .filter(({ question, answer }) => question && answer)
+        .map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        }));
+
+    if (mainEntity.length === 0) return null;
+
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "inLanguage": language,
+        "mainEntity": mainEntity,
+    };
+}
+
+function buildHomeHowToStructuredData(language, url) {
+    if (getPageType() !== "home") return null;
+
+    const steps = [
+        {
+            name: getTranslation("home_howto_schema_step1_name"),
+            text: getTranslation("home_howto_schema_step1_text"),
+        },
+        {
+            name: getTranslation("home_howto_schema_step2_name"),
+            text: getTranslation("home_howto_schema_step2_text"),
+        },
+        {
+            name: getTranslation("home_howto_schema_step3_name"),
+            text: getTranslation("home_howto_schema_step3_text"),
+        },
+        {
+            name: getTranslation("home_howto_schema_step4_name"),
+            text: getTranslation("home_howto_schema_step4_text"),
+        },
+    ]
+        .map((step) => ({
+            name: stripHtmlTags(step.name),
+            text: stripHtmlTags(step.text),
+        }))
+        .filter((step) => step.name && step.text)
+        .map((step, index) => ({
+            "@type": "HowToStep",
+            "position": index + 1,
+            "name": step.name,
+            "text": step.text,
+            "url": `${url}#etf-fees-howto`,
+        }));
+
+    if (steps.length === 0) return null;
+
+    return {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "inLanguage": language,
+        "name": stripHtmlTags(getTranslation("home_howto_schema_name")),
+        "description": stripHtmlTags(getTranslation("home_howto_schema_description")),
+        "step": steps,
+    };
 }
 
 function buildBreadcrumbStructuredData() {
@@ -502,6 +593,8 @@ async function fetchData() {
             resolveDataKeys(allData[0]);
         }
 
+        updateHomeCoverageMetric();
+
         renderTabs(allData);
         filterAndRenderTable();
         updateLastUpdated(false);
@@ -553,6 +646,27 @@ function resolveDataKeys(sample) {
         real: pick("실부담비용", ["실부담", "real"], 6),
     };
 }
+
+function updateHomeCoverageMetric() {
+    if (getPageType() !== "home") return;
+
+    const metric = document.getElementById("homeCoverageMetric");
+    if (!metric || allData.length === 0) return;
+
+    const template = getTranslation("home_kpi_coverage_dynamic");
+    const year = String(new Date().getFullYear());
+    const count = String(allData.length);
+
+    if (template && template !== "home_kpi_coverage_dynamic") {
+        metric.textContent = template
+            .replace("{year}", year)
+            .replace("{count}", count);
+        return;
+    }
+
+    metric.textContent = `${year}년 기준 ${count}개 ETF 실부담비용 데이터를 분석합니다.`;
+}
+
 function renderTabs(data) {
     const tabsContainer = document.getElementById("categoryTabs");
     if (!tabsContainer) return;
@@ -1133,4 +1247,13 @@ function escapeHtml(raw) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
+}
+
+function stripHtmlTags(raw) {
+    if (raw === null || raw === undefined) return "";
+
+    return String(raw)
+        .replace(/<[^>]*>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
 }
