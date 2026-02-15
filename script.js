@@ -194,6 +194,11 @@ async function initLanguage() {
         });
     }
 
+    // Keep English pack available as a fallback when a locale misses specific keys.
+    if (!i18nCache.has("en")) {
+        await loadLanguagePack("en");
+    }
+
     await updateLanguage(initialLang, { rerender: false, syncUrl: true, historyMode: "replace" });
 }
 
@@ -557,6 +562,11 @@ function getTranslation(key) {
 
     if (currentTranslations && key in currentTranslations) {
         return currentTranslations[key];
+    }
+
+    const enPack = i18nCache.get("en");
+    if (enPack && key in enPack) {
+        return enPack[key];
     }
 
     const koPack = i18nCache.get(DEFAULT_LANG);
