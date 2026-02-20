@@ -996,13 +996,13 @@ h1 {
         right: -86%;
         width: min(320px, 86vw);
         height: 100dvh;
-        background: var(--glass-bg-mobile);
-        border-left: 1px solid var(--glass-border);
+        background: var(--surface);
+        border-left: 1px solid var(--border-strong);
         backdrop-filter: var(--glass-blur-mobile);
         -webkit-backdrop-filter: var(--glass-blur-mobile);
         box-shadow: var(--glass-shadow-mobile), var(--glass-highlight);
         transition: right 0.22s ease;
-        z-index: 1100;
+        z-index: 1201;
         padding: 72px 0 1rem;
     }
 
@@ -1031,7 +1031,8 @@ h1 {
     }
 
     .nav-link.active {
-        background: rgba(233, 241, 255, 0.78);
+        background: var(--surface-soft);
+        color: var(--primary);
     }
 
     .hamburger-menu {
