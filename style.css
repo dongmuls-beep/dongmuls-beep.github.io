@@ -37,6 +37,7 @@
     --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08);
     --header-height: 64px;
 }
+
 * {
     box-sizing: border-box;
 }
@@ -123,6 +124,7 @@ body.modal-open {
     font-size: 0.95rem;
     font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
     transition: color 0.2s ease;
 }
 
@@ -801,6 +803,38 @@ h1 {
 }
 
 .share-button:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+    color: var(--primary);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+/* Custom Scrollbar for Webkit */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Focus rings */
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+
+.share-button:hover {
     border-color: rgba(11, 87, 208, 0.45);
     color: var(--primary);
     box-shadow: var(--glass-highlight), 0 9px 18px rgba(11, 87, 208, 0.14);
@@ -866,6 +900,7 @@ h1 {
 
 /* >= 1440 */
 @media (min-width: 1440px) {
+
     .container,
     .site-footer,
     .header-container {
@@ -879,6 +914,7 @@ h1 {
 
 /* 1024 - 1439 */
 @media (min-width: 1024px) and (max-width: 1439px) {
+
     .container,
     .site-footer,
     .header-container {
@@ -888,6 +924,7 @@ h1 {
 
 /* <= 1023 */
 @media (max-width: 1023px) {
+
     .container,
     .site-footer,
     .header-container {
@@ -903,6 +940,7 @@ h1 {
         font-size: 0.87rem;
     }
 }
+
 /* 768 - 1023 */
 @media (min-width: 768px) and (max-width: 1023px) {
     .main-nav ul {
@@ -921,6 +959,7 @@ h1 {
         width: min(720px, 100%);
     }
 }
+
 /* <= 767 */
 @media (max-width: 767px) {
     body::before {
@@ -1181,7 +1220,7 @@ h1 {
         align-items: stretch;
     }
 
-    .cta-row > * {
+    .cta-row>* {
         width: 100%;
     }
 
@@ -1228,6 +1267,7 @@ h1 {
         content: none;
     }
 }
+
 /* 480 - 767 */
 @media (min-width: 480px) and (max-width: 767px) {
     .view-section {
@@ -1296,9 +1336,9 @@ h1 {
     z-index: 0;
 }
 
-.quick-card > *,
-.changelog-card > *,
-.modal-content > * {
+.quick-card>*,
+.changelog-card>*,
+.modal-content>* {
     position: relative;
     z-index: 1;
 }
@@ -1313,9 +1353,17 @@ h1 {
     animation: card-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.quick-grid .quick-card:nth-child(2) { animation-delay: 80ms; }
-.quick-grid .quick-card:nth-child(3) { animation-delay: 140ms; }
-.quick-grid .quick-card:nth-child(4) { animation-delay: 200ms; }
+.quick-grid .quick-card:nth-child(2) {
+    animation-delay: 80ms;
+}
+
+.quick-grid .quick-card:nth-child(3) {
+    animation-delay: 140ms;
+}
+
+.quick-grid .quick-card:nth-child(4) {
+    animation-delay: 200ms;
+}
 
 @keyframes card-reveal {
     from {
@@ -1330,6 +1378,7 @@ h1 {
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+
     .site-header,
     .main-nav,
     .noscript-panel,
@@ -1343,6 +1392,7 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .quick-grid .quick-card,
     .quick-card,
     .btn-link {
@@ -1350,4 +1400,51 @@ h1 {
         transition: none;
         transform: none;
     }
+}
+
+
+/* Additive UI Refinements */
+.data-table tbody tr {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background-color: var(--surface-soft);
+    transform: scale(1.005);
+    box-shadow: var(--glass-shadow-mobile);
+    position: relative;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+h1 {
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 24px rgba(56, 189, 248, 0.2);
+    display: inline-block;
+}
+
+.language-selector select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.hamburger-menu span {
+    background: var(--text);
+}
+
+.data-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+}
+
+.table-container {
+    background: var(--glass-bg-desktop);
+}
+
+th,
+td {
+    font-variant-numeric: tabular-nums;
 }
