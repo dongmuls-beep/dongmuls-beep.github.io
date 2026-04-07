@@ -1,228 +1,228 @@
-# Codebase Concerns
+# 코드베이스 우려사항
 
-**Analysis Date:** 2026-04-07
+**분석일:** 2026-04-07
 
-## Tech Debt
+## 기술 부채
 
-**Hardcoded Google Apps Script URL in Python ETL:**
-- Issue: `etl_process.py` line 18 contains hardcoded GAS web app URL without externalization
-- Files: `etl_process.py:18`
-- Impact: Changes require code modification; no environment-based configuration; URL visible in source control
-- Fix approach: Move to environment variable (`GAS_WEB_APP_URL` env var) with fallback to config file
+**Python ETL에 Google Apps Script URL 하드코딩:**
+- 문제: `etl_process.py` 18번째 줄에 GAS Web App URL이 외부화 없이 하드코딩됨
+- 파일: `etl_process.py:18`
+- 영향: 변경 시 코드 수정 필요, 환경 기반 설정 불가, URL이 소스 제어에 노출
+- 해결 방향: 환경 변수 (`GAS_WEB_APP_URL` 환경 변수)로 이동, 설정 파일로 폴백
 
-**Manual Selenium download retry with fixed sleep timings:**
-- Issue: Lines 104-117 in `etl_process.py` use fixed `time.sleep(20)` and `time.sleep(1)` in download loop without exponential backoff
-- Files: `etl_process.py:86-120`
-- Impact: Fragile timeout behavior; network delays cause failures; could miss valid downloads
-- Fix approach: Implement exponential backoff with configurable max wait time; detect download completion more reliably
+**고정 sleep 시간을 사용하는 Selenium 다운로드 재시도:**
+- 문제: `etl_process.py` 104~117번째 줄에서 지수 백오프 없이 고정 `time.sleep(20)`, `time.sleep(1)` 사용
+- 파일: `etl_process.py:86-120`
+- 영향: 취약한 타임아웃 동작, 네트워크 지연 시 실패, 유효한 다운로드 누락 가능
+- 해결 방향: 설정 가능한 최대 대기 시간으로 지수 백오프 구현, 다운로드 완료 감지 개선
 
-**Insufficient error handling in ETL data processing:**
-- Issue: `etl_process.py` lines 300-302 catch all exceptions with generic message; header row detection falls back to index 0 without validation
-- Files: `etl_process.py:300-302, 206-208`
-- Impact: Silent failures mask data corruption; incorrect header detection processes wrong columns
-- Fix approach: Add specific exception types; validate header row matches expected columns before processing; log detailed context
+**ETL 데이터 처리의 불충분한 에러 처리:**
+- 문제: `etl_process.py` 300~302번째 줄에서 일반적인 메시지로 모든 예외 처리, 헤더 행 감지가 유효성 검사 없이 인덱스 0으로 폴백
+- 파일: `etl_process.py:300-302, 206-208`
+- 영향: 묵시적 실패가 데이터 손상을 숨김, 잘못된 헤더 감지로 잘못된 컬럼 처리
+- 해결 방향: 구체적인 예외 타입 추가, 처리 전 헤더 행이 예상 컬럼과 일치하는지 검증, 상세 컨텍스트 로깅
 
-**Inline string operations without error boundaries:**
-- Issue: `script.js` line 304 uses `innerHTML` directly with user translations without checking translation content
-- Files: `script.js:304`
-- Impact: If translation contains HTML, it will be rendered as markup (though mitigated by translation source control)
-- Fix approach: Use `textContent` for pure text or validate translation content before `innerHTML` use
+**에러 경계 없는 인라인 문자열 조작:**
+- 문제: `script.js` 304번째 줄에서 번역 내용 확인 없이 `innerHTML`에 직접 사용자 번역 적용
+- 파일: `script.js:304`
+- 영향: 번역에 HTML이 포함되면 마크업으로 렌더링됨 (번역 소스 제어로 일부 완화)
+- 해결 방향: 순수 텍스트는 `textContent` 사용, `innerHTML` 사용 전 번역 내용 검증
 
-## Known Bugs
+## 알려진 버그
 
-**Mobile header hiding glitch with simultaneous navigation open:**
-- Symptoms: Header hide/show behavior inconsistent when nav menu is open and page scrolled
-- Files: `script.js:160-178`
-- Trigger: Open mobile menu, scroll page, header state may become out of sync
-- Workaround: Close nav menu before scrolling
-- Root cause: `initSmartHeader()` doesn't account for nav-open state when determining scroll direction threshold
+**모바일 헤더 숨김 글리치 (네비게이션 열린 상태):**
+- 증상: 네비 메뉴가 열린 상태에서 페이지 스크롤 시 헤더 숨김/표시 동작 불일치
+- 파일: `script.js:160-178`
+- 트리거: 모바일 메뉴 열기 → 페이지 스크롤 → 헤더 상태 불일치 가능
+- 임시 해결책: 스크롤 전 네비 메뉴 닫기
+- 근본 원인: `initSmartHeader()`가 스크롤 방향 임계값 결정 시 네비-열림 상태를 고려하지 않음
 
-**Changelog table rendering with empty changes array:**
-- Symptoms: "No changes" placeholder displays but table structure still renders
-- Files: `script.js:1005-1020, 1022-1041`
-- Trigger: Changelog entry with empty changes array
-- Root cause: Conditional logic for empty changes only affects tbody, not table header rendering
+**빈 변경 배열로 변경 이력 테이블 렌더링:**
+- 증상: "변경 없음" 플레이스홀더가 표시되지만 테이블 구조는 여전히 렌더링됨
+- 파일: `script.js:1005-1020, 1022-1041`
+- 트리거: 변경 배열이 비어있는 변경 이력 항목
+- 근본 원인: 빈 변경에 대한 조건부 로직이 tbody에만 적용되고 테이블 헤더 렌더링에는 미적용
 
-**Language pack fallback silent failure:**
-- Symptoms: Missing translation keys display key name instead of graceful fallback
-- Files: `script.js:582-600`
-- Trigger: Translation key exists in current language but not English fallback
-- Root cause: `getTranslation()` returns key name when not found; no warning logged
+**언어팩 폴백 묵시적 실패:**
+- 증상: 누락된 번역 키가 우아한 폴백 대신 키 이름을 표시
+- 파일: `script.js:582-600`
+- 트리거: 현재 언어에는 번역 키가 있지만 영어 폴백에는 없는 경우
+- 근본 원인: `getTranslation()`이 찾지 못하면 키 이름 반환, 경고 미로깅
 
-## Security Considerations
+## 보안 고려사항
 
-**innerHTML usage in multiple locations:**
-- Risk: XSS injection if data sources become compromised
-- Files: `script.js:304, 606, 635, 711, 717, 780, 806, 1022, 1047`
-- Current mitigation: Data comes from controlled sources (translation JSON, backend JSON); `escapeHtml()` function available but not consistently applied
-- Recommendations: 
-  - Audit all `innerHTML` assignments to ensure they escape untrusted data
-  - Replace `innerHTML` with `textContent` where possible
-  - Use template literals with sanitization for HTML construction
+**여러 위치에서 innerHTML 사용:**
+- 위험: 데이터 원천이 손상되면 XSS 인젝션 가능
+- 파일: `script.js:304, 606, 635, 711, 717, 780, 806, 1022, 1047`
+- 현재 완화: 데이터가 통제된 원천에서 옴 (번역 JSON, 백엔드 JSON), `escapeHtml()` 함수 존재하지만 일관되게 적용되지 않음
+- 권고사항:
+  - 신뢰할 수 없는 데이터를 이스케이프하는지 모든 `innerHTML` 할당 감사
+  - 가능한 곳은 `innerHTML`을 `textContent`로 교체
+  - HTML 구성 시 삭제화를 포함한 템플릿 리터럴 사용
 
-**GAS URL hardcoded as string:**
-- Risk: Accidental exposure if different environments need different URLs
-- Files: `etl_process.py:18`
-- Current mitigation: URL is semi-private (embedded in codebase, not in .env)
-- Recommendations: Move to environment variable; add to `.env` template documentation
+**GAS URL 문자열로 하드코딩:**
+- 위험: 다른 환경에서 다른 URL이 필요할 경우 의도치 않게 노출
+- 파일: `etl_process.py:18`
+- 현재 완화: URL이 반공개 (코드베이스에 내장, .env 아님)
+- 권고사항: 환경 변수로 이동, `.env` 템플릿 문서에 추가
 
-**Changelog and data served without authentication:**
-- Risk: Data integrity not verified; MITM attack could modify ETF cost data
-- Files: `script.js:602-638, 971-1049`
-- Current mitigation: Data served over HTTPS; static files
-- Recommendations: Add file integrity hashing (SRI or JSON signature); verify data freshness
+**인증 없이 변경 이력 및 데이터 제공:**
+- 위험: 데이터 무결성 미검증, MITM 공격으로 ETF 비용 데이터 수정 가능
+- 파일: `script.js:602-638, 971-1049`
+- 현재 완화: HTTPS로 데이터 제공, 정적 파일
+- 권고사항: 파일 무결성 해싱 추가 (SRI 또는 JSON 서명), 데이터 신선도 검증
 
-**Copy to clipboard fallback mechanism:**
-- Risk: Legacy `document.execCommand("copy")` creates off-DOM textarea
-- Files: `script.js:902-917`
-- Current mitigation: Textarea marked readonly and positioned off-screen
-- Recommendations: Remove fallback once IE support dropped; audit clipboard access
+**클립보드 복사 폴백 메커니즘:**
+- 위험: 레거시 `document.execCommand("copy")`가 DOM 외부 textarea 생성
+- 파일: `script.js:902-917`
+- 현재 완화: textarea가 readonly로 표시되고 화면 밖에 배치됨
+- 권고사항: IE 지원 중단 후 폴백 제거, 클립보드 접근 감사
 
-## Performance Bottlenecks
+## 성능 병목
 
-**Synchronous language pack loading blocking:**
-- Problem: `loadLanguagePack()` uses async/await but is called at app init; UI waits for network
-- Files: `script.js:72, 220-253`
-- Cause: Promise chain not optimized; English fallback loaded separately
-- Improvement path: Pre-cache critical language packs in startup; load secondary packs in background
+**언어팩 로딩 동기 차단:**
+- 문제: `loadLanguagePack()`이 async/await를 사용하지만 앱 초기화 시 호출됨, UI가 네트워크를 기다림
+- 파일: `script.js:72, 220-253`
+- 원인: Promise 체인 최적화 안 됨, 영어 폴백을 별도로 로드
+- 개선 방향: 시작 시 중요 언어팩 사전 캐싱, 보조 팩은 백그라운드 로드
 
-**Full table re-render on category filter:**
-- Problem: `filterAndRenderTable()` creates new DOM nodes for every row even if data unchanged
-- Files: `script.js:759-771, 773-836`
-- Cause: No virtual scrolling or diff detection; DOM recreation expensive for large datasets
-- Impact: Noticeable lag with 50+ ETF rows on slower devices
-- Improvement path: Implement row-level updates; cache rendered rows; use document fragments
+**카테고리 필터 시 전체 테이블 재렌더링:**
+- 문제: `filterAndRenderTable()`이 데이터 변경 여부와 관계없이 모든 행에 새 DOM 노드 생성
+- 파일: `script.js:759-771, 773-836`
+- 원인: 가상 스크롤 또는 diff 감지 없음, 대용량 데이터셋에서 DOM 재생성 비용 큼
+- 영향: 느린 기기에서 50개+ ETF 행 처리 시 눈에 띄는 지연
+- 개선 방향: 행 수준 업데이트 구현, 렌더링된 행 캐싱, document fragment 사용
 
-**Repeated DOM queries in event handlers:**
-- Problem: `document.querySelectorAll()` called repeatedly in loops (tab rendering)
-- Files: `script.js:741-755`
-- Impact: Minor but scales poorly if tab count increases
-- Improvement path: Cache query results; use event delegation instead of per-element listeners
+**이벤트 핸들러에서 반복적인 DOM 쿼리:**
+- 문제: 루프에서 `document.querySelectorAll()`을 반복 호출 (탭 렌더링)
+- 파일: `script.js:741-755`
+- 영향: 미미하지만 탭 수 증가 시 확장성 저하
+- 개선 방향: 쿼리 결과 캐싱, 요소별 리스너 대신 이벤트 위임 사용
 
-**Changelog rendering without pagination:**
-- Problem: All changelog entries rendered to DOM at once (potentially 12+ months)
-- Files: `script.js:997-1044`
-- Cause: No pagination or lazy loading
-- Impact: Memory growth if changelog gets large
-- Improvement path: Implement month-by-month lazy loading or pagination UI
+**페이지네이션 없는 변경 이력 렌더링:**
+- 문제: 모든 변경 이력 항목이 한 번에 DOM에 렌더링 (12개월+ 가능)
+- 파일: `script.js:997-1044`
+- 원인: 페이지네이션 또는 지연 로딩 없음
+- 영향: 변경 이력이 커지면 메모리 증가
+- 개선 방향: 월별 지연 로딩 또는 페이지네이션 UI 구현
 
-## Fragile Areas
+## 취약한 영역
 
-**Excel header row detection in ETL:**
-- Files: `etl_process.py:188-208`
-- Why fragile: Relies on presence of '(A)' and '합계' markers; KOFIA Excel format could change
-- Safe modification: Add unit tests with sample KOFIA files; document expected column names; fail explicitly if markers not found
-- Test coverage: No test files for ETL header detection logic
-- Risk: Silent data corruption if KOFIA format changes (wrong columns processed as fees)
+**ETL의 Excel 헤더 행 감지:**
+- 파일: `etl_process.py:188-208`
+- 취약한 이유: '(A)' 및 '합계' 마커 존재에 의존, KOFIA Excel 형식 변경 가능
+- 안전한 수정: 샘플 KOFIA 파일로 단위 테스트 추가, 예상 컬럼명 문서화, 마커 없으면 명시적 실패
+- 테스트 커버리지: ETL 헤더 감지 로직 테스트 파일 없음
+- 위험: KOFIA 형식 변경 시 묵시적 데이터 손상 (잘못된 컬럼이 수수료로 처리됨)
 
-**Category filtering logic with preset categories:**
-- Files: `script.js:709-714, 760-768`
-- Why fragile: Dual code paths (preset vs. URL param) could diverge; category list is dynamic
-- Safe modification: Write tests covering both paths; add assertions for category existence before rendering
-- Test coverage: No unit tests for category logic
+**사전 설정 카테고리를 가진 카테고리 필터링 로직:**
+- 파일: `script.js:709-714, 760-768`
+- 취약한 이유: 사전 설정 vs URL 파라미터의 이중 코드 경로가 분기될 수 있음, 카테고리 목록이 동적
+- 안전한 수정: 두 경로를 커버하는 테스트 작성, 렌더링 전 카테고리 존재 여부 검증
+- 테스트 커버리지: 카테고리 로직에 대한 단위 테스트 없음
 
-**Selenium KOFIA automation:**
-- Files: `etl_process.py:22-132`
-- Why fragile: Depends on KOFIA website HTML structure; CSS selectors and element IDs could change
-- Safe modification: Add xpath fallback layers; implement page structure validation; version selectors with dates in comments
-- Test coverage: No automated tests; manual testing only
-- Risk: Breaking change in KOFIA site breaks entire ETL pipeline
+**Selenium KOFIA 자동화:**
+- 파일: `etl_process.py:22-132`
+- 취약한 이유: KOFIA 웹사이트 HTML 구조에 의존, CSS 선택자 및 요소 ID 변경 가능
+- 안전한 수정: xpath 폴백 레이어 추가, 페이지 구조 검증 구현, 날짜와 함께 선택자 버전 관리
+- 테스트 커버리지: 자동화 테스트 없음, 수동 테스트만
+- 위험: KOFIA 사이트 변경 시 전체 ETL 파이프라인 중단
 
-**Data key resolution logic:**
-- Files: `script.js:657-680`
-- Why fragile: Fuzzy matching on column names using `includes()` could match wrong columns
-- Safe modification: Require exact column name match; validate resolved keys against sample data
-- Test coverage: No tests
+**데이터 키 해결 로직:**
+- 파일: `script.js:657-680`
+- 취약한 이유: `includes()`를 사용한 퍼지 컬럼명 매칭으로 잘못된 컬럼 매칭 가능
+- 안전한 수정: 정확한 컬럼명 매칭 요구, 샘플 데이터로 해결된 키 검증
+- 테스트 커버리지: 테스트 없음
 
-## Scaling Limits
+## 확장 한계
 
-**In-memory data storage:**
-- Current capacity: 60+ ETFs handled; all data in `allData` global variable
-- Limit: Beyond 1000+ records, DOM rendering becomes slow
-- Scaling path: Implement pagination or virtual scrolling; move data to IndexedDB for offline support
+**인메모리 데이터 저장:**
+- 현재 용량: 60개+ ETF 처리, 모든 데이터가 `allData` 전역 변수에
+- 한계: 1000개+ 레코드 초과 시 DOM 렌더링 느려짐
+- 확장 방향: 페이지네이션 또는 가상 스크롤 구현, 오프라인 지원을 위해 IndexedDB로 데이터 이동
 
-**Single data.json file:**
-- Current capacity: ~15KB file with 60 ETFs
-- Limit: File size grows linearly with ETF count; network load increases
-- Scaling path: Split by category or implement delta updates; add compression
+**단일 data.json 파일:**
+- 현재 용량: 60개 ETF가 담긴 약 15KB 파일
+- 한계: ETF 수에 비례하여 파일 크기 증가, 네트워크 부하 증가
+- 확장 방향: 카테고리별 분할 또는 델타 업데이트 구현, 압축 추가
 
-**GAS deployment constraints:**
-- Current capacity: GAS has quotas on execution time and requests
-- Limit: If ETL processing grows beyond current KOFIA fetch, GAS execution timeouts
-- Scaling path: Move to dedicated backend; implement caching layer; batch operations
+**GAS 배포 제약:**
+- 현재 용량: GAS에 실행 시간 및 요청 할당량 존재
+- 한계: ETL 처리가 현재 KOFIA fetch를 초과하면 GAS 실행 타임아웃
+- 확장 방향: 전용 백엔드로 이전, 캐싱 레이어 구현, 배치 작업
 
-## Dependencies at Risk
+## 위험한 의존성
 
-**Python Selenium with webdriver-manager:**
-- Risk: Selenium version compatibility; ChromeDriver updates; webdriver-manager maintenance
-- Impact: ETL breaks if dependencies become incompatible
-- Migration plan: Evaluate Playwright as modern replacement; add version pinning with tests
+**webdriver-manager를 사용하는 Python Selenium:**
+- 위험: Selenium 버전 호환성, ChromeDriver 업데이트, webdriver-manager 유지보수
+- 영향: 의존성 불호환 시 ETL 중단
+- 마이그레이션 계획: 현대적 대안으로 Playwright 평가, 테스트와 함께 버전 고정
 
-**Google Apps Script as backend:**
-- Risk: GAS limitations (no custom domain, limited libraries); dependency on Google services
-- Impact: Data pipeline tightly coupled to GAS; hard to migrate
-- Migration plan: Build lightweight REST API (Node.js/Python); deprecate GAS gradually
+**백엔드로서의 Google Apps Script:**
+- 위험: GAS 제한 (커스텀 도메인 없음, 제한된 라이브러리), Google 서비스 의존성
+- 영향: 데이터 파이프라인이 GAS에 강하게 결합, 마이그레이션 어려움
+- 마이그레이션 계획: 경량 REST API 구축 (Node.js/Python), GAS 점진적 폐기
 
-**Multiple i18n language packs:**
-- Risk: Translation quality maintenance; missing translations in new languages
-- Impact: Inconsistent UX across languages; fallback chain could miss keys
-- Migration plan: Implement translation coverage reporting; add CI check for missing keys
+**여러 i18n 언어팩:**
+- 위험: 번역 품질 유지보수, 새 언어의 누락 번역
+- 영향: 언어 간 불일치한 UX, 폴백 체인에서 키 누락 가능
+- 마이그레이션 계획: 번역 커버리지 리포팅 구현, 누락 키에 대한 CI 검사 추가
 
-## Missing Critical Features
+## 누락된 핵심 기능
 
-**No data validation layer:**
-- Problem: ETF cost data accepted without range checking or sanity validation
-- Blocks: Cannot detect KOFIA data anomalies; fee values could be corrupted
-- Priority: HIGH - impacts core data integrity
-- Recommendation: Add range checks (fees 0-2%), duplicate detection, historical comparison
+**데이터 유효성 검사 레이어 없음:**
+- 문제: 범위 검사나 정상성 검증 없이 ETF 비용 데이터 수용
+- 차단: KOFIA 데이터 이상 감지 불가, 수수료 값 손상 가능
+- 우선순위: **높음** — 핵심 데이터 무결성에 영향
+- 권고사항: 범위 검사 추가 (수수료 0~2%), 중복 감지, 이력 비교
 
-**No offline support:**
-- Problem: App requires network; no service worker or local cache
-- Blocks: Users on flaky connections cannot access previously loaded data
-- Priority: MEDIUM
-- Recommendation: Implement service worker with offline fallback
+**오프라인 지원 없음:**
+- 문제: 네트워크 필요, 서비스 워커 또는 로컬 캐시 없음
+- 차단: 불안정한 연결의 사용자가 이전에 로드한 데이터에 접근 불가
+- 우선순위: **중간**
+- 권고사항: 오프라인 폴백을 포함한 서비스 워커 구현
 
-**No real-time data updates:**
-- Problem: Data updated monthly only; no intraday updates
-- Blocks: Users cannot see latest fee changes without page refresh
-- Priority: LOW (monthly update acceptable for investment use case)
+**실시간 데이터 업데이트 없음:**
+- 문제: 데이터가 월 1회만 업데이트, 당일 내 업데이트 없음
+- 차단: 페이지 새로고침 없이 최신 수수료 변경 확인 불가
+- 우선순위: **낮음** (투자 사용 사례에서 월 업데이트 허용 가능)
 
-**No user preferences persistence:**
-- Problem: Only language selection saved to localStorage; no other preferences stored
-- Blocks: Cannot remember category selection or selected ETFs
-- Priority: LOW-MEDIUM
+**사용자 설정 유지 없음:**
+- 문제: 언어 선택만 localStorage에 저장, 다른 설정 미저장
+- 차단: 카테고리 선택 또는 선택한 ETF 기억 불가
+- 우선순위: **낮음~중간**
 
-## Test Coverage Gaps
+## 테스트 커버리지 공백
 
-**No unit tests for ETL process:**
-- What's not tested: Header detection, fee calculation, data matching logic
-- Files: `etl_process.py` (entire file)
-- Risk: Data corruption goes unnoticed; Excel format changes break silently
-- Priority: HIGH
+**ETL 프로세스 단위 테스트 없음:**
+- 미테스트 항목: 헤더 감지, 수수료 계산, 데이터 매칭 로직
+- 파일: `etl_process.py` (전체 파일)
+- 위험: 데이터 손상이 눈에 띄지 않음, Excel 형식 변경이 묵시적으로 중단
+- 우선순위: **높음**
 
-**No integration tests for frontend data flow:**
-- What's not tested: Data fetch → render pipeline; filter/sort logic
-- Files: `script.js` (lines 602-836)
-- Risk: Rendering bugs only caught manually
-- Priority: MEDIUM
+**프론트엔드 데이터 흐름 통합 테스트 없음:**
+- 미테스트 항목: 데이터 fetch → 렌더링 파이프라인, 필터/정렬 로직
+- 파일: `script.js` (602~836번째 줄)
+- 위험: 렌더링 버그가 수동으로만 발견됨
+- 우선순위: **중간**
 
-**No tests for translation system:**
-- What's not tested: Language pack loading, fallback behavior, missing key handling
-- Files: `script.js` (lines 199-253, 582-600)
-- Risk: i18n system failures not caught until user reports
-- Priority: MEDIUM
+**번역 시스템 테스트 없음:**
+- 미테스트 항목: 언어팩 로딩, 폴백 동작, 누락 키 처리
+- 파일: `script.js` (199~253, 582~600번째 줄)
+- 위험: i18n 시스템 장애가 사용자 보고 전까지 발견 안 됨
+- 우선순위: **중간**
 
-**No tests for KOFIA Selenium automation:**
-- What's not tested: Website navigation, download detection, timeout behavior
-- Files: `etl_process.py` (lines 22-132)
-- Risk: Site structure changes break ETL without warning
-- Priority: CRITICAL - entire pipeline depends on this
+**KOFIA Selenium 자동화 테스트 없음:**
+- 미테스트 항목: 웹사이트 탐색, 다운로드 감지, 타임아웃 동작
+- 파일: `etl_process.py` (22~132번째 줄)
+- 위험: 사이트 구조 변경 시 경고 없이 ETL 중단
+- 우선순위: **매우 높음** — 전체 파이프라인이 이에 의존
 
-**No end-to-end tests:**
-- What's not tested: Full ETL → frontend pipeline
-- Risk: Changes to ETL output format not caught before deployment
-- Priority: MEDIUM
+**E2E 테스트 없음:**
+- 미테스트 항목: 전체 ETL → 프론트엔드 파이프라인
+- 위험: ETL 출력 형식 변경이 배포 전에 발견 안 됨
+- 우선순위: **중간**
 
 ---
 
-*Concerns audit: 2026-04-07*
+*우려사항 감사: 2026-04-07*
