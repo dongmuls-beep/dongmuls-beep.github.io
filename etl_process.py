@@ -303,50 +303,36 @@ def process_data(managed_df, file_path):
 
 def fetch_market_data_batch(codes):
     """
-    pykrx를 이용해 ETF 목록의 순자산(AUM, 억원)과 거래량을 일괄 조회.
+    yfinance를 이용해 ETF 목록의 순자산(AUM, 억원)과 거래량을 일괄 조회.
+    Yahoo Finance는 GitHub Actions 환경에서도 정상 동작.
     조회 실패 시 None 반환 (데이터 없이도 ETL 계속 진행).
     """
     try:
-        from pykrx import stock as pykrx_stock
+        import yfinance as yf
     except ImportError:
-        print("pykrx not installed. Skipping AUM/volume data.")
+        print("yfinance not installed. Skipping AUM/volume data.")
         return {}
 
-    today = datetime.now(timezone(timedelta(hours=9)))
-    date_to = today.strftime("%Y%m%d")
-    date_from = (today - timedelta(days=7)).strftime("%Y%m%d")
-
-    # 첫 종목으로 컬럼명 확인
-    sample_printed = False
     result = {}
+    # 표준 6자리 숫자 코드만 Yahoo Finance에서 조회 가능 (0026S0 등 비표준 코드 제외)
     for code in codes:
+        if not str(code).isdigit():
+            print(f"  {code}: 비표준 코드 → 건너뜀")
+            result[code] = {"AUM": None, "거래량": None}
+            continue
         try:
-            df = pykrx_stock.get_etf_ohlcv_by_date(date_from, date_to, code)
-            if not sample_printed:
-                print(f"  pykrx columns: {df.columns.tolist()}")
-                if not df.empty:
-                    print(f"  sample row: {df.iloc[-1].to_dict()}")
-                sample_printed = True
+            ticker = yf.Ticker(f"{str(code).zfill(6)}.KS")
+            # 최근 5일 거래량
+            hist = ticker.history(period="5d")
+            volume = int(hist["Volume"].iloc[-1]) if not hist.empty else None
 
-            if not df.empty:
-                latest = df.iloc[-1]
-                cols = df.columns.tolist()
+            # ETF 순자산 (totalAssets) 또는 시가총액 대체
+            info = ticker.info
+            total_assets = info.get("totalAssets") or info.get("marketCap")
+            aum_eok = round(total_assets / 1e8) if total_assets and total_assets > 0 else None
 
-                # 순자산가치총액 컬럼 탐색 (pykrx 버전별 컬럼명 차이 대응)
-                aum_col = next((c for c in cols if "순자산가치총액" in c or "순자산" in c), None)
-                vol_col = next((c for c in cols if "거래량" in c), None)
-
-                aum_raw = float(latest[aum_col]) if aum_col else 0
-                aum_eok = round(aum_raw / 1e8) if aum_raw and aum_raw > 0 else None
-
-                vol_raw = latest[vol_col] if vol_col else 0
-                volume = int(vol_raw) if vol_raw and float(vol_raw) > 0 else None
-
-                result[code] = {"AUM": aum_eok, "거래량": volume}
-                print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
-            else:
-                print(f"  {code}: empty DataFrame")
-                result[code] = {"AUM": None, "거래량": None}
+            result[code] = {"AUM": aum_eok, "거래량": volume}
+            print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
         except Exception as e:
             print(f"  Market data error for {code}: {e}")
             result[code] = {"AUM": None, "거래량": None}
