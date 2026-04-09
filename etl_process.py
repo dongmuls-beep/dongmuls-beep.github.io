@@ -303,46 +303,68 @@ def process_data(managed_df, file_path):
 
 def fetch_market_data_batch(codes):
     """
-    yfinance를 이용해 ETF 목록의 순자산(AUM, 억원)과 거래량을 일괄 조회.
-    Yahoo Finance는 GitHub Actions 환경에서도 정상 동작.
+    NAVER Finance ETF 리스트 API를 이용해 AUM(억원)과 거래량을 일괄 조회.
+
+    Yahoo Finance(yfinance)는 한국 KSE 상장 ETF에 대해 시가총액/주식수 등
+    fundamentals 데이터를 제공하지 않으므로 사용 불가.
+    NAVER Finance API는 단일 요청으로 전체 ETF의 marketSum(억원)과
+    quant(거래량)를 반환하며, GitHub Actions 환경에서도 정상 동작.
     조회 실패 시 None 반환 (데이터 없이도 ETL 계속 진행).
     """
-    try:
-        import yfinance as yf
-    except ImportError:
-        print("yfinance not installed. Skipping AUM/volume data.")
-        return {}
+    NAVER_ETF_URL = "https://finance.naver.com/api/sise/etfItemList.nhn"
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        ),
+        "Referer": "https://finance.naver.com/",
+    }
 
+    # 초기화: 비표준 코드는 미리 None으로 세팅
     result = {}
-    # 표준 6자리 숫자 코드만 Yahoo Finance에서 조회 가능 (0026S0 등 비표준 코드 제외)
     for code in codes:
         if not str(code).isdigit():
             print(f"  {code}: 비표준 코드 → 건너뜀")
             result[code] = {"AUM": None, "거래량": None}
-            continue
-        try:
-            ticker = yf.Ticker(f"{str(code).zfill(6)}.KS")
-            # 최근 5일 거래량
-            hist = ticker.history(period="5d")
-            volume = int(hist["Volume"].iloc[-1]) if not hist.empty else None
 
-            # AUM = 종가(NAV) × 상장주식수
-            # Yahoo Finance info에서 sharesOutstanding 또는 impliedSharesOutstanding 사용
-            info = ticker.info
-            shares = info.get("sharesOutstanding") or info.get("impliedSharesOutstanding")
-            close = float(hist["Close"].iloc[-1]) if not hist.empty else None
-            if shares and close:
-                aum_eok = round((shares * close) / 1e8)
+    # 표준 코드 집합
+    standard_codes = {str(c).zfill(6) for c in codes if str(c).isdigit()}
+    if not standard_codes:
+        return result
+
+    try:
+        resp = requests.get(NAVER_ETF_URL, headers=headers, timeout=15)
+        resp.raise_for_status()
+        data = resp.json()
+        etf_list = data.get("result", {}).get("etfItemList", [])
+
+        # itemcode → {marketSum, quant} 맵 구성
+        naver_map = {
+            item["itemcode"]: item
+            for item in etf_list
+            if item.get("itemcode")
+        }
+
+        for code in codes:
+            code_str = str(code).zfill(6) if str(code).isdigit() else None
+            if code_str is None:
+                continue  # 이미 위에서 처리됨
+            item = naver_map.get(code_str)
+            if item:
+                aum_eok = item.get("marketSum")  # 이미 억원 단위
+                volume = item.get("quant")
+                result[code] = {"AUM": aum_eok, "거래량": volume}
+                print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
             else:
-                # fallback: totalAssets, marketCap 순서로 시도
-                total_assets = info.get("totalAssets") or info.get("marketCap")
-                aum_eok = round(total_assets / 1e8) if total_assets and total_assets > 0 else None
+                print(f"  {code}: NAVER ETF 목록에서 찾을 수 없음 → AUM=None")
+                result[code] = {"AUM": None, "거래량": None}
 
-            result[code] = {"AUM": aum_eok, "거래량": volume}
-            print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
-        except Exception as e:
-            print(f"  Market data error for {code}: {e}")
-            result[code] = {"AUM": None, "거래량": None}
+    except Exception as e:
+        print(f"  NAVER ETF API 오류: {e} → 전체 AUM/거래량 None 처리")
+        for code in codes:
+            if code not in result:
+                result[code] = {"AUM": None, "거래량": None}
 
     return result
 
