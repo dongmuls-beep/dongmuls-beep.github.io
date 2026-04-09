@@ -316,17 +316,36 @@ def fetch_market_data_batch(codes):
     date_to = today.strftime("%Y%m%d")
     date_from = (today - timedelta(days=7)).strftime("%Y%m%d")
 
+    # 첫 종목으로 컬럼명 확인
+    sample_printed = False
     result = {}
     for code in codes:
         try:
             df = pykrx_stock.get_etf_ohlcv_by_date(date_from, date_to, code)
+            if not sample_printed:
+                print(f"  pykrx columns: {df.columns.tolist()}")
+                if not df.empty:
+                    print(f"  sample row: {df.iloc[-1].to_dict()}")
+                sample_printed = True
+
             if not df.empty:
                 latest = df.iloc[-1]
-                aum_won = latest.get("순자산가치총액", 0)
-                aum_eok = round(aum_won / 1e8) if aum_won and aum_won > 0 else None
-                volume = int(latest.get("거래량", 0)) or None
+                cols = df.columns.tolist()
+
+                # 순자산가치총액 컬럼 탐색 (pykrx 버전별 컬럼명 차이 대응)
+                aum_col = next((c for c in cols if "순자산가치총액" in c or "순자산" in c), None)
+                vol_col = next((c for c in cols if "거래량" in c), None)
+
+                aum_raw = float(latest[aum_col]) if aum_col else 0
+                aum_eok = round(aum_raw / 1e8) if aum_raw and aum_raw > 0 else None
+
+                vol_raw = latest[vol_col] if vol_col else 0
+                volume = int(vol_raw) if vol_raw and float(vol_raw) > 0 else None
+
                 result[code] = {"AUM": aum_eok, "거래량": volume}
+                print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
             else:
+                print(f"  {code}: empty DataFrame")
                 result[code] = {"AUM": None, "거래량": None}
         except Exception as e:
             print(f"  Market data error for {code}: {e}")
