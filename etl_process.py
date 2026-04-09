@@ -301,6 +301,40 @@ def process_data(managed_df, file_path):
         print(f"Error processing Excel: {e}")
         return []
 
+def fetch_market_data_batch(codes):
+    """
+    pykrx를 이용해 ETF 목록의 순자산(AUM, 억원)과 거래량을 일괄 조회.
+    조회 실패 시 None 반환 (데이터 없이도 ETL 계속 진행).
+    """
+    try:
+        from pykrx import stock as pykrx_stock
+    except ImportError:
+        print("pykrx not installed. Skipping AUM/volume data.")
+        return {}
+
+    today = datetime.now(timezone(timedelta(hours=9)))
+    date_to = today.strftime("%Y%m%d")
+    date_from = (today - timedelta(days=7)).strftime("%Y%m%d")
+
+    result = {}
+    for code in codes:
+        try:
+            df = pykrx_stock.get_etf_ohlcv_by_date(date_from, date_to, code)
+            if not df.empty:
+                latest = df.iloc[-1]
+                aum_won = latest.get("순자산가치총액", 0)
+                aum_eok = round(aum_won / 1e8) if aum_won and aum_won > 0 else None
+                volume = int(latest.get("거래량", 0)) or None
+                result[code] = {"AUM": aum_eok, "거래량": volume}
+            else:
+                result[code] = {"AUM": None, "거래량": None}
+        except Exception as e:
+            print(f"  Market data error for {code}: {e}")
+            result[code] = {"AUM": None, "거래량": None}
+
+    return result
+
+
 def write_update_meta():
     """
     Writes ETL success metadata for frontend "last updated" rendering.
@@ -365,7 +399,17 @@ if __name__ == "__main__":
         final_data = process_data(targets, excel_file)
         
 
-        # 4. Upload
+        # 4. Fetch AUM and volume from KRX
+        if final_data:
+            print("Fetching market data (AUM, volume) via pykrx...")
+            codes = [item["종목코드"] for item in final_data]
+            market_data = fetch_market_data_batch(codes)
+            for item in final_data:
+                md = market_data.get(item["종목코드"], {})
+                item["AUM"] = md.get("AUM")
+                item["거래량"] = md.get("거래량")
+
+        # 5. Upload
         if final_data:
             if not update_google_sheets(final_data):
                 print("Failed to save ETL outputs.")

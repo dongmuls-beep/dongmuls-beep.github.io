@@ -456,6 +456,22 @@ h1 {
     font-weight: 700;
 }
 
+.fee-change {
+    display: block;
+    font-size: 0.72em;
+    font-weight: 500;
+    margin-top: 3px;
+    letter-spacing: -0.01em;
+}
+
+.fee-change.up {
+    color: #ef4444;
+}
+
+.fee-change.down {
+    color: #22c55e;
+}
+
 .loading-text {
     padding: var(--space-8) var(--space-4);
     color: var(--text-soft);

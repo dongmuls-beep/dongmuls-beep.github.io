@@ -21,6 +21,8 @@
   "table_other": "기타비용",
   "table_trade": "매매중개",
   "table_real": "실부담비용(%)",
+  "table_aum": "순자산(억)",
+  "table_volume": "거래량",
   "table_loading": "데이터를 불러오는 중입니다...",
   "table_error": "데이터를 불러오지 못했습니다. <br> 잠시 후 다시 시도해주세요.",
   "table_empty": "표시할 데이터가 없습니다.",

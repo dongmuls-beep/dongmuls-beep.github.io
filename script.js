@@ -46,6 +46,7 @@ let currentLanguage = DEFAULT_LANG;
 let currentTranslations = {};
 let lastFocusedBeforeModal = null;
 let latestDataUpdatedAt = "";
+let changelogLatestByCode = {};
 
 let dataKeys = {
     category: "구분",
@@ -55,6 +56,8 @@ let dataKeys = {
     other: "기타비용",
     trade: "매매중개수수료",
     real: "실부담비용",
+    aum: "AUM",
+    volume: "거래량",
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -603,16 +606,41 @@ async function fetchData() {
     const tbody = document.getElementById("tableBody");
     if (!tbody) return;
 
-    tbody.innerHTML = `<tr><td colspan="6" class="loading-text">${getTranslation("table_loading")}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_loading")}</td></tr>`;
     updateLastUpdated(true);
 
     try {
-        const [response] = await Promise.all([
+        const [response, changelogResponse] = await Promise.all([
             fetch(GAS_API_URL, { cache: "no-store" }),
+            fetch(CHANGELOG_URL, { cache: "no-store" }).catch(() => null),
             loadUpdateMeta(),
         ]);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
+        }
+
+        // changelog 파싱: 가장 최신 월의 실부담비용 변동을 종목코드별로 매핑
+        changelogLatestByCode = {};
+        if (changelogResponse && changelogResponse.ok) {
+            try {
+                const changelogData = await changelogResponse.json();
+                if (Array.isArray(changelogData) && changelogData.length > 0) {
+                    const latest = [...changelogData].sort((a, b) => b.month.localeCompare(a.month))[0];
+                    if (latest && Array.isArray(latest.changes)) {
+                        latest.changes.forEach((change) => {
+                            if (change.field === "실부담비용") {
+                                changelogLatestByCode[change.code] = {
+                                    before: change.before,
+                                    after: change.after,
+                                    diff: Number((change.after - change.before).toFixed(4)),
+                                };
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.warn("Changelog parse error:", e);
+            }
         }
 
         const data = await response.json();
@@ -632,7 +660,7 @@ async function fetchData() {
         updateLastUpdated(false);
     } catch (error) {
         console.error("Error fetching data:", error);
-        tbody.innerHTML = `<tr><td colspan="6" class="loading-text error-text">${getTranslation("table_error")}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="loading-text error-text">${getTranslation("table_error")}</td></tr>`;
         updateLastUpdated(true);
     }
 }
@@ -676,6 +704,8 @@ function resolveDataKeys(sample) {
         other: pick("기타비용", ["기타비용", "other"], 4),
         trade: pick("매매중개수수료", ["매매", "중개", "trade"], 5),
         real: pick("실부담비용", ["실부담", "real"], 6),
+        aum: pick("AUM", ["AUM", "순자산", "aum"], 7),
+        volume: pick("거래량", ["거래량", "volume"], 8),
     };
 }
 
@@ -770,6 +800,23 @@ function filterAndRenderTable() {
     renderTable(filtered);
 }
 
+function formatAUM(value) {
+    if (value == null || value === "" || isNaN(Number(value))) return "-";
+    const aum = Number(value);
+    if (aum <= 0) return "-";
+    if (aum >= 10000) return (aum / 10000).toFixed(1) + "조";
+    return aum.toLocaleString("ko-KR") + "억";
+}
+
+function formatVolume(value) {
+    if (value == null || value === "" || isNaN(Number(value))) return "-";
+    const vol = Number(value);
+    if (vol <= 0) return "-";
+    if (vol >= 100000000) return (vol / 100000000).toFixed(1) + "억";
+    if (vol >= 10000) return Math.round(vol / 10000) + "만";
+    return vol.toLocaleString("ko-KR");
+}
+
 function renderTable(rows) {
     const tbody = document.getElementById("tableBody");
     if (!tbody) return;
@@ -777,7 +824,7 @@ function renderTable(rows) {
     tbody.innerHTML = "";
 
     if (!rows || rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="loading-text">${getTranslation("table_empty")}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_empty")}</td></tr>`;
         return;
     }
 
@@ -803,6 +850,16 @@ function renderTable(rows) {
             ? `https://finance.naver.com/item/main.naver?code=${encodeURIComponent(naverCode)}`
             : "#";
 
+        const changeData = changelogLatestByCode[String(code)] || null;
+        let changeHtml = "";
+        if (changeData) {
+            const diff = changeData.diff;
+            const sign = diff > 0 ? "+" : "";
+            const cls = diff > 0 ? "fee-change up" : "fee-change down";
+            const arrow = diff > 0 ? "▲" : "▼";
+            changeHtml = `<span class="${cls}">${arrow}${sign}${Math.abs(diff).toFixed(4)}%p</span>`;
+        }
+
         row.innerHTML = `
             <td class="clickable code-cell" data-label="${escapeHtml(getTranslation("table_code"))}" title="Copy Code">${escapeHtml(code)}</td>
             <td data-label="${escapeHtml(getTranslation("table_name"))}" class="name-cell">
@@ -811,7 +868,9 @@ function renderTable(rows) {
             <td class="text-right" data-label="${escapeHtml(getTranslation("table_fee"))}">${formatPercent(item[dataKeys.fee])}</td>
             <td class="text-right" data-label="${escapeHtml(getTranslation("table_other"))}">${formatPercent(item[dataKeys.other])}</td>
             <td class="text-right" data-label="${escapeHtml(getTranslation("table_trade"))}">${formatPercent(item[dataKeys.trade])}</td>
-            <td class="text-right highlight" data-label="${escapeHtml(getTranslation("table_real"))}">${formatPercent(item[dataKeys.real])}</td>
+            <td class="text-right highlight" data-label="${escapeHtml(getTranslation("table_real"))}">${formatPercent(item[dataKeys.real])}${changeHtml}</td>
+            <td class="text-right" data-label="${escapeHtml(getTranslation("table_aum"))}">${formatAUM(item[dataKeys.aum])}</td>
+            <td class="text-right" data-label="${escapeHtml(getTranslation("table_volume"))}">${formatVolume(item[dataKeys.volume])}</td>
         `;
 
         const codeCell = row.querySelector(".code-cell");
