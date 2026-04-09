@@ -326,10 +326,17 @@ def fetch_market_data_batch(codes):
             hist = ticker.history(period="5d")
             volume = int(hist["Volume"].iloc[-1]) if not hist.empty else None
 
-            # ETF 순자산 (totalAssets) 또는 시가총액 대체
+            # AUM = 종가(NAV) × 상장주식수
+            # Yahoo Finance info에서 sharesOutstanding 또는 impliedSharesOutstanding 사용
             info = ticker.info
-            total_assets = info.get("totalAssets") or info.get("marketCap")
-            aum_eok = round(total_assets / 1e8) if total_assets and total_assets > 0 else None
+            shares = info.get("sharesOutstanding") or info.get("impliedSharesOutstanding")
+            close = float(hist["Close"].iloc[-1]) if not hist.empty else None
+            if shares and close:
+                aum_eok = round((shares * close) / 1e8)
+            else:
+                # fallback: totalAssets, marketCap 순서로 시도
+                total_assets = info.get("totalAssets") or info.get("marketCap")
+                aum_eok = round(total_assets / 1e8) if total_assets and total_assets > 0 else None
 
             result[code] = {"AUM": aum_eok, "거래량": volume}
             print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
