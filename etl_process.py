@@ -13,10 +13,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Configuration
-# Replace with your actual GAS Web App URL
-GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwx4Bee14DASyNTMz5CrYsb4C4TtNldAcWU3ccj1UJaV1uQAF3lYEJQGaAavfXwpVcJ/exec" 
-DOWNLOAD_DIR = os.getcwd() # Current directory for downloads
+# Configuration — 환경 변수에서 읽음 (하드코딩 금지)
+GAS_WEB_APP_URL = os.environ.get("GAS_WEB_APP_URL", "")
+DOWNLOAD_DIR = os.environ.get("DOWNLOAD_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "downloads"))
 UPDATE_META_FILE = "update-meta.json"
 
 def setup_driver():
@@ -135,13 +134,10 @@ def fetch_managed_items():
     """
     Fetches the list of items to manage from Google Sheets via GAS.
     """
-    print(f"Fetching managed items from: {GAS_WEB_APP_URL}")
-    if "YOUR_GAS_WEB_APP_URL" in GAS_WEB_APP_URL:
-        print("Warning: GAS Checklist - URL not set. Using mock.")
-        return get_mock_managed_items()
-
+    print(f"Fetching managed items from GAS...")
+    # GAS_WEB_APP_URL은 __main__ 진입점에서 이미 검증됨
     try:
-        response = requests.get(GAS_WEB_APP_URL, params={'action': 'getItems'})
+        response = requests.get(GAS_WEB_APP_URL, params={'action': 'getItems'}, timeout=30)
         response.raise_for_status()
         data = response.json()
         return pd.DataFrame(data)
@@ -419,6 +415,17 @@ def update_google_sheets(data):
     return True
 
 if __name__ == "__main__":
+    # 필수 환경 변수 검사
+    if not GAS_WEB_APP_URL:
+        print("ERROR: 환경 변수 GAS_WEB_APP_URL이 설정되지 않았습니다.")
+        print("  로컬: export GAS_WEB_APP_URL='https://script.google.com/...'")
+        print("  GitHub Actions: repository Settings > Secrets > GAS_WEB_APP_URL 추가")
+        sys.exit(1)
+
+    if not os.path.isdir(DOWNLOAD_DIR):
+        os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+        print(f"Created DOWNLOAD_DIR: {DOWNLOAD_DIR}")
+
     exit_code = 0
 
     # 1. Download via Selenium
