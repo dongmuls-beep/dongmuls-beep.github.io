@@ -139,12 +139,12 @@ def download_kofia_excel():
         print("Looking for Excel Download button...")
         try:
             excel_btn = driver.find_element(By.XPATH, "//img[contains(@alt, '엑셀') or contains(@alt, 'Excel')]/parent::*")
-        except:
+        except NoSuchElementException:
             try:
                 excel_btn = driver.find_element(By.CSS_SELECTOR, "#btnExcel, #excelDown")
-            except:
-                 print("Excel button not found!")
-                 return None
+            except NoSuchElementException:
+                print("Excel button not found!")
+                return None
             
         print("Clicking Excel Download...")
         driver.execute_script("arguments[0].click();", excel_btn)
@@ -164,7 +164,7 @@ def download_kofia_excel():
         try:
             driver.save_screenshot("selenium_error.png")
             print("Saved screenshot to selenium_error.png")
-        except:
+        except Exception:
             pass
         return None
     finally:
@@ -328,9 +328,9 @@ def process_data(managed_df, file_path):
             
             # --- Robust Fee Calculation ---
             def p_float(v):
-                try: 
-                    return float(str(v).replace(',', '').replace('%',''))
-                except: 
+                try:
+                    return float(str(v).replace(',', '').replace('%', ''))
+                except (ValueError, TypeError, AttributeError):
                     return 0.0
 
             # Dynamic Column Findings
