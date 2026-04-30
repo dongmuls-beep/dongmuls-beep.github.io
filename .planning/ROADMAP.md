@@ -11,11 +11,12 @@
 
 **Requirements:** ETL-01, ETL-02, ETL-03, ETL-04
 
-### Plans
+**Plans:** 3 plans
 
-1. **환경 변수화** — `etl_process.py`의 GAS Web App URL과 KOFIA URL을 환경 변수로 분리, GitHub Actions secrets 연동
-2. **Selenium 재시도 개선** — 고정 sleep 제거, 지수 백오프 + 다운로드 완료 감지 로직 구현
-3. **에러 처리 강화** — 일반 except 대신 구체적 예외 타입, 컬럼 유효성 검사, 상세 로깅
+Plans:
+- [ ] 01-PLAN-A.md — GAS URL 환경 변수화 + GitHub Actions secrets 연동 (ETL-01)
+- [ ] 01-PLAN-B.md — Selenium 지수 백오프 재시도 + 적응형 다운로드 감지 (ETL-02)
+- [ ] 01-PLAN-C.md — 구체적 예외 처리 + KOFIA 컬럼 유효성 검사 (ETL-03, ETL-04)
 
 **Verification:** GitHub Actions에서 ETL이 성공적으로 실행되고, 환경 변수 없이 실행 시 명확한 에러 메시지가 출력된다.
 
@@ -76,7 +77,7 @@
 
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
-| 1 | ETL 안정성 | ETL-01~04 | Pending |
+| 1 | ETL 안정성 | ETL-01~04 | Planning Complete |
 | 2 | 데이터 무결성 | DATA-01~03 | Pending |
 | 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | Pending |
 | 4 | ETL 테스트 | TEST-01~03 | Pending |
@@ -84,3 +85,4 @@
 ---
 *Roadmap created: 2026-04-07*
 *Milestone: v1.1 안정성·보안·품질 개선*
+*Phase 1 plans created: 2026-04-30*
