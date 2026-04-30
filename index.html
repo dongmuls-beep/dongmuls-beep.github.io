@@ -153,6 +153,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7540201129051567" crossorigin="anonymous"></script>
 </head>
 <body data-page="home">
+    <a href="#main-content" class="skip-link" data-i18n="aria_skip_to_content">본문 바로가기</a>
     <div class="background-gradient">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -175,7 +176,7 @@
             </nav>
             <div class="header-actions">
                 <div class="language-selector">
-                    <select id="languageSelect" aria-label="Language">
+                    <select id="languageSelect" data-i18n-aria="aria_lang_select" aria-label="언어 선택">
                         <option value="ko">🇰🇷 한국어</option>
                         <option value="vi">🇻🇳 Tiếng Việt</option>
                         <option value="zh">🇨🇳 中文</option>
@@ -186,14 +187,14 @@
                         <option value="km">🇰🇭 ខ្មែរ</option>
                     </select>
                 </div>
-                <button class="hamburger-menu" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primaryNav" aria-haspopup="true">
+                <button class="hamburger-menu" data-i18n-aria="aria_menu_open" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primaryNav" aria-haspopup="true">
                     <span></span><span></span><span></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="container">
+    <main id="main-content" class="container">
         <section class="view-section active">
             <header class="header">
                 <h1 data-i18n="home_hero_title">ETF 실부담비용 비교</h1>

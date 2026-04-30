@@ -114,6 +114,7 @@ function initNavigation() {
         nav.classList.remove("active");
         hamburger.classList.remove("active");
         hamburger.setAttribute("aria-expanded", "false");
+        hamburger.setAttribute("aria-label", getTranslation("aria_menu_open"));
         document.body.classList.remove("nav-open");
     };
 
@@ -121,6 +122,7 @@ function initNavigation() {
         nav.classList.add("active");
         hamburger.classList.add("active");
         hamburger.setAttribute("aria-expanded", "true");
+        hamburger.setAttribute("aria-label", getTranslation("aria_menu_close"));
         document.body.classList.add("nav-open");
     };
 
@@ -165,19 +167,21 @@ function initSmartHeader() {
     if (!header) return;
 
     let lastScroll = window.scrollY || document.documentElement.scrollTop;
+    let rafPending = false;
 
     window.addEventListener("scroll", () => {
-        const currentScroll = window.scrollY || document.documentElement.scrollTop;
-        const body = document.body;
-
-        // Hide only if navigation is closed. Open nav shouldn't let header hide (even if scroll accidentally triggered)
-        if (currentScroll > lastScroll && currentScroll > 60 && !body.classList.contains("nav-open")) {
-            header.classList.add("header-hidden");
-        } else {
-            header.classList.remove("header-hidden");
-        }
-
-        lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(() => {
+            const currentScroll = window.scrollY || document.documentElement.scrollTop;
+            if (currentScroll > lastScroll && currentScroll > 60 && !document.body.classList.contains("nav-open")) {
+                header.classList.add("header-hidden");
+            } else {
+                header.classList.remove("header-hidden");
+            }
+            lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+            rafPending = false;
+        });
     }, { passive: true });
 }
 
@@ -297,14 +301,19 @@ async function updateLanguage(lang, options = {}) {
 }
 
 function applyTranslations() {
-    const targets = document.querySelectorAll("[data-i18n]");
-
-    targets.forEach((el) => {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
         const key = el.getAttribute("data-i18n");
         const translated = getTranslation(key);
-
         if (translated && translated !== key) {
             el.innerHTML = translated;
+        }
+    });
+
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+        const key = el.getAttribute("data-i18n-aria");
+        const translated = getTranslation(key);
+        if (translated && translated !== key) {
+            el.setAttribute("aria-label", translated);
         }
     });
 }
@@ -861,7 +870,7 @@ function renderTable(rows) {
         }
 
         row.innerHTML = `
-            <td class="clickable code-cell" data-label="${escapeHtml(getTranslation("table_code"))}" title="Copy Code">${escapeHtml(code)}</td>
+            <td class="clickable code-cell" data-label="${escapeHtml(getTranslation("table_code"))}" title="${escapeHtml(getTranslation("aria_copy_code"))}">${escapeHtml(code)}</td>
             <td data-label="${escapeHtml(getTranslation("table_name"))}" class="name-cell">
                 <a href="${naverUrl}" target="_blank" rel="noopener noreferrer" class="stock-link">${escapeHtml(name)}</a>
             </td>
@@ -881,6 +890,7 @@ function renderTable(rows) {
 
             codeCell.setAttribute("role", "button");
             codeCell.setAttribute("tabindex", "0");
+            codeCell.setAttribute("aria-label", `${getTranslation("aria_copy_code")}: ${code}`);
 
             codeCell.addEventListener("keydown", (event) => {
                 if (event.key === "Enter" || event.key === " ") {
