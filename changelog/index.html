@@ -64,10 +64,12 @@
 
     <main class="container">
         <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/" data-i18n="breadcrumbs_home">메인</a><span aria-current="page" data-i18n="changelog_hero_title">변경이력</span></nav>
-        <section class="content-panel">
+        <header class="header">
             <h1 data-i18n="changelog_hero_title">ETF 비용 변경이력</h1>
-            <p data-i18n="changelog_hero_desc">매월 갱신된 데이터 중 변경된 비용 항목을 기록합니다.</p>
+            <p class="subtitle" data-i18n="changelog_hero_desc">매월 갱신된 데이터 중 변경된 비용 항목을 기록합니다.</p>
             <div class="cta-row"><a href="/" class="btn-link" data-track-cta="changelog_to_home" data-i18n="common_cta_home_compare">메인 비교표로 이동</a><a href="/methodology/" class="btn-link" data-track-cta="changelog_to_methodology" data-i18n="common_cta_methodology">방법론 보기</a></div>
+        </header>
+        <section class="content-panel">
             <div id="changelogList" class="changelog-list"></div>
         </section>
 

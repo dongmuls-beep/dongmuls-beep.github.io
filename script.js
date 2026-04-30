@@ -1046,9 +1046,10 @@ async function renderChangelog() {
         }
 
         const sorted = [...data].sort((a, b) => {
-            const aDate = String(a.updatedAt || "");
-            const bDate = String(b.updatedAt || "");
-            return bDate.localeCompare(aDate);
+            const aMonth = String(a.month || "");
+            const bMonth = String(b.month || "");
+            if (bMonth !== aMonth) return bMonth.localeCompare(aMonth);
+            return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
         });
 
         container.innerHTML = "";
