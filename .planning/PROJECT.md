@@ -12,6 +12,8 @@
 
 ### Validated
 
+- ✓ ETL 설정 환경 변수화 (GAS URL 하드코딩 제거) — Validated in Phase 1: ETL 안정성 강화
+- ✓ ETL 안정성 강화 (Selenium 재시도 로직, 에러 처리 개선) — Validated in Phase 1: ETL 안정성 강화
 - ✓ KOFIA에서 ETF 수수료 Excel 파일 매일 자동 다운로드 (Selenium + GitHub Actions) — existing
 - ✓ 실부담비용 자동 계산 (총보수 + 기타비용 + 매매중개수수료) — existing
 - ✓ data.json으로 정적 파일 출력 및 GitHub Pages 자동 배포 — existing
@@ -25,8 +27,6 @@
 
 ### Active
 
-- [ ] ETL 설정 환경 변수화 (GAS URL 하드코딩 제거)
-- [ ] ETL 안정성 강화 (Selenium 재시도 로직, 에러 처리 개선)
 - [ ] 데이터 유효성 검사 레이어 추가 (수수료 범위 검증, 이상치 감지)
 - [ ] XSS 취약점 개선 (innerHTML → textContent 전환 및 이스케이프 일관 적용)
 - [ ] ETL 단위 테스트 추가 (헤더 감지, 수수료 계산, 데이터 매칭)
@@ -68,4 +68,4 @@
 | 8개 언어 i18n | 동남아 투자자 포함 넓은 타겟 | ✓ Good |
 
 ---
-*Last updated: 2026-04-07 after initial GSD setup*
+*Last updated: 2026-04-30 after Phase 1 completion*

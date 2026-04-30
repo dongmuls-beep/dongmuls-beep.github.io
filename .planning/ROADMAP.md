@@ -11,14 +11,17 @@
 
 **Requirements:** ETL-01, ETL-02, ETL-03, ETL-04
 
-**Plans:** 3 plans, 2 waves
+**Plans:** 4 plans (A/B/C + D gap closure) ✓ Complete (2026-04-30)
 
 **Wave 1**
-- [ ] 01-PLAN-A.md — GAS URL 환경 변수화 + GitHub Actions secrets 연동 (ETL-01)
+- [x] 01-PLAN-A.md — GAS URL 환경 변수화 + GitHub Actions secrets 연동 (ETL-01)
 
-**Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01-PLAN-B.md — Selenium 지수 백오프 재시도 + 적응형 다운로드 감지 (ETL-02)
-- [ ] 01-PLAN-C.md — 구체적 예외 처리 + KOFIA 컬럼 유효성 검사 (ETL-03, ETL-04)
+**Wave 2**
+- [x] 01-PLAN-B.md — Selenium 지수 백오프 재시도 + 적응형 다운로드 감지 (ETL-02)
+- [x] 01-PLAN-C.md — 구체적 예외 처리 + KOFIA 컬럼 유효성 검사 (ETL-03, ETL-04)
+
+**Gap Closure**
+- [x] 01-PLAN-D.md — bare except: 4개 완전 제거 (ETL-03 gap)
 
 **Cross-cutting constraints:**
 - PLAN-B/C 실행 전 PLAN-A 완료 필수 (`etl_process.py` 환경변수 패턴 변경 의존)
@@ -83,7 +86,7 @@
 
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
-| 1 | ETL 안정성 | ETL-01~04 | Planning Complete |
+| 1 | ETL 안정성 | ETL-01~04 | Complete (2026-04-30) |
 | 2 | 데이터 무결성 | DATA-01~03 | Pending |
 | 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | Pending |
 | 4 | ETL 테스트 | TEST-01~03 | Pending |

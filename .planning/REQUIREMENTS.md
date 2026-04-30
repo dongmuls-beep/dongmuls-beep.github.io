@@ -9,10 +9,10 @@
 
 ### ETL 안정성
 
-- [ ] **ETL-01**: GAS Web App URL이 환경 변수(`GAS_WEB_APP_URL`)로 관리된다
-- [ ] **ETL-02**: Selenium 다운로드 재시도 로직이 지수 백오프를 사용한다
-- [ ] **ETL-03**: ETL 에러 시 구체적인 예외 타입과 컨텍스트가 로깅된다
-- [ ] **ETL-04**: KOFIA Excel 헤더 행 감지 전 예상 컬럼명 유효성 검사를 수행한다
+- [x] **ETL-01**: GAS Web App URL이 환경 변수(`GAS_WEB_APP_URL`)로 관리된다 *(Validated Phase 1)*
+- [x] **ETL-02**: Selenium 다운로드 재시도 로직이 지수 백오프를 사용한다 *(Validated Phase 1)*
+- [x] **ETL-03**: ETL 에러 시 구체적인 예외 타입과 컨텍스트가 로깅된다 *(Validated Phase 1)*
+- [x] **ETL-04**: KOFIA Excel 헤더 행 감지 전 예상 컬럼명 유효성 검사를 수행한다 *(Validated Phase 1)*
 
 ### 데이터 무결성
 
@@ -68,10 +68,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ETL-01 | Phase 1 | Pending |
-| ETL-02 | Phase 1 | Pending |
-| ETL-03 | Phase 1 | Pending |
-| ETL-04 | Phase 1 | Pending |
+| ETL-01 | Phase 1 | Satisfied (2026-04-30) |
+| ETL-02 | Phase 1 | Satisfied (2026-04-30) |
+| ETL-03 | Phase 1 | Satisfied (2026-04-30) |
+| ETL-04 | Phase 1 | Satisfied (2026-04-30) |
 | DATA-01 | Phase 2 | Pending |
 | DATA-02 | Phase 2 | Pending |
 | DATA-03 | Phase 2 | Pending |
