@@ -11,12 +11,18 @@
 
 **Requirements:** ETL-01, ETL-02, ETL-03, ETL-04
 
-**Plans:** 3 plans
+**Plans:** 3 plans, 2 waves
 
-Plans:
+**Wave 1**
 - [ ] 01-PLAN-A.md — GAS URL 환경 변수화 + GitHub Actions secrets 연동 (ETL-01)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-PLAN-B.md — Selenium 지수 백오프 재시도 + 적응형 다운로드 감지 (ETL-02)
 - [ ] 01-PLAN-C.md — 구체적 예외 처리 + KOFIA 컬럼 유효성 검사 (ETL-03, ETL-04)
+
+**Cross-cutting constraints:**
+- PLAN-B/C 실행 전 PLAN-A 완료 필수 (`etl_process.py` 환경변수 패턴 변경 의존)
+- GitHub Actions `GAS_WEB_APP_URL` secret 등록 선행 필요
 
 **Verification:** GitHub Actions에서 ETL이 성공적으로 실행되고, 환경 변수 없이 실행 시 명확한 에러 메시지가 출력된다.
 
