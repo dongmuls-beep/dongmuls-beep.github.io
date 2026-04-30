@@ -12,6 +12,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+import traceback
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 
 # Configuration — 환경 변수에서 읽음 (하드코딩 금지)
 GAS_WEB_APP_URL = os.environ.get("GAS_WEB_APP_URL", "")
@@ -106,9 +108,12 @@ def download_kofia_excel():
              fund_nm_input.send_keys("상장지수")
              print("Entered '상장지수'")
              time.sleep(1)
-        except Exception as e:
-             print(f"Error entering fund name: {e}")
-             return None
+        except (TimeoutException, NoSuchElementException) as e:
+            print(f"Error: Fund name input field not found or not interactable: {e}")
+            return None
+        except WebDriverException as e:
+            print(f"WebDriver error while entering fund name: {e}")
+            return None
 
         # 3. Click Search
         print("Clicking Search...")
@@ -176,8 +181,17 @@ def fetch_managed_items():
         response.raise_for_status()
         data = response.json()
         return pd.DataFrame(data)
-    except Exception as e:
-        print(f"Error fetching items from GAS: {e}")
+    except requests.exceptions.HTTPError as e:
+        print(f"GAS API HTTP error (status {e.response.status_code if e.response else 'unknown'}): {e}")
+        print("Falling back to mock data.")
+        return get_mock_managed_items()
+    except requests.exceptions.RequestException as e:
+        print(f"GAS API network error: {e}")
+        print("Falling back to mock data.")
+        return get_mock_managed_items()
+    except (ValueError, KeyError) as e:
+        print(f"GAS API response parse error: {e}")
+        print("Falling back to mock data.")
         return get_mock_managed_items()
 
 def get_mock_managed_items():
@@ -243,6 +257,32 @@ def process_data(managed_df, file_path):
     
         # Clean naming: remove newlines, spaces, returns
         df.columns = df.columns.astype(str).str.replace('\n', '').str.replace('\r', '').str.strip()
+
+        # 컬럼 정제 완료 후 — 필수 컬럼 유효성 검사 (ETL-04)
+        REQUIRED_COLUMNS = {
+            "표준코드": lambda cols: any("표준코드" in c for c in cols),
+            "합계(A) 또는 총보수": lambda cols: (
+                any("합계" in c and "(A)" in c for c in cols) or
+                any("총보수" in c for c in cols)
+            ),
+        }
+
+        missing_required = [
+            name
+            for name, checker in REQUIRED_COLUMNS.items()
+            if not checker(df.columns)
+        ]
+
+        if missing_required:
+            actual_cols = df.columns.tolist()
+            raise ValueError(
+                f"KOFIA Excel 필수 컬럼 누락: {missing_required}\n"
+                f"실제 발견된 컬럼 ({len(actual_cols)}개): {actual_cols}\n"
+                f"원인: KOFIA 파일 형식이 변경되었거나 헤더 행 감지가 실패했을 수 있습니다. "
+                f"header_idx={header_idx}를 확인하세요."
+            )
+
+        print(f"Column validation passed. Required columns found.")
         print(f"Columns found: {df.columns.tolist()}")
         print(f"Excel Data Row Count: {len(df)}")
         print("First 3 rows of Excel Data:")
@@ -328,9 +368,23 @@ def process_data(managed_df, file_path):
         print(f"Processed {len(results)} items.")
         return results
         
+    except (pd.errors.EmptyDataError, pd.errors.ParserError) as e:
+        print(f"Excel parse error — KOFIA file may be corrupted or empty: {e}")
+        traceback.print_exc()
+        raise
+    except ValueError as e:
+        # 컬럼 유효성 검사 실패 포함 (Task 2에서 추가)
+        print(f"Excel column validation error: {e}")
+        traceback.print_exc()
+        raise
+    except OSError as e:
+        print(f"File I/O error while reading Excel ({e.filename}): {e}")
+        traceback.print_exc()
+        raise
     except Exception as e:
-        print(f"Error processing Excel: {e}")
-        return []
+        print(f"Unexpected error processing Excel: {type(e).__name__}: {e}")
+        traceback.print_exc()
+        raise
 
 def fetch_market_data_batch(codes):
     """
@@ -472,8 +526,12 @@ if __name__ == "__main__":
         targets = fetch_managed_items()
         
         # 3. Process
-        final_data = process_data(targets, excel_file)
-        
+        try:
+            final_data = process_data(targets, excel_file)
+        except Exception as etl_err:
+            print(f"ETL aborted: {etl_err}")
+            exit_code = 1
+            final_data = []
 
         # 4. Fetch AUM and volume from KRX
         if final_data:
