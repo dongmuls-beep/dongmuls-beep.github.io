@@ -18,6 +18,39 @@ GAS_WEB_APP_URL = os.environ.get("GAS_WEB_APP_URL", "")
 DOWNLOAD_DIR = os.environ.get("DOWNLOAD_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "downloads"))
 UPDATE_META_FILE = "update-meta.json"
 
+def _wait_for_download(download_dir: str, timeout: int = 90, max_retries: int = 3) -> str | None:
+    """
+    다운로드 완료 파일을 감지한다. 실패 시 지수 백오프로 재시도.
+    Returns: 완료된 파일 경로 또는 None
+    """
+    delay = 2  # 초기 대기 시간 (초)
+    for attempt in range(1, max_retries + 1):
+        end_time = time.time() + timeout
+        while time.time() < end_time:
+            xls_files = glob.glob(os.path.join(download_dir, "*.xls"))
+            xlsx_files = glob.glob(os.path.join(download_dir, "*.xlsx"))
+            crdownload_files = glob.glob(os.path.join(download_dir, "*.crdownload"))
+            all_files = xls_files + xlsx_files
+
+            if all_files and not crdownload_files:
+                latest = max(all_files, key=os.path.getmtime)
+                # 파일이 최근 90초 내에 생성·수정되었고, 크기가 0보다 크면 완료
+                if time.time() - os.path.getmtime(latest) < 90 and os.path.getsize(latest) > 0:
+                    print(f"Download detected: {latest} (attempt {attempt})")
+                    return latest
+            time.sleep(1)
+
+        # 이번 시도 실패 — 지수 백오프 후 재시도
+        if attempt < max_retries:
+            print(f"Download not detected (attempt {attempt}/{max_retries}). Retrying in {delay}s...")
+            time.sleep(delay)
+            delay *= 2  # 지수 백오프: 2 -> 4 -> 8초
+        else:
+            print(f"Download timed out after {max_retries} attempts.")
+
+    return None
+
+
 def setup_driver():
     """
     Sets up the Chrome WebDriver with options for downloading files.
@@ -81,9 +114,21 @@ def download_kofia_excel():
         print("Clicking Search...")
         driver.execute_script("arguments[0].click();", search_btn)
         
-        # 4. Wait for Grid/Table (Loading)
-        print("Waiting for data to load (20s)...")
-        time.sleep(20) 
+        # 4. Wait for Grid/Table (Loading) — 고정 sleep 대신 그리드 행 출현 대기
+        print("Waiting for data grid to load...")
+        try:
+            # KOFIA WebSquare 그리드: 첫 번째 데이터 행이 나타날 때까지 최대 60초 대기
+            # 그리드 행 선택자는 WebSquare 공통 패턴인 tr[id*='gridView'] 사용
+            wait.until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "tr[id*='gridView'], div[id*='gridView'] tr")
+                )
+            )
+            print("Data grid loaded.")
+        except Exception as grid_wait_err:
+            # 그리드 선택자가 맞지 않을 경우 — 짧은 폴백 sleep 사용 (5초)
+            print(f"Grid wait timed out ({grid_wait_err}). Using 5s fallback sleep.")
+            time.sleep(5)
         
         # 5. Looking for Excel Download button
         print("Looking for Excel Download button...")
@@ -99,23 +144,13 @@ def download_kofia_excel():
         print("Clicking Excel Download...")
         driver.execute_script("arguments[0].click();", excel_btn)
         
-        # 6. Wait for download
+        # 6. Wait for download — 지수 백오프 재시도 (최대 3회, 각 90초)
         print("Waiting for file download...")
-        timeout = 60
-        end_time = time.time() + timeout
-        while time.time() < end_time:
-            files = glob.glob(os.path.join(DOWNLOAD_DIR, "*.xls")) + glob.glob(os.path.join(DOWNLOAD_DIR, "*.xlsx"))
-            if files:
-                latest_file = max(files, key=os.path.getmtime)
-                # Check modified time < 1 min ago
-                if time.time() - os.path.getmtime(latest_file) < 60:
-                    # Check not incomplete
-                    if os.path.getsize(latest_file) > 0 and not latest_file.endswith('.crdownload'):
-                        print(f"Downloaded: {latest_file}")
-                        return latest_file
-            time.sleep(1)
-            
-        print("Download timed out.")
+        result = _wait_for_download(DOWNLOAD_DIR, timeout=90, max_retries=3)
+        if result:
+            return result
+
+        print("Download failed after all retries.")
         return None
 
     except Exception as e:
