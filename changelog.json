@@ -1837,5 +1837,949 @@
         "after": 0.4823
       }
     ]
+  },
+  {
+    "month": "2026-05",
+    "updatedAt": "2026-05-12",
+    "changes": [
+      {
+        "code": "0026S0",
+        "name": "1Q 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.1412,
+        "after": 0.1415
+      },
+      {
+        "code": "0026S0",
+        "name": "1Q 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.2667,
+        "after": 0.267
+      },
+      {
+        "code": "0069M0",
+        "name": "1Q 미국나스닥100",
+        "field": "기타비용",
+        "before": 0.13,
+        "after": 0.15
+      },
+      {
+        "code": "0069M0",
+        "name": "1Q 미국나스닥100",
+        "field": "매매중개수수료",
+        "before": 0.1586,
+        "after": 0.1608
+      },
+      {
+        "code": "0069M0",
+        "name": "1Q 미국나스닥100",
+        "field": "실부담비용",
+        "before": 0.2941,
+        "after": 0.3163
+      },
+      {
+        "code": "069500",
+        "name": "KODEX 200",
+        "field": "매매중개수수료",
+        "before": 0.0221,
+        "after": 0.0206
+      },
+      {
+        "code": "069500",
+        "name": "KODEX 200",
+        "field": "실부담비용",
+        "before": 0.1821,
+        "after": 0.1806
+      },
+      {
+        "code": "102110",
+        "name": "TIGER 200",
+        "field": "매매중개수수료",
+        "before": 0.0177,
+        "after": 0.0173
+      },
+      {
+        "code": "102110",
+        "name": "TIGER 200",
+        "field": "실부담비용",
+        "before": 0.0877,
+        "after": 0.0873
+      },
+      {
+        "code": "105190",
+        "name": "ACE 200",
+        "field": "매매중개수수료",
+        "before": 0.0215,
+        "after": 0.0216
+      },
+      {
+        "code": "105190",
+        "name": "ACE 200",
+        "field": "실부담비용",
+        "before": 0.0585,
+        "after": 0.0586
+      },
+      {
+        "code": "133690",
+        "name": "TIGER 미국나스닥100",
+        "field": "매매중개수수료",
+        "before": 0.0382,
+        "after": 0.0375
+      },
+      {
+        "code": "133690",
+        "name": "TIGER 미국나스닥100",
+        "field": "실부담비용",
+        "before": 0.135,
+        "after": 0.1343
+      },
+      {
+        "code": "152100",
+        "name": "PLUS 200",
+        "field": "매매중개수수료",
+        "before": 0.0217,
+        "after": 0.0243
+      },
+      {
+        "code": "152100",
+        "name": "PLUS 200",
+        "field": "실부담비용",
+        "before": 0.0587,
+        "after": 0.0613
+      },
+      {
+        "code": "168580",
+        "name": "ACE 중국본토CSI300",
+        "field": "기타비용",
+        "before": 0.12,
+        "after": 0.11
+      },
+      {
+        "code": "168580",
+        "name": "ACE 중국본토CSI300",
+        "field": "매매중개수수료",
+        "before": 0.0357,
+        "after": 0.0345
+      },
+      {
+        "code": "168580",
+        "name": "ACE 중국본토CSI300",
+        "field": "실부담비용",
+        "before": 0.8557,
+        "after": 0.8445
+      },
+      {
+        "code": "192090",
+        "name": "TIGER 차이나CSI300",
+        "field": "기타비용",
+        "before": 0.22,
+        "after": 0.23
+      },
+      {
+        "code": "192090",
+        "name": "TIGER 차이나CSI300",
+        "field": "매매중개수수료",
+        "before": 0.0579,
+        "after": 0.0581
+      },
+      {
+        "code": "192090",
+        "name": "TIGER 차이나CSI300",
+        "field": "실부담비용",
+        "before": 0.9079,
+        "after": 0.9181
+      },
+      {
+        "code": "269540",
+        "name": "PLUS 미국S&P500(H)",
+        "field": "기타비용",
+        "before": 0.09,
+        "after": 0.08
+      },
+      {
+        "code": "269540",
+        "name": "PLUS 미국S&P500(H)",
+        "field": "매매중개수수료",
+        "before": 0.1247,
+        "after": 0.128
+      },
+      {
+        "code": "269540",
+        "name": "PLUS 미국S&P500(H)",
+        "field": "실부담비용",
+        "before": 0.5147,
+        "after": 0.508
+      },
+      {
+        "code": "283580",
+        "name": "KODEX 차이나CSI300",
+        "field": "매매중개수수료",
+        "before": 0.0417,
+        "after": 0.0374
+      },
+      {
+        "code": "283580",
+        "name": "KODEX 차이나CSI300",
+        "field": "실부담비용",
+        "before": 0.2617,
+        "after": 0.2574
+      },
+      {
+        "code": "293180",
+        "name": "HANARO 200",
+        "field": "매매중개수수료",
+        "before": 0.0103,
+        "after": 0.0102
+      },
+      {
+        "code": "293180",
+        "name": "HANARO 200",
+        "field": "실부담비용",
+        "before": 0.0663,
+        "after": 0.0662
+      },
+      {
+        "code": "314250",
+        "name": "KODEX 미국빅테크10(H)",
+        "field": "매매중개수수료",
+        "before": 0.0685,
+        "after": 0.0657
+      },
+      {
+        "code": "314250",
+        "name": "KODEX 미국빅테크10(H)",
+        "field": "실부담비용",
+        "before": 0.6285,
+        "after": 0.6257
+      },
+      {
+        "code": "360200",
+        "name": "ACE 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.024,
+        "after": 0.0221
+      },
+      {
+        "code": "360200",
+        "name": "ACE 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.0887,
+        "after": 0.0868
+      },
+      {
+        "code": "360750",
+        "name": "TIGER 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.0384,
+        "after": 0.0366
+      },
+      {
+        "code": "360750",
+        "name": "TIGER 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.1052,
+        "after": 0.1034
+      },
+      {
+        "code": "367380",
+        "name": "ACE 미국나스닥100",
+        "field": "매매중개수수료",
+        "before": 0.0374,
+        "after": 0.034
+      },
+      {
+        "code": "367380",
+        "name": "ACE 미국나스닥100",
+        "field": "실부담비용",
+        "before": 0.1336,
+        "after": 0.1302
+      },
+      {
+        "code": "368590",
+        "name": "RISE 미국나스닥100",
+        "field": "기타비용",
+        "before": 0.1,
+        "after": 0.09
+      },
+      {
+        "code": "368590",
+        "name": "RISE 미국나스닥100",
+        "field": "매매중개수수료",
+        "before": 0.0317,
+        "after": 0.0304
+      },
+      {
+        "code": "368590",
+        "name": "RISE 미국나스닥100",
+        "field": "실부담비용",
+        "before": 0.1379,
+        "after": 0.1266
+      },
+      {
+        "code": "371150",
+        "name": "RISE 차이나항셍테크",
+        "field": "매매중개수수료",
+        "before": 0.2377,
+        "after": 0.2369
+      },
+      {
+        "code": "371150",
+        "name": "RISE 차이나항셍테크",
+        "field": "실부담비용",
+        "before": 0.6777,
+        "after": 0.6769
+      },
+      {
+        "code": "371160",
+        "name": "TIGER 차이나항셍테크",
+        "field": "매매중개수수료",
+        "before": 0.1044,
+        "after": 0.1012
+      },
+      {
+        "code": "371160",
+        "name": "TIGER 차이나항셍테크",
+        "field": "실부담비용",
+        "before": 0.2644,
+        "after": 0.2612
+      },
+      {
+        "code": "371870",
+        "name": "ACE 차이나항셍테크",
+        "field": "기타비용",
+        "before": 0.32,
+        "after": 0.31
+      },
+      {
+        "code": "371870",
+        "name": "ACE 차이나항셍테크",
+        "field": "매매중개수수료",
+        "before": 0.116,
+        "after": 0.1157
+      },
+      {
+        "code": "371870",
+        "name": "ACE 차이나항셍테크",
+        "field": "실부담비용",
+        "before": 0.686,
+        "after": 0.6757
+      },
+      {
+        "code": "372330",
+        "name": "KODEX 차이나항셍테크",
+        "field": "매매중개수수료",
+        "before": 0.1862,
+        "after": 0.1847
+      },
+      {
+        "code": "372330",
+        "name": "KODEX 차이나항셍테크",
+        "field": "실부담비용",
+        "before": 0.4162,
+        "after": 0.4147
+      },
+      {
+        "code": "379780",
+        "name": "RISE 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.0384,
+        "after": 0.0366
+      },
+      {
+        "code": "379780",
+        "name": "RISE 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.1031,
+        "after": 0.1013
+      },
+      {
+        "code": "379800",
+        "name": "KODEX 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.0362,
+        "after": 0.0337
+      },
+      {
+        "code": "379800",
+        "name": "KODEX 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.1124,
+        "after": 0.1099
+      },
+      {
+        "code": "379810",
+        "name": "KODEX 미국나스닥100",
+        "field": "매매중개수수료",
+        "before": 0.0565,
+        "after": 0.0552
+      },
+      {
+        "code": "379810",
+        "name": "KODEX 미국나스닥100",
+        "field": "실부담비용",
+        "before": 0.1527,
+        "after": 0.1514
+      },
+      {
+        "code": "381170",
+        "name": "TIGER 미국테크TOP10 INDXX",
+        "field": "매매중개수수료",
+        "before": 0.0426,
+        "after": 0.0419
+      },
+      {
+        "code": "381170",
+        "name": "TIGER 미국테크TOP10 INDXX",
+        "field": "실부담비용",
+        "before": 0.5926,
+        "after": 0.5919
+      },
+      {
+        "code": "402970",
+        "name": "ACE 미국배당다우존스",
+        "field": "매매중개수수료",
+        "before": 0.0736,
+        "after": 0.0707
+      },
+      {
+        "code": "402970",
+        "name": "ACE 미국배당다우존스",
+        "field": "실부담비용",
+        "before": 0.1436,
+        "after": 0.1407
+      },
+      {
+        "code": "429760",
+        "name": "PLUS 미국S&P500",
+        "field": "기타비용",
+        "before": 0.14,
+        "after": 0.13
+      },
+      {
+        "code": "429760",
+        "name": "PLUS 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.1349,
+        "after": 0.13
+      },
+      {
+        "code": "429760",
+        "name": "PLUS 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.3449,
+        "after": 0.33
+      },
+      {
+        "code": "432840",
+        "name": "HANARO 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.0091,
+        "after": 0.0089
+      },
+      {
+        "code": "432840",
+        "name": "HANARO 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.3541,
+        "after": 0.3539
+      },
+      {
+        "code": "433330",
+        "name": "SOL 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.0604,
+        "after": 0.0543
+      },
+      {
+        "code": "433330",
+        "name": "SOL 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.1904,
+        "after": 0.1843
+      },
+      {
+        "code": "444490",
+        "name": "WON 미국S&P500",
+        "field": "기타비용",
+        "before": 0.14,
+        "after": 0.13
+      },
+      {
+        "code": "444490",
+        "name": "WON 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.1268,
+        "after": 0.1153
+      },
+      {
+        "code": "444490",
+        "name": "WON 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.3168,
+        "after": 0.2953
+      },
+      {
+        "code": "446720",
+        "name": "SOL 미국배당다우존스",
+        "field": "매매중개수수료",
+        "before": 0.1036,
+        "after": 0.1003
+      },
+      {
+        "code": "446720",
+        "name": "SOL 미국배당다우존스",
+        "field": "실부담비용",
+        "before": 0.1736,
+        "after": 0.1703
+      },
+      {
+        "code": "448100",
+        "name": "WON 200",
+        "field": "매매중개수수료",
+        "before": 0.0184,
+        "after": 0.0173
+      },
+      {
+        "code": "448100",
+        "name": "WON 200",
+        "field": "실부담비용",
+        "before": 0.0784,
+        "after": 0.0773
+      },
+      {
+        "code": "448290",
+        "name": "TIGER 미국S&P500(H)",
+        "field": "기타비용",
+        "before": 0.1,
+        "after": 0.09
+      },
+      {
+        "code": "448290",
+        "name": "TIGER 미국S&P500(H)",
+        "field": "매매중개수수료",
+        "before": 0.0691,
+        "after": 0.0708
+      },
+      {
+        "code": "448290",
+        "name": "TIGER 미국S&P500(H)",
+        "field": "실부담비용",
+        "before": 0.2391,
+        "after": 0.2308
+      },
+      {
+        "code": "448300",
+        "name": "TIGER 미국나스닥100(H)",
+        "field": "매매중개수수료",
+        "before": 0.0928,
+        "after": 0.0986
+      },
+      {
+        "code": "448300",
+        "name": "TIGER 미국나스닥100(H)",
+        "field": "실부담비용",
+        "before": 0.2728,
+        "after": 0.2786
+      },
+      {
+        "code": "449180",
+        "name": "KODEX 미국S&P500(H)",
+        "field": "기타비용",
+        "before": 0.11,
+        "after": 0.1
+      },
+      {
+        "code": "449180",
+        "name": "KODEX 미국S&P500(H)",
+        "field": "매매중개수수료",
+        "before": 0.0731,
+        "after": 0.0518
+      },
+      {
+        "code": "449180",
+        "name": "KODEX 미국S&P500(H)",
+        "field": "실부담비용",
+        "before": 0.193,
+        "after": 0.1617
+      },
+      {
+        "code": "449190",
+        "name": "KODEX 미국나스닥100(H)",
+        "field": "매매중개수수료",
+        "before": 0.0691,
+        "after": 0.0628
+      },
+      {
+        "code": "449190",
+        "name": "KODEX 미국나스닥100(H)",
+        "field": "실부담비용",
+        "before": 0.189,
+        "after": 0.1827
+      },
+      {
+        "code": "449770",
+        "name": "KIWOOM 미국S&P500",
+        "field": "기타비용",
+        "before": 0.12,
+        "after": 0.14
+      },
+      {
+        "code": "449770",
+        "name": "KIWOOM 미국S&P500",
+        "field": "매매중개수수료",
+        "before": 0.0663,
+        "after": 0.0674
+      },
+      {
+        "code": "449770",
+        "name": "KIWOOM 미국S&P500",
+        "field": "실부담비용",
+        "before": 0.2073,
+        "after": 0.2284
+      },
+      {
+        "code": "449780",
+        "name": "KIWOOM 미국S&P500(H)",
+        "field": "기타비용",
+        "before": 0.25,
+        "after": 0.24
+      },
+      {
+        "code": "449780",
+        "name": "KIWOOM 미국S&P500(H)",
+        "field": "매매중개수수료",
+        "before": 0.2084,
+        "after": 0.2072
+      },
+      {
+        "code": "449780",
+        "name": "KIWOOM 미국S&P500(H)",
+        "field": "실부담비용",
+        "before": 0.4984,
+        "after": 0.4872
+      },
+      {
+        "code": "452360",
+        "name": "SOL 미국배당다우존스(H)",
+        "field": "기타비용",
+        "before": 0.09,
+        "after": 0.08
+      },
+      {
+        "code": "452360",
+        "name": "SOL 미국배당다우존스(H)",
+        "field": "매매중개수수료",
+        "before": 0.1144,
+        "after": 0.1082
+      },
+      {
+        "code": "452360",
+        "name": "SOL 미국배당다우존스(H)",
+        "field": "실부담비용",
+        "before": 0.2544,
+        "after": 0.2382
+      },
+      {
+        "code": "453080",
+        "name": "KIWOOM 미국나스닥100(H)",
+        "field": "매매중개수수료",
+        "before": 0.2435,
+        "after": 0.2151
+      },
+      {
+        "code": "453080",
+        "name": "KIWOOM 미국나스닥100(H)",
+        "field": "실부담비용",
+        "before": 0.4235,
+        "after": 0.3951
+      },
+      {
+        "code": "453330",
+        "name": "RISE 미국S&P500(H)",
+        "field": "매매중개수수료",
+        "before": 0.086,
+        "after": 0.0817
+      },
+      {
+        "code": "453330",
+        "name": "RISE 미국S&P500(H)",
+        "field": "실부담비용",
+        "before": 0.2207,
+        "after": 0.2164
+      },
+      {
+        "code": "453810",
+        "name": "KODEX 인도Nifty50",
+        "field": "매매중개수수료",
+        "before": 0.0179,
+        "after": 0.0177
+      },
+      {
+        "code": "453810",
+        "name": "KODEX 인도Nifty50",
+        "field": "실부담비용",
+        "before": 0.2879,
+        "after": 0.2877
+      },
+      {
+        "code": "453850",
+        "name": "ACE 미국30년국채액티브(H)",
+        "field": "매매중개수수료",
+        "before": 0.012,
+        "after": 0.0113
+      },
+      {
+        "code": "453850",
+        "name": "ACE 미국30년국채액티브(H)",
+        "field": "실부담비용",
+        "before": 0.132,
+        "after": 0.1313
+      },
+      {
+        "code": "453870",
+        "name": "TIGER 인도니프티50",
+        "field": "매매중개수수료",
+        "before": 0.0551,
+        "after": 0.0573
+      },
+      {
+        "code": "453870",
+        "name": "TIGER 인도니프티50",
+        "field": "실부담비용",
+        "before": 0.3651,
+        "after": 0.3673
+      },
+      {
+        "code": "458730",
+        "name": "TIGER 미국배당다우존스",
+        "field": "매매중개수수료",
+        "before": 0.0431,
+        "after": 0.0419
+      },
+      {
+        "code": "458730",
+        "name": "TIGER 미국배당다우존스",
+        "field": "실부담비용",
+        "before": 0.1031,
+        "after": 0.1019
+      },
+      {
+        "code": "461600",
+        "name": "SOL 미국30년국채액티브(H)",
+        "field": "매매중개수수료",
+        "before": 0.0044,
+        "after": 0.0034
+      },
+      {
+        "code": "461600",
+        "name": "SOL 미국30년국채액티브(H)",
+        "field": "실부담비용",
+        "before": 0.0944,
+        "after": 0.0934
+      },
+      {
+        "code": "461900",
+        "name": "PLUS 미국테크TOP10",
+        "field": "매매중개수수료",
+        "before": 0.0458,
+        "after": 0.049
+      },
+      {
+        "code": "461900",
+        "name": "PLUS 미국테크TOP10",
+        "field": "실부담비용",
+        "before": 0.1558,
+        "after": 0.159
+      },
+      {
+        "code": "463300",
+        "name": "RISE 중국본토CSI300",
+        "field": "기타비용",
+        "before": 0.19,
+        "after": 0.18
+      },
+      {
+        "code": "463300",
+        "name": "RISE 중국본토CSI300",
+        "field": "매매중개수수료",
+        "before": 0.0494,
+        "after": 0.043
+      },
+      {
+        "code": "463300",
+        "name": "RISE 중국본토CSI300",
+        "field": "실부담비용",
+        "before": 0.2894,
+        "after": 0.273
+      },
+      {
+        "code": "465580",
+        "name": "ACE 미국빅테크TOP7 Plus",
+        "field": "매매중개수수료",
+        "before": 0.0814,
+        "after": 0.0806
+      },
+      {
+        "code": "465580",
+        "name": "ACE 미국빅테크TOP7 Plus",
+        "field": "실부담비용",
+        "before": 0.4514,
+        "after": 0.4506
+      },
+      {
+        "code": "472160",
+        "name": "TIGER 미국테크TOP10 INDXX(H)",
+        "field": "매매중개수수료",
+        "before": 0.2001,
+        "after": 0.2045
+      },
+      {
+        "code": "472160",
+        "name": "TIGER 미국테크TOP10 INDXX(H)",
+        "field": "실부담비용",
+        "before": 0.7601,
+        "after": 0.7645
+      },
+      {
+        "code": "476030",
+        "name": "SOL 미국나스닥100",
+        "field": "기타비용",
+        "before": 0.12,
+        "after": 0.11
+      },
+      {
+        "code": "476030",
+        "name": "SOL 미국나스닥100",
+        "field": "매매중개수수료",
+        "before": 0.0902,
+        "after": 0.0877
+      },
+      {
+        "code": "476030",
+        "name": "SOL 미국나스닥100",
+        "field": "실부담비용",
+        "before": 0.2602,
+        "after": 0.2477
+      },
+      {
+        "code": "476760",
+        "name": "ACE 미국30년국채액티브",
+        "field": "매매중개수수료",
+        "before": 0.0134,
+        "after": 0.0127
+      },
+      {
+        "code": "476760",
+        "name": "ACE 미국30년국채액티브",
+        "field": "실부담비용",
+        "before": 0.1234,
+        "after": 0.1227
+      },
+      {
+        "code": "481190",
+        "name": "SOL 미국테크TOP10",
+        "field": "매매중개수수료",
+        "before": 0.0984,
+        "after": 0.0944
+      },
+      {
+        "code": "481190",
+        "name": "SOL 미국테크TOP10",
+        "field": "실부담비용",
+        "before": 0.1884,
+        "after": 0.1844
+      },
+      {
+        "code": "481340",
+        "name": "RISE 미국30년국채액티브",
+        "field": "기타비용",
+        "before": 0.09,
+        "after": 0.08
+      },
+      {
+        "code": "481340",
+        "name": "RISE 미국30년국채액티브",
+        "field": "매매중개수수료",
+        "before": 0.017,
+        "after": 0.0145
+      },
+      {
+        "code": "481340",
+        "name": "RISE 미국30년국채액티브",
+        "field": "실부담비용",
+        "before": 0.157,
+        "after": 0.1445
+      },
+      {
+        "code": "484790",
+        "name": "KODEX 미국30년국채액티브(H)",
+        "field": "기타비용",
+        "before": 0.04,
+        "after": 0.03
+      },
+      {
+        "code": "484790",
+        "name": "KODEX 미국30년국채액티브(H)",
+        "field": "매매중개수수료",
+        "before": 0.0433,
+        "after": 0.0351
+      },
+      {
+        "code": "484790",
+        "name": "KODEX 미국30년국채액티브(H)",
+        "field": "실부담비용",
+        "before": 0.0983,
+        "after": 0.0801
+      },
+      {
+        "code": "485540",
+        "name": "KODEX 미국AI테크TOP10",
+        "field": "기타비용",
+        "before": 0.08,
+        "after": 0.07
+      },
+      {
+        "code": "485540",
+        "name": "KODEX 미국AI테크TOP10",
+        "field": "매매중개수수료",
+        "before": 0.1566,
+        "after": 0.1515
+      },
+      {
+        "code": "485540",
+        "name": "KODEX 미국AI테크TOP10",
+        "field": "실부담비용",
+        "before": 0.5366,
+        "after": 0.5215
+      },
+      {
+        "code": "489250",
+        "name": "KODEX 미국배당다우존스",
+        "field": "매매중개수수료",
+        "before": 0.1097,
+        "after": 0.0999
+      },
+      {
+        "code": "489250",
+        "name": "KODEX 미국배당다우존스",
+        "field": "실부담비용",
+        "before": 0.1996,
+        "after": 0.1898
+      },
+      {
+        "code": "490090",
+        "name": "TIGER 미국AI빅테크10",
+        "field": "매매중개수수료",
+        "before": 0.1123,
+        "after": 0.1099
+      },
+      {
+        "code": "490090",
+        "name": "TIGER 미국AI빅테크10",
+        "field": "실부담비용",
+        "before": 0.4823,
+        "after": 0.4799
+      }
+    ]
   }
 ]
