@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-20T06:46:00Z"
+last_updated: "2026-05-20T06:47:15Z"
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 3
   total_plans: 0
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -24,13 +24,13 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 ## Current Status
 
 **Phase:** 3 — 보안 및 버그 수정
-**Status:** Executing — Plans A/B complete, Plan C pending
-**Last action:** Phase 3 Plan B 실행 완료 (2026-05-20) — BUG-01 충족, nav-open early return 추가 완료
-**Next action:** Execute Phase 3 Plan C (BUG-02: 빈 변경 이력 테이블 처리)
+**Status:** Complete — Plans A/B/C all done
+**Last action:** Phase 3 Plan C 실행 완료 (2026-05-20) — BUG-02 충족, renderChangelog() 빈 변경 이력 테이블 처리 완료
+**Next action:** Phase 3 완료 — 다음 Phase 계획 또는 마일스톤 리뷰
 
 ## Active Work
 
-Phase 3 Plan C (03-PLAN-C.md) — renderChangelog() 빈 변경 이력 테이블 처리 (BUG-02)
+없음 — Phase 3 완료
 
 ## Completed Phases
 
@@ -40,6 +40,10 @@ Phase 3 Plan C (03-PLAN-C.md) — renderChangelog() 빈 변경 이력 테이블 
 - **Phase 2: 데이터 무결성 검증** — 1개 Plan (A), DATA-01/02/03 모두 충족 (2026-05-20)
   - validate_etl_results(results, prev_data) 함수 추가
   - 실부담비용 범위(0~5%), 종목코드 중복, 이상치(±1.0%p) soft-warning 검증
+- **Phase 3: 보안 및 버그 수정** — 3개 Plan (A/B/C), SEC-01/SEC-02/BUG-01/BUG-02 모두 충족 (2026-05-20)
+  - applyTranslations() innerHTML 유지 + SECURITY 주석 추가 (SEC-01/SEC-02)
+  - initSmartHeader() RAF 콜백 nav-open early return + rafPending 리셋 (BUG-01)
+  - renderChangelog() changes 없을 때 테이블 생략, <p class="changelog-no-changes"> 단독 렌더링 (BUG-02)
 
 ## Decisions Log
 
@@ -54,6 +58,8 @@ Phase 3 Plan C (03-PLAN-C.md) — renderChangelog() 빈 변경 이력 테이블 
 | 2026-05-20 | applyTranslations() el.innerHTML 유지, SECURITY 주석 추가 (D-01) | i18n JSON에 의도적 HTML 포함, textContent 전환 불가 |
 | 2026-05-20 | getTranslation() 반환값 innerHTML 현행 유지 (D-03) | 번역 JSON 시스템 통제 소스, escapeHtml 추가 시 <br> 깨짐 |
 | 2026-05-20 | RAF 콜백 early return 전 rafPending = false 실행 (BUG-01) | nav-open 상태 early return 시 rafPending 리셋 누락 시 이후 스크롤 이벤트 전체 무시됨 |
+| 2026-05-20 | changes.length === 0 시 테이블 블록 전체 생략, <p> 단독 렌더링 (D-06/D-07) | 빈 changes 배열에서 orphaned thead 노출 방지 (BUG-02) |
+| 2026-05-20 | changelog_no_changes 번역값에 escapeHtml() 추가 적용 | 번역 소스 통제되나 일관된 이스케이핑 패턴 유지 |
 
 ## Blockers
 
