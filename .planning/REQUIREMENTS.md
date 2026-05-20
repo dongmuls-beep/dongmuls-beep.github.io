@@ -32,9 +32,9 @@
 
 ### 테스트
 
-- [ ] **TEST-01**: ETL 수수료 계산 로직 단위 테스트가 존재한다
-- [ ] **TEST-02**: ETL 헤더 감지 로직 단위 테스트가 존재한다
-- [ ] **TEST-03**: 데이터 매칭(표준코드 기준) 단위 테스트가 존재한다
+- [x] **TEST-01**: ETL 수수료 계산 로직 단위 테스트가 존재한다 *(Satisfied Phase 4-B)*
+- [x] **TEST-02**: ETL 헤더 감지 로직 단위 테스트가 존재한다 *(Satisfied Phase 4-C)*
+- [x] **TEST-03**: 데이터 매칭(표준코드 기준) 단위 테스트가 존재한다 *(Satisfied Phase 4-C)*
 
 ## v2 Requirements
 
@@ -79,9 +79,9 @@
 | SEC-02 | Phase 3 | Satisfied (2026-05-20) |
 | BUG-01 | Phase 3 | Satisfied (2026-05-20) |
 | BUG-02 | Phase 3 | Satisfied (2026-05-20) |
-| TEST-01 | Phase 4 | Pending |
-| TEST-02 | Phase 4 | Pending |
-| TEST-03 | Phase 4 | Pending |
+| TEST-01 | Phase 4 | Satisfied (2026-05-20) |
+| TEST-02 | Phase 4 | Satisfied (2026-05-20) |
+| TEST-03 | Phase 4 | Satisfied (2026-05-20) |
 
 **Coverage:**
 - v1 requirements: 14 total
@@ -90,4 +90,4 @@
 
 ---
 *Requirements defined: 2026-04-07*
-*Last updated: 2026-05-20 after Phase 3-C execution (BUG-02 satisfied)*
+*Last updated: 2026-05-20 after Phase 4-C execution (TEST-01/02/03 satisfied — v1.1 마일스톤 완료)*

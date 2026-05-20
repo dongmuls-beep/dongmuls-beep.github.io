@@ -80,9 +80,9 @@
 
 **Wave 2**
 - [x] 04-PLAN-B.md — p_float() 모듈 수준 추출 + 수수료 계산 단위 테스트 (TEST-01) ✓ Complete (2026-05-20)
-- [ ] 04-PLAN-C.md — 헤더 감지·데이터 매칭 테스트 + validate_etl_results 검증 테스트 (TEST-02, TEST-03)
+- [x] 04-PLAN-C.md — 헤더 감지·데이터 매칭 테스트 + validate_etl_results 검증 테스트 (TEST-02, TEST-03) ✓ Complete (2026-05-20)
 
-**Verification:** `pytest tests/` 실행 시 모든 테스트 통과. GitHub Actions에 테스트 단계 추가.
+**Verification:** `pytest tests/` → 33 passed (test_fees 11 + test_process_data 9 + test_validate 13), exit 0
 
 ---
 
@@ -93,7 +93,9 @@
 | 1 | ETL 안정성 | ETL-01~04 | Complete (2026-04-30) |
 | 2 | 데이터 무결성 | DATA-01~03 | Complete (2026-05-20) |
 | 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | Complete (2026-05-20) |
-| 4 | ETL 테스트 | TEST-01~03 | In Progress — Plan A/B 완료 (2026-05-20) |
+| 4 | ETL 테스트 | TEST-01~03 | Complete (2026-05-20) |
+
+**v1.1 마일스톤 완료** — 4개 Phase, 12개 Plan, 모든 요구사항 충족 (2026-05-20)
 
 ---
 *Roadmap created: 2026-04-07*
