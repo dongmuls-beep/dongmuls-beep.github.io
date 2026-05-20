@@ -247,16 +247,16 @@ def process_data(managed_df, file_path):
         
         # Strategy: Look for the specific marker '(A)' which denotes "Total Fee (A)" in KOFIA standard
         for i, row in df_raw.head(10).iterrows(): # Check first 10 rows
-            row_str = row.astype(str).values
+            row_str = [str(x) for x in row]  # explicit str conversion to avoid TypeError on mixed types
             if any('(A)' in s for s in row_str) and any('합계' in s for s in row_str):
                 header_idx = i
                 print(f"Header candidates found at row {i} due to '합계(A)'")
                 break
-        
+
         # Fallback Strategies
         if header_idx == -1:
              for i, row in df_raw.head(10).iterrows():
-                row_str = row.astype(str).values
+                row_str = [str(x) for x in row]  # explicit str conversion to avoid TypeError on mixed types
                 if any('매매' in s and '수수료' in s for s in row_str):
                     header_idx = i
                     break
