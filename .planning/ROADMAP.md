@@ -39,12 +39,12 @@
 
 **Depends on:** Phase 1
 
-**Plans:** 1 plan
+**Plans:** 1 plan ✓ Complete (2026-05-20)
 
 **Wave 1**
 - [x] 02-PLAN-A.md — validate_etl_results() 구현 + __main__ 호출 삽입 (DATA-01, DATA-02, DATA-03)
 
-**Verification:** validate_etl_results()에 범위 이탈·중복·이상치 데이터를 주입하면 각각 [WARNING] DATA-0X 경고가 출력되고, ETL은 중단 없이 계속 진행된다.
+**Verification:** 5/5 must-haves 통과 (2026-05-20) — DATA-01/02/03 behavioral evidence 확인
 
 ---
 
