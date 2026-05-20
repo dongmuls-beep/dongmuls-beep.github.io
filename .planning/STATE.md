@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: executing
-last_updated: "2026-05-20T07:30:00Z"
+status: planning
+last_updated: "2026-05-20T06:58:30.445Z"
 progress:
-  total_phases: 4
-  completed_phases: 3
-  total_plans: 8
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
   completed_plans: 8
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 **Phase:** 4 — ETL 단위 테스트
 **Status:** Ready to plan
 **Last action:** Phase 3 완료 (2026-05-20) — SEC-01/02/BUG-01/02 모두 충족, 7/7 must-haves 통과
-**Next action:** `/gsd-discuss-phase 4` 또는 `/gsd-plan-phase 4`
+**Next action:** `/gsd-plan-phase 4`
 
 ## Active Work
 
