@@ -39,12 +39,12 @@
 
 **Depends on:** Phase 1
 
-### Plans
+**Plans:** 1 plan
 
-1. **수수료 범위 검증** — `process_data()` 후 각 ETF 수수료값이 0~5% 범위 내인지 검사, 벗어나면 경고 출력
-2. **중복·이상치 감지** — 종목코드 중복 감지, 이전 data.json 대비 급격한 변동(±1% 이상) 경고
+**Wave 1**
+- [ ] 02-PLAN-A.md — validate_etl_results() 구현 + __main__ 호출 삽입 (DATA-01, DATA-02, DATA-03)
 
-**Verification:** 의도적으로 잘못된 데이터 입력 시 ETL이 경고를 출력하고 기존 data.json을 보존한다.
+**Verification:** validate_etl_results()에 범위 이탈·중복·이상치 데이터를 주입하면 각각 [WARNING] DATA-0X 경고가 출력되고, ETL은 중단 없이 계속 진행된다.
 
 ---
 
@@ -95,3 +95,4 @@
 *Roadmap created: 2026-04-07*
 *Milestone: v1.1 안정성·보안·품질 개선*
 *Phase 1 plans created: 2026-04-30*
+*Phase 2 plans created: 2026-05-20*
