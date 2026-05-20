@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: planning
-last_updated: "2026-05-20T09:30:00.000Z"
+status: in_progress
+last_updated: "2026-05-20T07:48:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 3
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -24,13 +24,13 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 ## Current Status
 
 **Phase:** 4 — ETL 단위 테스트
-**Status:** Ready to execute
-**Last action:** Phase 4 계획 완료 (2026-05-20) — 3개 Plan (A/B/C), TEST-01/02/03 커버, 검증 통과
-**Next action:** `/gsd-execute-phase 4`
+**Status:** In progress — Plan A 완료, Plan B/C 실행 대기
+**Last action:** Phase 4 Plan A 완료 (2026-05-20) — pytest 의존성, tests/ 디렉토리, conftest.py fixture, CI 통합
+**Next action:** Phase 4 Plan B 실행 (p_float 및 수수료 계산 단위 테스트)
 
 ## Active Work
 
-없음 — Phase 4 계획 완료, 실행 대기
+Phase 4 Plan B/C 실행 대기 — 테스트 환경 기반(Plan A) 완료
 
 ## Completed Phases
 
@@ -60,6 +60,9 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 | 2026-05-20 | RAF 콜백 early return 전 rafPending = false 실행 (BUG-01) | nav-open 상태 early return 시 rafPending 리셋 누락 시 이후 스크롤 이벤트 전체 무시됨 |
 | 2026-05-20 | changes.length === 0 시 테이블 블록 전체 생략, <p> 단독 렌더링 (D-06/D-07) | 빈 changes 배열에서 orphaned thead 노출 방지 (BUG-02) |
 | 2026-05-20 | changelog_no_changes 번역값에 escapeHtml() 추가 적용 | 번역 소스 통제되나 일관된 이스케이핑 패턴 유지 |
+| 2026-05-20 | openpyxl로 fixture 코드 생성 (실제 파일 저장 없음, D-04) | 실제 KOFIA 파일 코드베이스 보관 없음, tmp_path로 테스트별 격리 |
+| 2026-05-20 | CI pip install -r requirements.txt 방식으로 의존성 설치 일원화 (D-12) | 직접 패키지 나열 방식 제거, pytest 포함 모든 의존성 requirements.txt로 관리 |
+| 2026-05-20 | Run unit tests 단계를 Run ETL Script 앞에 배치 (D-10/D-11) | 테스트 실패 시 ETL 자동 차단 — 단계 순서로 보장, 별도 조건 불필요 |
 
 ## Blockers
 

@@ -76,7 +76,7 @@
 **Plans:** 3 plans
 
 **Wave 1**
-- [ ] 04-PLAN-A.md — pytest 추가 (requirements.txt), tests/ 디렉토리 + conftest.py (openpyxl fixtures), CI 통합 (daily_update.yml)
+- [x] 04-PLAN-A.md — pytest 추가 (requirements.txt), tests/ 디렉토리 + conftest.py (openpyxl fixtures), CI 통합 (daily_update.yml) ✓ Complete (2026-05-20)
 
 **Wave 2**
 - [ ] 04-PLAN-B.md — p_float() 모듈 수준 추출 + 수수료 계산 단위 테스트 (TEST-01)
@@ -93,7 +93,7 @@
 | 1 | ETL 안정성 | ETL-01~04 | Complete (2026-04-30) |
 | 2 | 데이터 무결성 | DATA-01~03 | Complete (2026-05-20) |
 | 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | Complete (2026-05-20) |
-| 4 | ETL 테스트 | TEST-01~03 | Pending |
+| 4 | ETL 테스트 | TEST-01~03 | In Progress — Plan A 완료 (2026-05-20) |
 
 ---
 *Roadmap created: 2026-04-07*
