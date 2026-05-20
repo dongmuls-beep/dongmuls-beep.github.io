@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-20T06:38:02Z"
+last_updated: "2026-05-20T06:46:00Z"
 progress:
-  total_phases: 4
-  completed_phases: 2
-  total_plans: 8
-  completed_plans: 6
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 8
 ---
 
 # Project State
@@ -24,13 +24,13 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 ## Current Status
 
 **Phase:** 3 — 보안 및 버그 수정
-**Status:** Executing — Plan A complete, Plans B/C pending
-**Last action:** Phase 3 Plan A 실행 완료 (2026-05-20) — SEC-01/SEC-02 충족, innerHTML 전수 감사 완료
-**Next action:** Execute Phase 3 Plan B (BUG-01 헤더 수정)
+**Status:** Executing — Plans A/B complete, Plan C pending
+**Last action:** Phase 3 Plan B 실행 완료 (2026-05-20) — BUG-01 충족, nav-open early return 추가 완료
+**Next action:** Execute Phase 3 Plan C (BUG-02: 빈 변경 이력 테이블 처리)
 
 ## Active Work
 
-Phase 3 Plan B (03-PLAN-B.md) — initSmartHeader RAF 콜백 nav-open early return 추가 (BUG-01)
+Phase 3 Plan C (03-PLAN-C.md) — renderChangelog() 빈 변경 이력 테이블 처리 (BUG-02)
 
 ## Completed Phases
 
@@ -53,6 +53,7 @@ Phase 3 Plan B (03-PLAN-B.md) — initSmartHeader RAF 콜백 nav-open early retu
 | 2026-05-20 | DATA-03 이상치 기준 ±1.0%p 절대 변동폭 (상대 변동률 아님) | 소규모 수수료에서 상대값 과민 문제 방지 |
 | 2026-05-20 | applyTranslations() el.innerHTML 유지, SECURITY 주석 추가 (D-01) | i18n JSON에 의도적 HTML 포함, textContent 전환 불가 |
 | 2026-05-20 | getTranslation() 반환값 innerHTML 현행 유지 (D-03) | 번역 JSON 시스템 통제 소스, escapeHtml 추가 시 <br> 깨짐 |
+| 2026-05-20 | RAF 콜백 early return 전 rafPending = false 실행 (BUG-01) | nav-open 상태 early return 시 rafPending 리셋 누락 시 이후 스크롤 이벤트 전체 무시됨 |
 
 ## Blockers
 

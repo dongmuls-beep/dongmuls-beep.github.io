@@ -27,7 +27,7 @@
 
 ### 버그 수정
 
-- [ ] **BUG-01**: 모바일 네비 열린 상태에서 스크롤 시 헤더 숨김 글리치가 수정된다
+- [x] **BUG-01**: 모바일 네비 열린 상태에서 스크롤 시 헤더 숨김 글리치가 수정된다 *(Satisfied Phase 3-B)*
 - [ ] **BUG-02**: 변경 이력 빈 배열 시 테이블 헤더가 렌더링되지 않는다
 
 ### 테스트
@@ -77,7 +77,7 @@
 | DATA-03 | Phase 2 | Satisfied (2026-05-20) |
 | SEC-01 | Phase 3 | Satisfied (2026-05-20) |
 | SEC-02 | Phase 3 | Satisfied (2026-05-20) |
-| BUG-01 | Phase 3 | Pending |
+| BUG-01 | Phase 3 | Satisfied (2026-05-20) |
 | BUG-02 | Phase 3 | Pending |
 | TEST-01 | Phase 4 | Pending |
 | TEST-02 | Phase 4 | Pending |
@@ -90,4 +90,4 @@
 
 ---
 *Requirements defined: 2026-04-07*
-*Last updated: 2026-05-20 after Phase 3-A execution (SEC-01, SEC-02 satisfied)*
+*Last updated: 2026-05-20 after Phase 3-B execution (BUG-01 satisfied)*
