@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: in_progress
-last_updated: "2026-05-20T07:48:00.000Z"
+last_updated: "2026-05-20T08:10:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
@@ -24,13 +24,13 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 ## Current Status
 
 **Phase:** 4 — ETL 단위 테스트
-**Status:** In progress — Plan A 완료, Plan B/C 실행 대기
-**Last action:** Phase 4 Plan A 완료 (2026-05-20) — pytest 의존성, tests/ 디렉토리, conftest.py fixture, CI 통합
-**Next action:** Phase 4 Plan B 실행 (p_float 및 수수료 계산 단위 테스트)
+**Status:** In progress — Plan A/B 완료, Plan C 실행 대기
+**Last action:** Phase 4 Plan B 완료 (2026-05-20) — p_float() 모듈 수준 이동, tests/test_fees.py 11개 단위 테스트 (TEST-01 충족)
+**Next action:** Phase 4 Plan C 실행 (헤더 감지·데이터 매칭 테스트 + validate_etl_results 검증)
 
 ## Active Work
 
-Phase 4 Plan B/C 실행 대기 — 테스트 환경 기반(Plan A) 완료
+Phase 4 Plan C 실행 대기 — Plan A(테스트 환경) + Plan B(TEST-01 수수료 테스트) 완료
 
 ## Completed Phases
 
@@ -63,6 +63,8 @@ Phase 4 Plan B/C 실행 대기 — 테스트 환경 기반(Plan A) 완료
 | 2026-05-20 | openpyxl로 fixture 코드 생성 (실제 파일 저장 없음, D-04) | 실제 KOFIA 파일 코드베이스 보관 없음, tmp_path로 테스트별 격리 |
 | 2026-05-20 | CI pip install -r requirements.txt 방식으로 의존성 설치 일원화 (D-12) | 직접 패키지 나열 방식 제거, pytest 포함 모든 의존성 requirements.txt로 관리 |
 | 2026-05-20 | Run unit tests 단계를 Run ETL Script 앞에 배치 (D-10/D-11) | 테스트 실패 시 ETL 자동 차단 — 단계 순서로 보장, 별도 조건 불필요 |
+| 2026-05-20 | p_float()를 process_data() 중첩 함수에서 모듈 수준으로 이동 | from etl_process import p_float 직접 import 테스트 가능성 확보 |
+| 2026-05-20 | 실부담비용 계산 로직을 테스트에서 직접 재현 (ter = total + other, real_cost = ter + sell) | ETL 내부 공식을 화이트박스 방식으로 단위 테스트 검증 |
 
 ## Blockers
 
