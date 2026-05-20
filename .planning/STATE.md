@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-20T01:00:00Z"
+last_updated: "2026-05-20T05:53:15Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,24 +19,27 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
 **Current milestone:** v1.1 — 안정성·보안·품질 개선
-**Current focus:** Phase 2 — 데이터 무결성 검증
+**Current focus:** Phase 3 — 보안 및 버그 수정
 
 ## Current Status
 
-**Phase:** 2 — 데이터 무결성 검증
-**Status:** Ready to execute (1 plan, 1 wave)
-**Last action:** Phase 2 계획 완료 (2026-05-20) — 02-PLAN-A.md 생성, 검증 통과
-**Next action:** `/gsd-execute-phase 2`
+**Phase:** 3 — 보안 및 버그 수정
+**Status:** Ready to plan
+**Last action:** Phase 2 Plan A 실행 완료 (2026-05-20) — DATA-01/02/03 soft-warning 검증 구현
+**Next action:** `/gsd-plan-phase 3`
 
 ## Active Work
 
-없음 — Phase 2 PLAN-A 완료, 실행 대기
+없음 — Phase 2 완료, Phase 3 계획 대기
 
 ## Completed Phases
 
 - **Phase 1: ETL 안정성 강화** — 4개 Plan (A/B/C + D gap closure), 12/12 검증 통과 (2026-04-30)
   - ETL-01~04 모두 충족
   - GAS URL 환경변수화, Selenium 지수 백오프, 구체적 예외 처리, KOFIA 컬럼 검증 완료
+- **Phase 2: 데이터 무결성 검증** — 1개 Plan (A), DATA-01/02/03 모두 충족 (2026-05-20)
+  - validate_etl_results(results, prev_data) 함수 추가
+  - 실부담비용 범위(0~5%), 종목코드 중복, 이상치(±1.0%p) soft-warning 검증
 
 ## Decisions Log
 
@@ -45,6 +48,9 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 | 2026-04-07 | .planning/codebase/ 분석 문서 기반으로 GSD 초기화 | 기존 코드베이스 분석 완료 상태 |
 | 2026-04-07 | v1.1 마일스톤 = 안정성·보안·품질 개선으로 설정 | CONCERNS.md에서 식별된 기술 부채 해소 우선 |
 | 2026-04-07 | research 에이전트 비활성화 | 기존 코드베이스 분석 이미 완료됨 |
+| 2026-05-20 | DATA-01/02/03 모두 soft-warning 방식 채택 | ETL 파싱 버그 조기 감지 목적 — 데이터 손실 없이 경고만 출력 |
+| 2026-05-20 | validate_etl_results()를 순수 함수로 설계 (파일 I/O 없음) | Phase 4 단위 테스트 용이성 확보 |
+| 2026-05-20 | DATA-03 이상치 기준 ±1.0%p 절대 변동폭 (상대 변동률 아님) | 소규모 수수료에서 상대값 과민 문제 방지 |
 
 ## Blockers
 

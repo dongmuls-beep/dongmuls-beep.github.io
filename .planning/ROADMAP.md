@@ -42,7 +42,7 @@
 **Plans:** 1 plan
 
 **Wave 1**
-- [ ] 02-PLAN-A.md — validate_etl_results() 구현 + __main__ 호출 삽입 (DATA-01, DATA-02, DATA-03)
+- [x] 02-PLAN-A.md — validate_etl_results() 구현 + __main__ 호출 삽입 (DATA-01, DATA-02, DATA-03)
 
 **Verification:** validate_etl_results()에 범위 이탈·중복·이상치 데이터를 주입하면 각각 [WARNING] DATA-0X 경고가 출력되고, ETL은 중단 없이 계속 진행된다.
 
@@ -87,7 +87,7 @@
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
 | 1 | ETL 안정성 | ETL-01~04 | Complete (2026-04-30) |
-| 2 | 데이터 무결성 | DATA-01~03 | Pending |
+| 2 | 데이터 무결성 | DATA-01~03 | Complete (2026-05-20) |
 | 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | Pending |
 | 4 | ETL 테스트 | TEST-01~03 | Pending |
 

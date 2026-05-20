@@ -16,9 +16,9 @@
 
 ### 데이터 무결성
 
-- [ ] **DATA-01**: ETL 처리 후 수수료 값이 유효 범위(0~5%)인지 검증한다
-- [ ] **DATA-02**: 중복 종목코드 감지 및 경고 로직이 존재한다
-- [ ] **DATA-03**: ETL 결과가 이전 data.json과 비교하여 이상치(급격한 변동)를 감지한다
+- [x] **DATA-01**: ETL 처리 후 수수료 값이 유효 범위(0~5%)인지 검증한다 *(Satisfied Phase 2)*
+- [x] **DATA-02**: 중복 종목코드 감지 및 경고 로직이 존재한다 *(Satisfied Phase 2)*
+- [x] **DATA-03**: ETL 결과가 이전 data.json과 비교하여 이상치(급격한 변동)를 감지한다 *(Satisfied Phase 2)*
 
 ### 보안
 
@@ -72,9 +72,9 @@
 | ETL-02 | Phase 1 | Satisfied (2026-04-30) |
 | ETL-03 | Phase 1 | Satisfied (2026-04-30) |
 | ETL-04 | Phase 1 | Satisfied (2026-04-30) |
-| DATA-01 | Phase 2 | Pending |
-| DATA-02 | Phase 2 | Pending |
-| DATA-03 | Phase 2 | Pending |
+| DATA-01 | Phase 2 | Satisfied (2026-05-20) |
+| DATA-02 | Phase 2 | Satisfied (2026-05-20) |
+| DATA-03 | Phase 2 | Satisfied (2026-05-20) |
 | SEC-01 | Phase 3 | Pending |
 | SEC-02 | Phase 3 | Pending |
 | BUG-01 | Phase 3 | Pending |
