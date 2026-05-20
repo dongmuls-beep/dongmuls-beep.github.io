@@ -215,6 +215,19 @@ def get_mock_managed_items():
         {'구분': '국내주식형', '종목코드': '133690', '종목명': 'TIGER 미국나스닥100', '표준코드': 'KR7133690008', '펀드명': '미래에셋 TIGER 미국나스닥100증권상장지수투자신탁(주식)'},
     ])
 
+def p_float(v):
+    """
+    수수료 문자열을 float로 파싱한다.
+    - '%' 제거: "0.05%" → 0.05
+    - ',' 제거: "1,234" → 1234.0
+    - 파싱 불가 (None, "", "N/A" 등) → 0.0
+    """
+    try:
+        return float(str(v).replace(',', '').replace('%', ''))
+    except (ValueError, TypeError, AttributeError):
+        return 0.0
+
+
 def process_data(managed_df, file_path):
     """
     Loads Excel and calculates fees.
@@ -327,12 +340,6 @@ def process_data(managed_df, file_path):
             print(f"[MATCHED] {target_name} -> {row['펀드명']} (by {matched_by})")
             
             # --- Robust Fee Calculation ---
-            def p_float(v):
-                try:
-                    return float(str(v).replace(',', '').replace('%', ''))
-                except (ValueError, TypeError, AttributeError):
-                    return 0.0
-
             # Dynamic Column Findings
             col_total = next((c for c in df.columns if '합계' in c and '(A)' in c), None) # 합계(A)
             if not col_total: col_total = next((c for c in df.columns if '총보수' in c), None) # Fallback
