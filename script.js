@@ -173,8 +173,13 @@ function initSmartHeader() {
         if (rafPending) return;
         rafPending = true;
         requestAnimationFrame(() => {
+            // BUG-01: skip scroll handling while mobile nav is open (D-04)
+            if (document.body.classList.contains("nav-open")) {
+                rafPending = false;
+                return;
+            }
             const currentScroll = window.scrollY || document.documentElement.scrollTop;
-            if (currentScroll > lastScroll && currentScroll > 60 && !document.body.classList.contains("nav-open")) {
+            if (currentScroll > lastScroll && currentScroll > 60) {
                 header.classList.add("header-hidden");
             } else {
                 header.classList.remove("header-hidden");
