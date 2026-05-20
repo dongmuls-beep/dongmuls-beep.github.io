@@ -57,7 +57,7 @@
 **Plans:** 3 plans
 
 **Wave 1**
-- [ ] 03-PLAN-A.md — innerHTML 전수 감사 + applyTranslations 의도적 HTML 주석 추가 (SEC-01, SEC-02)
+- [x] 03-PLAN-A.md — innerHTML 전수 감사 + applyTranslations 의도적 HTML 주석 추가 (SEC-01, SEC-02)
 - [ ] 03-PLAN-B.md — initSmartHeader RAF 콜백 nav-open early return 추가 (BUG-01)
 - [ ] 03-PLAN-C.md — renderChangelog 빈 changes 시 테이블 블록 생략, p 단독 렌더링 (BUG-02)
 
@@ -89,7 +89,7 @@
 |-------|------|--------------|--------|
 | 1 | ETL 안정성 | ETL-01~04 | Complete (2026-04-30) |
 | 2 | 데이터 무결성 | DATA-01~03 | Complete (2026-05-20) |
-| 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | Pending |
+| 3 | 보안·버그 수정 | SEC-01~02, BUG-01~02 | In Progress (1/3 plans done) |
 | 4 | ETL 테스트 | TEST-01~03 | Pending |
 
 ---

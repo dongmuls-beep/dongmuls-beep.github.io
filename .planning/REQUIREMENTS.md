@@ -22,8 +22,8 @@
 
 ### 보안
 
-- [ ] **SEC-01**: `script.js` 내 사용자 데이터를 렌더링하는 모든 위치에서 `escapeHtml()`이 일관 적용된다
-- [ ] **SEC-02**: 순수 텍스트 콘텐츠는 `innerHTML` 대신 `textContent`를 사용한다
+- [x] **SEC-01**: `script.js` 내 사용자 데이터를 렌더링하는 모든 위치에서 `escapeHtml()`이 일관 적용된다 *(Satisfied Phase 3-A)*
+- [x] **SEC-02**: 순수 텍스트 콘텐츠는 `innerHTML` 대신 `textContent`를 사용한다 *(Satisfied Phase 3-A — 순수 텍스트 렌더링 innerHTML 위치 없음 확인)*
 
 ### 버그 수정
 
@@ -75,8 +75,8 @@
 | DATA-01 | Phase 2 | Satisfied (2026-05-20) |
 | DATA-02 | Phase 2 | Satisfied (2026-05-20) |
 | DATA-03 | Phase 2 | Satisfied (2026-05-20) |
-| SEC-01 | Phase 3 | Pending |
-| SEC-02 | Phase 3 | Pending |
+| SEC-01 | Phase 3 | Satisfied (2026-05-20) |
+| SEC-02 | Phase 3 | Satisfied (2026-05-20) |
 | BUG-01 | Phase 3 | Pending |
 | BUG-02 | Phase 3 | Pending |
 | TEST-01 | Phase 4 | Pending |
@@ -90,4 +90,4 @@
 
 ---
 *Requirements defined: 2026-04-07*
-*Last updated: 2026-04-07 after initial GSD setup*
+*Last updated: 2026-05-20 after Phase 3-A execution (SEC-01, SEC-02 satisfied)*
