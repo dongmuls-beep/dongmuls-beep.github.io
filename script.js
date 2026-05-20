@@ -1080,9 +1080,17 @@ async function renderChangelog() {
             const updatedAt = escapeHtml(String(entry.updatedAt || ""));
             const changes = Array.isArray(entry.changes) ? entry.changes : [];
 
-            const rowsHtml = changes.length === 0
-                ? `<tr><td colspan="5">${escapeHtml(getTranslation("changelog_no_changes"))}</td></tr>`
-                : changes.map((change) => {
+            if (changes.length === 0) {
+                // BUG-02: skip table entirely when no changes — avoids orphaned thead (D-06, D-07)
+                card.innerHTML = `
+                    <header class="changelog-head">
+                        <h3>${month}</h3>
+                        <p>${getTranslation("changelog_updated_at")} ${updatedAt}</p>
+                    </header>
+                    <p class="changelog-no-changes">${escapeHtml(getTranslation("changelog_no_changes"))}</p>
+                `;
+            } else {
+                const rowsHtml = changes.map((change) => {
                     const beforeValue = formatChangeValue(change.before);
                     const afterValue = formatChangeValue(change.after);
 
@@ -1097,26 +1105,27 @@ async function renderChangelog() {
                     `;
                 }).join("");
 
-            card.innerHTML = `
-                <header class="changelog-head">
-                    <h3>${month}</h3>
-                    <p>${getTranslation("changelog_updated_at")} ${updatedAt}</p>
-                </header>
-                <div class="table-container">
-                    <table class="data-table changelog-table">
-                        <thead>
-                            <tr>
-                                <th>${getTranslation("table_code")}</th>
-                                <th>${getTranslation("table_name")}</th>
-                                <th>${getTranslation("changelog_field")}</th>
-                                <th>${getTranslation("changelog_before")}</th>
-                                <th>${getTranslation("changelog_after")}</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rowsHtml}</tbody>
-                    </table>
-                </div>
-            `;
+                card.innerHTML = `
+                    <header class="changelog-head">
+                        <h3>${month}</h3>
+                        <p>${getTranslation("changelog_updated_at")} ${updatedAt}</p>
+                    </header>
+                    <div class="table-container">
+                        <table class="data-table changelog-table">
+                            <thead>
+                                <tr>
+                                    <th>${getTranslation("table_code")}</th>
+                                    <th>${getTranslation("table_name")}</th>
+                                    <th>${getTranslation("changelog_field")}</th>
+                                    <th>${getTranslation("changelog_before")}</th>
+                                    <th>${getTranslation("changelog_after")}</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
 
             container.appendChild(card);
         });
