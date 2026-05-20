@@ -386,6 +386,59 @@ def process_data(managed_df, file_path):
         traceback.print_exc()
         raise
 
+def validate_etl_results(results, prev_data):
+    """
+    ETL 결과 데이터의 무결성을 검증한다. 모든 검증은 soft-warning:
+    경고를 출력하고 계속 진행 (ETL 중단 없음, exit_code 변경 없음).
+
+    Args:
+        results: process_data() 반환값 (final_data). List[dict].
+                 각 항목: {종목코드, 종목명, 실부담비용, ...}
+        prev_data: 기존 data.json 로드 결과. List[dict] 또는 None.
+                   None이면 DATA-03 이상치 감지를 건너뜀.
+    """
+    # --- DATA-01: 수수료 범위 검증 (실부담비용 0~5%) ---
+    COST_MIN = 0.0
+    COST_MAX = 5.0
+    for item in results:
+        cost = item.get('실부담비용', 0.0)
+        if not (COST_MIN <= cost <= COST_MAX):
+            print(
+                f"[WARNING] DATA-01: {item.get('종목명', item.get('종목코드', '?'))} "
+                f"실부담비용 {cost:.4f}% — 정상 범위({COST_MIN}~{COST_MAX}%) 이탈"
+            )
+
+    # --- DATA-02: 중복 종목코드 감지 ---
+    seen_codes = {}
+    for item in results:
+        code = item.get('종목코드', '')
+        seen_codes[code] = seen_codes.get(code, 0) + 1
+    duplicates = [code for code, count in seen_codes.items() if count > 1]
+    if duplicates:
+        print(
+            f"[WARNING] DATA-02: 중복 종목코드 발견 ({len(duplicates)}건): "
+            f"{', '.join(duplicates)}"
+        )
+
+    # --- DATA-03: 이상치 감지 (이전 data.json 대비 실부담비용 절대 변동폭 ±1.0 이상) ---
+    ANOMALY_THRESHOLD = 1.0  # 1%p
+    if prev_data is not None:
+        prev_map = {item.get('종목코드'): item.get('실부담비용') for item in prev_data}
+        for item in results:
+            code = item.get('종목코드', '')
+            new_cost = item.get('실부담비용', 0.0)
+            prev_cost = prev_map.get(code)
+            if prev_cost is not None:
+                delta = abs(new_cost - prev_cost)
+                if delta >= ANOMALY_THRESHOLD:
+                    print(
+                        f"[WARNING] DATA-03: {item.get('종목명', code)} "
+                        f"실부담비용 급변 감지 — 이전: {prev_cost:.4f}%, "
+                        f"현재: {new_cost:.4f}%, 변동폭: {delta:.4f}%p "
+                        f"(임계값: ±{ANOMALY_THRESHOLD}%p)"
+                    )
+
+
 def fetch_market_data_batch(codes):
     """
     NAVER Finance ETF 리스트 API를 이용해 AUM(억원)과 거래량을 일괄 조회.
