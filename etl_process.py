@@ -586,6 +586,21 @@ if __name__ == "__main__":
             exit_code = 1
             final_data = []
 
+        # 3.5. Load previous data.json for anomaly detection (DATA-03)
+        prev_data = None
+        try:
+            json_path = os.path.join(os.getcwd(), 'data.json')
+            with open(json_path, 'r', encoding='utf-8') as f:
+                prev_data = json.load(f)
+        except FileNotFoundError:
+            print("data.json not found — skipping anomaly detection (first run).")
+        except json.JSONDecodeError as e:
+            print(f"data.json parse error — skipping anomaly detection: {e}")
+
+        # 3.6. Validate ETL results (DATA-01, DATA-02, DATA-03)
+        if final_data:
+            validate_etl_results(final_data, prev_data)
+
         # 4. Fetch AUM and volume from KRX
         if final_data:
             print("Fetching market data (AUM, volume) via pykrx...")
