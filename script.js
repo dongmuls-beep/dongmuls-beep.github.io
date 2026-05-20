@@ -305,6 +305,9 @@ function applyTranslations() {
         const key = el.getAttribute("data-i18n");
         const translated = getTranslation(key);
         if (translated && translated !== key) {
+            // SECURITY: innerHTML is intentional — i18n JSON contains deliberate HTML
+            // (e.g., <br>, <strong>) that must render as markup. Source is
+            // system-controlled (local i18n/*.json files), not user input. (D-01)
             el.innerHTML = translated;
         }
     });
