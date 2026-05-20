@@ -54,11 +54,12 @@
 
 **Requirements:** SEC-01, SEC-02, BUG-01, BUG-02
 
-### Plans
+**Plans:** 3 plans
 
-1. **innerHTML 감사 및 수정** — `script.js` 내 사용자 데이터 렌더링 위치 전수 검사, `escapeHtml()` 일관 적용, 텍스트 전용 위치는 `textContent`로 전환
-2. **모바일 헤더 글리치 수정** — `initSmartHeader()`가 네비 열림 상태를 고려하도록 수정
-3. **빈 변경 이력 테이블 버그 수정** — 빈 배열 시 테이블 헤더 조건부 렌더링
+**Wave 1**
+- [ ] 03-PLAN-A.md — innerHTML 전수 감사 + applyTranslations 의도적 HTML 주석 추가 (SEC-01, SEC-02)
+- [ ] 03-PLAN-B.md — initSmartHeader RAF 콜백 nav-open early return 추가 (BUG-01)
+- [ ] 03-PLAN-C.md — renderChangelog 빈 changes 시 테이블 블록 생략, p 단독 렌더링 (BUG-02)
 
 **Verification:** 번역 JSON에 HTML 태그 삽입 시 태그가 렌더링되지 않는다. 모바일에서 메뉴 열고 스크롤 시 헤더가 올바르게 동작한다.
 
@@ -96,3 +97,4 @@
 *Milestone: v1.1 안정성·보안·품질 개선*
 *Phase 1 plans created: 2026-04-30*
 *Phase 2 plans created: 2026-05-20*
+*Phase 3 plans created: 2026-05-20*
