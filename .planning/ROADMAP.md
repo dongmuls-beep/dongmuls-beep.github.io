@@ -73,11 +73,14 @@
 
 **Depends on:** Phase 1, Phase 2
 
-### Plans
+**Plans:** 3 plans
 
-1. **테스트 환경 구성** — pytest 설치, `tests/` 디렉토리 구조, 샘플 KOFIA Excel fixture 준비
-2. **수수료 계산 테스트** — `p_float()`, 실부담비용 계산 로직 단위 테스트
-3. **헤더 감지·데이터 매칭 테스트** — Excel 헤더 행 감지, 표준코드 기준 종목 매칭 테스트
+**Wave 1**
+- [ ] 04-PLAN-A.md — pytest 추가 (requirements.txt), tests/ 디렉토리 + conftest.py (openpyxl fixtures), CI 통합 (daily_update.yml)
+
+**Wave 2**
+- [ ] 04-PLAN-B.md — p_float() 모듈 수준 추출 + 수수료 계산 단위 테스트 (TEST-01)
+- [ ] 04-PLAN-C.md — 헤더 감지·데이터 매칭 테스트 + validate_etl_results 검증 테스트 (TEST-02, TEST-03)
 
 **Verification:** `pytest tests/` 실행 시 모든 테스트 통과. GitHub Actions에 테스트 단계 추가.
 
@@ -98,3 +101,4 @@
 *Phase 1 plans created: 2026-04-30*
 *Phase 2 plans created: 2026-05-20*
 *Phase 3 plans created: 2026-05-20*
+*Phase 4 plans created: 2026-05-20*
