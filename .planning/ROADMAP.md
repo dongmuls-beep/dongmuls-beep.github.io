@@ -54,14 +54,14 @@
 
 **Requirements:** SEC-01, SEC-02, BUG-01, BUG-02
 
-**Plans:** 3 plans
+**Plans:** 3 plans ✓ Complete (2026-05-20)
 
 **Wave 1**
 - [x] 03-PLAN-A.md — innerHTML 전수 감사 + applyTranslations 의도적 HTML 주석 추가 (SEC-01, SEC-02)
 - [x] 03-PLAN-B.md — initSmartHeader RAF 콜백 nav-open early return 추가 (BUG-01)
 - [x] 03-PLAN-C.md — renderChangelog 빈 changes 시 테이블 블록 생략, p 단독 렌더링 (BUG-02)
 
-**Verification:** 번역 JSON에 HTML 태그 삽입 시 태그가 렌더링되지 않는다. 모바일에서 메뉴 열고 스크롤 시 헤더가 올바르게 동작한다.
+**Verification:** 7/7 must-haves 통과 (2026-05-20) — SEC-01/02/BUG-01/02 automated evidence 확인, browser test pending
 
 ---
 
