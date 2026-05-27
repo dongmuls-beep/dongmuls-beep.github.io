@@ -206,58 +206,44 @@ def download_kofia_excel():
                 print("Excel button not found!")
                 return None
 
-        # Use browser fetch() to download — same session/cookies/SSL as browser, no external requests needed
-        print("Clicking Excel Download (browser fetch mode)...")
+        # Primary: extract data directly from grdMain WebSquare model — bypasses server entirely
+        print("Extracting data directly from grdMain WebSquare model...")
         driver.set_script_timeout(120)
-        fetch_result = driver.execute_async_script("""
-            var callback = arguments[arguments.length - 1];
-            var origSubmit = HTMLFormElement.prototype.submit;
-            HTMLFormElement.prototype.submit = function() {
-                var formEl = this;
-                var url = this.action;
-                var fd = new FormData(this);
-                origSubmit.call(this);  // let Chrome try normal download too
-                HTMLFormElement.prototype.submit = origSubmit;
-                fetch(url, {method: 'POST', body: fd})
-                    .then(function(r) {
-                        if (!r.ok) { callback({ok: false, status: r.status}); return; }
-                        return r.blob();
-                    })
-                    .then(function(blob) {
-                        if (!blob) return;
-                        var reader = new FileReader();
-                        reader.onloadend = function() {
-                            callback({ok: true, data: reader.result, size: blob.size, type: blob.type});
-                        };
-                        reader.readAsDataURL(blob);
-                    })
-                    .catch(function(e) { callback({ok: false, error: String(e)}); });
-            };
-            // Trigger download button
-            try { fnExcelDownBtn(); } catch(e) { HTMLFormElement.prototype.submit = origSubmit; callback({ok: false, error: 'fnExcelDownBtn: ' + e}); }
+        grid_json = driver.execute_script("""
+            var count = grdMain.getRowCount();
+            if (!count) return JSON.stringify({error: 'empty', count: 0});
+            // Discover column IDs from first row
+            var firstRow = null;
+            try { firstRow = grdMain.getRowData(0); } catch(e) {}
+            var colIds = firstRow ? Object.keys(firstRow) : [];
+            if (!colIds.length) {
+                return JSON.stringify({error: 'no_cols', firstRow: JSON.stringify(firstRow), count: count});
+            }
+            var rows = [];
+            for (var i = 0; i < count; i++) {
+                try { rows.push(grdMain.getRowData(i)); } catch(e) { rows.push(null); }
+            }
+            return JSON.stringify({count: count, cols: colIds, rows: rows});
         """)
-        print(f"fetch result: ok={fetch_result.get('ok') if fetch_result else None}, size={fetch_result.get('size') if fetch_result else None}, type={fetch_result.get('type','') if fetch_result else ''}")
 
-        # 6b. If fetch returned file data, save it
-        if fetch_result and fetch_result.get('ok') and fetch_result.get('data', '').startswith('data:'):
-            import base64
-            data_url = fetch_result['data']
-            # data:<mime>;base64,<content>
-            b64 = data_url.split(',', 1)[1]
-            file_bytes = base64.b64decode(b64)
-            fetch_path = os.path.join(DOWNLOAD_DIR, f"kofia_fetch_{datetime.now().strftime('%Y%m%d%H%M%S')}.xls")
-            with open(fetch_path, 'wb') as fp:
-                fp.write(file_bytes)
-            print(f"Browser fetch saved: {fetch_path} ({len(file_bytes)} bytes)")
-            return fetch_path
+        if grid_json:
+            import json as _json
+            gdata = _json.loads(grid_json)
+            print(f"grdMain extract: count={gdata.get('count')}, cols={gdata.get('cols','?')[:5] if isinstance(gdata.get('cols'), list) else gdata.get('cols','?')}, error={gdata.get('error','none')}")
+            if gdata.get('rows') and not gdata.get('error'):
+                import pandas as _pd
+                df = _pd.DataFrame(gdata['rows'])
+                print(f"DataFrame columns: {list(df.columns)}")
+                # Write to Excel so process_data() can read it unchanged
+                ws_path = os.path.join(DOWNLOAD_DIR, f"kofia_ws_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx")
+                df.to_excel(ws_path, index=False)
+                print(f"WebSquare model saved to Excel: {ws_path}")
+                return ws_path
 
-        # 6c. Also wait briefly for Chrome's native download (may have also triggered)
-        print("Waiting for Chrome native download...")
+        print("Direct extraction failed — trying Chrome native download as fallback...")
         result = _wait_for_download(DOWNLOAD_DIR, timeout=30, max_retries=1)
         if result:
             return result
-
-        print(f"fetch error: {fetch_result.get('error','') if fetch_result else 'no result'}")
 
         print("Download failed after all retries. Capturing debug info...")
         try:
