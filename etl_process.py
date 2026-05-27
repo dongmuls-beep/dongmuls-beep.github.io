@@ -150,34 +150,51 @@ def download_kofia_excel():
         print("Clicking Search...")
         driver.execute_script("arguments[0].click();", search_btn)
 
-        # 4. Wait for actual search results (not just grid skeleton)
+        # 4. Wait for actual search results — use WebSquare JS API (grdMain.getRowCount())
+        # DOM text ('건') can appear before the data model is bound; getRowCount() is authoritative.
         print("Waiting for data grid to load...")
         try:
-            # Wait up to 60s for result count to become non-zero
-            WebDriverWait(driver, 60).until(
-                lambda d: any(
-                    c.isdigit() and int(''.join(filter(str.isdigit, c.strip()))) > 0
-                    for el in d.find_elements(By.CSS_SELECTOR, "[id='txtTotCnt'], span, div")
-                    if (c := el.text.strip()) and '건' in c
-                ) if d.find_elements(By.CSS_SELECTOR, "[id='txtTotCnt'], span, div") else False
+            WebDriverWait(driver, 90).until(
+                lambda d: d.execute_script(
+                    "return typeof grdMain !== 'undefined' && grdMain.getRowCount() > 0;"
+                )
             )
-            print("Data grid loaded.")
+            row_count = driver.execute_script("return grdMain.getRowCount();")
+            print(f"Data grid loaded: {row_count} rows (WebSquare model)")
         except Exception as grid_wait_err:
-            print(f"Grid result wait timed out. Using 10s fallback sleep.")
+            print(f"Grid JS wait timed out. Checking row count and applying fallback sleep.")
             time.sleep(10)
-        # Log actual result count for diagnostics
-        try:
-            count_els = driver.find_elements(By.XPATH, "//*[contains(text(),'건')]")
-            for el in count_els[:3]:
-                t = el.text.strip()
-                if '건' in t:
-                    print(f"Result count text: {t}")
-                    break
-        except Exception:
-            pass
-        
+            try:
+                row_count = driver.execute_script(
+                    "return typeof grdMain !== 'undefined' ? grdMain.getRowCount() : -1;"
+                )
+                print(f"Post-fallback grdMain.getRowCount(): {row_count}")
+            except Exception as rc_err:
+                row_count = -1
+                print(f"Could not read row count: {rc_err}")
+            if row_count <= 0:
+                print("Grid model empty after fallback — extending wait 30s for slow CI.")
+                time.sleep(30)
+                try:
+                    row_count = driver.execute_script("return grdMain.getRowCount();")
+                    print(f"Extended-wait grdMain.getRowCount(): {row_count}")
+                except Exception:
+                    pass
+
         # 5. Looking for Excel Download button
         print("Looking for Excel Download button...")
+        # Guard: confirm WebSquare model has rows before clicking download
+        try:
+            ws_count = driver.execute_script(
+                "return typeof grdMain !== 'undefined' ? grdMain.getRowCount() : -1;"
+            )
+            print(f"Pre-download grdMain.getRowCount(): {ws_count}")
+            if ws_count == 0:
+                print("WARNING: WebSquare grid model empty — fnExcelDownBtn will no-op. Aborting.")
+                return None
+        except Exception as e:
+            print(f"Could not read pre-download row count: {e}")
+
         try:
             excel_btn = driver.find_element(By.XPATH, "//img[contains(@alt, '엑셀') or contains(@alt, 'Excel')]/parent::*")
         except NoSuchElementException:
@@ -186,7 +203,7 @@ def download_kofia_excel():
             except NoSuchElementException:
                 print("Excel button not found!")
                 return None
-            
+
         print("Clicking Excel Download...")
         driver.execute_script("arguments[0].click();", excel_btn)
         # Dismiss any JS alert (e.g. "데이터가 없습니다.") that blocks download
