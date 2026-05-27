@@ -68,6 +68,8 @@ def setup_driver():
     else:
         print(f"Display detected ({os.environ.get('DISPLAY')}) — headed Chrome via Xvfb")
         options.add_argument("--window-size=1920,1080")
+    # KOFIA uses Korean government CA not in Linux trust store — ignore SSL errors
+    options.add_argument("--ignore-certificate-errors")
 
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -272,6 +274,7 @@ def download_kofia_excel():
                     data=captured.get('data', {}),
                     stream=True,
                     timeout=60,
+                    verify=False,
                 )
                 resp.raise_for_status()
                 ctype = resp.headers.get('Content-Type', '')
