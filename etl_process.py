@@ -124,11 +124,18 @@ def download_kofia_excel():
         # This bypasses the complex checkbox selectors and filters by name directly.
         print("Entering '상장지수' in Fund Name Search...")
         try:
-             fund_nm_input = wait.until(EC.visibility_of_element_located((By.ID, "fundNm")))
-             fund_nm_input.clear()
-             fund_nm_input.send_keys("상장지수")
-             print("Entered '상장지수'")
-             time.sleep(1)
+            fund_nm_input = wait.until(EC.visibility_of_element_located((By.ID, "fundNm")))
+            fund_nm_input.clear()
+            # WebSquare headless workaround: set value via JS + dispatch events to trigger internal handlers
+            driver.execute_script("""
+                var el = document.getElementById('fundNm');
+                el.value = arguments[0];
+                el.dispatchEvent(new Event('input', {bubbles: true}));
+                el.dispatchEvent(new Event('change', {bubbles: true}));
+            """, "상장지수")
+            fund_nm_input.send_keys("")  # focus trigger
+            print(f"Entered '상장지수' (JS+events)")
+            time.sleep(1)
         except (TimeoutException, NoSuchElementException) as e:
             print(f"Error: Fund name input field not found or not interactable: {e}")
             return None
@@ -139,22 +146,32 @@ def download_kofia_excel():
         # 3. Click Search
         print("Clicking Search...")
         driver.execute_script("arguments[0].click();", search_btn)
-        
-        # 4. Wait for Grid/Table (Loading) — 고정 sleep 대신 그리드 행 출현 대기
+
+        # 4. Wait for actual search results (not just grid skeleton)
         print("Waiting for data grid to load...")
         try:
-            # KOFIA WebSquare 그리드: 첫 번째 데이터 행이 나타날 때까지 최대 60초 대기
-            # 그리드 행 선택자는 WebSquare 공통 패턴인 tr[id*='gridView'] 사용
-            wait.until(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "[id='row1'], [id='gRow1']")
-                )
+            # Wait up to 60s for result count to become non-zero
+            WebDriverWait(driver, 60).until(
+                lambda d: any(
+                    c.isdigit() and int(''.join(filter(str.isdigit, c.strip()))) > 0
+                    for el in d.find_elements(By.CSS_SELECTOR, "[id='txtTotCnt'], span, div")
+                    if (c := el.text.strip()) and '건' in c
+                ) if d.find_elements(By.CSS_SELECTOR, "[id='txtTotCnt'], span, div") else False
             )
             print("Data grid loaded.")
         except Exception as grid_wait_err:
-            # 그리드 선택자가 맞지 않을 경우 — 짧은 폴백 sleep 사용 (5초)
-            print(f"Grid wait timed out ({grid_wait_err}). Using 5s fallback sleep.")
-            time.sleep(5)
+            print(f"Grid result wait timed out. Using 10s fallback sleep.")
+            time.sleep(10)
+        # Log actual result count for diagnostics
+        try:
+            count_els = driver.find_elements(By.XPATH, "//*[contains(text(),'건')]")
+            for el in count_els[:3]:
+                t = el.text.strip()
+                if '건' in t:
+                    print(f"Result count text: {t}")
+                    break
+        except Exception:
+            pass
         
         # 5. Looking for Excel Download button
         print("Looking for Excel Download button...")
@@ -169,7 +186,19 @@ def download_kofia_excel():
             
         print("Clicking Excel Download...")
         driver.execute_script("arguments[0].click();", excel_btn)
-        
+        # Dismiss any JS alert (e.g. "데이터가 없습니다.") that blocks download
+        try:
+            from selenium.webdriver.common.alert import Alert
+            alert = Alert(driver)
+            alert_text = alert.text
+            print(f"Alert dismissed: {alert_text}")
+            alert.accept()
+            if "데이터" in alert_text:
+                print("Search returned no data — aborting download.")
+                return None
+        except Exception:
+            pass  # No alert, proceed normally
+
         # 6. Wait for download — 지수 백오프 재시도 (최대 3회, 각 90초)
         print("Waiting for file download...")
         result = _wait_for_download(DOWNLOAD_DIR, timeout=90, max_retries=3)
