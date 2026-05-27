@@ -2790,1240 +2790,827 @@
         "code": "0026S0",
         "name": "1Q 미국S&P500",
         "field": "총보수",
-        "before": 0.0055,
-        "after": 20250314.0
-      },
-      {
-        "code": "0026S0",
-        "name": "1Q 미국S&P500",
-        "field": "기타비용",
-        "before": 0.12,
-        "after": 0.4421
+        "before": 20250314.0,
+        "after": 0.0001
       },
       {
         "code": "0026S0",
         "name": "1Q 미국S&P500",
         "field": "실부담비용",
-        "before": 0.267,
-        "after": 20250314.5836
+        "before": 20250314.5836,
+        "after": 0.5837
       },
       {
         "code": "0069M0",
         "name": "1Q 미국나스닥100",
         "field": "총보수",
-        "before": 0.0055,
-        "after": 20250620.0
-      },
-      {
-        "code": "0069M0",
-        "name": "1Q 미국나스닥100",
-        "field": "기타비용",
-        "before": 0.15,
-        "after": 0.4421
+        "before": 20250620.0,
+        "after": 0.0001
       },
       {
         "code": "0069M0",
         "name": "1Q 미국나스닥100",
         "field": "실부담비용",
-        "before": 0.3163,
-        "after": 20250620.6029
+        "before": 20250620.6029,
+        "after": 0.603
       },
       {
         "code": "069500",
         "name": "KODEX 200",
         "field": "총보수",
-        "before": 0.15,
-        "after": 20021011.0
-      },
-      {
-        "code": "069500",
-        "name": "KODEX 200",
-        "field": "기타비용",
-        "before": 0.01,
-        "after": 0.4421
+        "before": 20021011.0,
+        "after": 0.124
       },
       {
         "code": "069500",
         "name": "KODEX 200",
         "field": "실부담비용",
-        "before": 0.1806,
-        "after": 20021011.4627
+        "before": 20021011.4627,
+        "after": 0.5867
       },
       {
         "code": "102110",
         "name": "TIGER 200",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20080402.0
-      },
-      {
-        "code": "102110",
-        "name": "TIGER 200",
-        "field": "기타비용",
-        "before": 0.02,
-        "after": 0.4421
+        "before": 20080402.0,
+        "after": 0.029
       },
       {
         "code": "102110",
         "name": "TIGER 200",
         "field": "실부담비용",
-        "before": 0.0873,
-        "after": 20080402.4594
+        "before": 20080402.4594,
+        "after": 0.4884
       },
       {
         "code": "105190",
         "name": "ACE 200",
         "field": "총보수",
-        "before": 0.017,
-        "after": 20080910.0
-      },
-      {
-        "code": "105190",
-        "name": "ACE 200",
-        "field": "기타비용",
-        "before": 0.02,
-        "after": 0.4421
+        "before": 20080910.0,
+        "after": 0.01
       },
       {
         "code": "105190",
         "name": "ACE 200",
         "field": "실부담비용",
-        "before": 0.0586,
-        "after": 20080910.4637
+        "before": 20080910.4637,
+        "after": 0.4737
       },
       {
         "code": "133690",
         "name": "TIGER 미국나스닥100",
         "field": "총보수",
-        "before": 0.0068,
-        "after": 20101015.0
-      },
-      {
-        "code": "133690",
-        "name": "TIGER 미국나스닥100",
-        "field": "기타비용",
-        "before": 0.09,
-        "after": 0.4421
+        "before": 20101015.0,
+        "after": 0.0002
       },
       {
         "code": "133690",
         "name": "TIGER 미국나스닥100",
         "field": "실부담비용",
-        "before": 0.1343,
-        "after": 20101015.4796
+        "before": 20101015.4796,
+        "after": 0.4798
       },
       {
         "code": "148020",
         "name": "RISE 200",
         "field": "총보수",
-        "before": 0.017,
-        "after": 20111019.0
-      },
-      {
-        "code": "148020",
-        "name": "RISE 200",
-        "field": "기타비용",
-        "before": 0.02,
-        "after": 0.4421
+        "before": 20111019.0,
+        "after": 0.001
       },
       {
         "code": "148020",
         "name": "RISE 200",
         "field": "실부담비용",
-        "before": 0.0514,
-        "after": 20111019.4565
+        "before": 20111019.4565,
+        "after": 0.4575
       },
       {
         "code": "152100",
         "name": "PLUS 200",
         "field": "총보수",
-        "before": 0.017,
-        "after": 20120109.0
-      },
-      {
-        "code": "152100",
-        "name": "PLUS 200",
-        "field": "기타비용",
-        "before": 0.02,
-        "after": 0.4421
+        "before": 20120109.0,
+        "after": 0.001
       },
       {
         "code": "152100",
         "name": "PLUS 200",
         "field": "실부담비용",
-        "before": 0.0613,
-        "after": 20120109.4664
+        "before": 20120109.4664,
+        "after": 0.4674
       },
       {
         "code": "168580",
         "name": "ACE 중국본토CSI300",
         "field": "총보수",
-        "before": 0.7,
-        "after": 20121121.0
-      },
-      {
-        "code": "168580",
-        "name": "ACE 중국본토CSI300",
-        "field": "기타비용",
-        "before": 0.11,
-        "after": 0.3434
+        "before": 20121121.0,
+        "after": 0.585
       },
       {
         "code": "168580",
         "name": "ACE 중국본토CSI300",
         "field": "실부담비용",
-        "before": 0.8445,
-        "after": 20121121.3779
+        "before": 20121121.3779,
+        "after": 0.9629
       },
       {
         "code": "192090",
         "name": "TIGER 차이나CSI300",
         "field": "총보수",
-        "before": 0.63,
-        "after": 20140127.0
-      },
-      {
-        "code": "192090",
-        "name": "TIGER 차이나CSI300",
-        "field": "기타비용",
-        "before": 0.23,
-        "after": 0.3434
+        "before": 20140127.0,
+        "after": 0.539
       },
       {
         "code": "192090",
         "name": "TIGER 차이나CSI300",
         "field": "실부담비용",
-        "before": 0.9181,
-        "after": 20140127.4015
+        "before": 20140127.4015,
+        "after": 0.9405
       },
       {
         "code": "269540",
         "name": "PLUS 미국S&P500(H)",
         "field": "총보수",
-        "before": 0.3,
-        "after": 20170511.0
-      },
-      {
-        "code": "269540",
-        "name": "PLUS 미국S&P500(H)",
-        "field": "기타비용",
-        "before": 0.08,
-        "after": 0.3434
+        "before": 20170511.0,
+        "after": 0.215
       },
       {
         "code": "269540",
         "name": "PLUS 미국S&P500(H)",
         "field": "실부담비용",
-        "before": 0.508,
-        "after": 20170511.4714
+        "before": 20170511.4714,
+        "after": 0.6864
       },
       {
         "code": "283580",
         "name": "KODEX 차이나CSI300",
         "field": "총보수",
-        "before": 0.12,
-        "after": 20171129.0
-      },
-      {
-        "code": "283580",
-        "name": "KODEX 차이나CSI300",
-        "field": "기타비용",
-        "before": 0.1,
-        "after": 0.3434
+        "before": 20171129.0,
+        "after": 0.059
       },
       {
         "code": "283580",
         "name": "KODEX 차이나CSI300",
         "field": "실부담비용",
-        "before": 0.2574,
-        "after": 20171129.3808
+        "before": 20171129.3808,
+        "after": 0.4398
       },
       {
         "code": "293180",
         "name": "HANARO 200",
         "field": "총보수",
-        "before": 0.036,
-        "after": 20180329.0
-      },
-      {
-        "code": "293180",
-        "name": "HANARO 200",
-        "field": "기타비용",
-        "before": 0.02,
-        "after": 0.4421
+        "before": 20180329.0,
+        "after": 0.02
       },
       {
         "code": "293180",
         "name": "HANARO 200",
         "field": "실부담비용",
-        "before": 0.0662,
-        "after": 20180329.4523
+        "before": 20180329.4523,
+        "after": 0.4723
       },
       {
         "code": "314250",
         "name": "KODEX 미국빅테크10(H)",
         "field": "총보수",
-        "before": 0.45,
-        "after": 20190108.0
-      },
-      {
-        "code": "314250",
-        "name": "KODEX 미국빅테크10(H)",
-        "field": "기타비용",
-        "before": 0.11,
-        "after": 0.3434
+        "before": 20190108.0,
+        "after": 0.409
       },
       {
         "code": "314250",
         "name": "KODEX 미국빅테크10(H)",
         "field": "실부담비용",
-        "before": 0.6257,
-        "after": 20190108.4091
+        "before": 20190108.4091,
+        "after": 0.8181
       },
       {
         "code": "360200",
         "name": "ACE 미국S&P500",
         "field": "총보수",
-        "before": 0.0047,
-        "after": 20200804.0
-      },
-      {
-        "code": "360200",
-        "name": "ACE 미국S&P500",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.4421
+        "before": 20200804.0,
+        "after": 0.0001
       },
       {
         "code": "360200",
         "name": "ACE 미국S&P500",
         "field": "실부담비용",
-        "before": 0.0868,
-        "after": 20200804.4642
+        "before": 20200804.4642,
+        "after": 0.4643
       },
       {
         "code": "360750",
         "name": "TIGER 미국S&P500",
         "field": "총보수",
-        "before": 0.0068,
-        "after": 20200806.0
-      },
-      {
-        "code": "360750",
-        "name": "TIGER 미국S&P500",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.4421
+        "before": 20200806.0,
+        "after": 0.0002
       },
       {
         "code": "360750",
         "name": "TIGER 미국S&P500",
         "field": "실부담비용",
-        "before": 0.1034,
-        "after": 20200806.4787
+        "before": 20200806.4787,
+        "after": 0.4789
       },
       {
         "code": "367380",
         "name": "ACE 미국나스닥100",
         "field": "총보수",
-        "before": 0.0062,
-        "after": 20201026.0
-      },
-      {
-        "code": "367380",
-        "name": "ACE 미국나스닥100",
-        "field": "기타비용",
-        "before": 0.09,
-        "after": 0.4421
+        "before": 20201026.0,
+        "after": 0.0001
       },
       {
         "code": "367380",
         "name": "ACE 미국나스닥100",
         "field": "실부담비용",
-        "before": 0.1302,
-        "after": 20201026.4761
+        "before": 20201026.4761,
+        "after": 0.4762
       },
       {
         "code": "368590",
         "name": "RISE 미국나스닥100",
         "field": "총보수",
-        "before": 0.0062,
-        "after": 20201104.0
-      },
-      {
-        "code": "368590",
-        "name": "RISE 미국나스닥100",
-        "field": "기타비용",
-        "before": 0.09,
-        "after": 0.4421
+        "before": 20201104.0,
+        "after": 0.0001
       },
       {
         "code": "368590",
         "name": "RISE 미국나스닥100",
         "field": "실부담비용",
-        "before": 0.1266,
-        "after": 20201104.4725
+        "before": 20201104.4725,
+        "after": 0.4726
       },
       {
         "code": "371150",
         "name": "RISE 차이나항셍테크",
         "field": "총보수",
-        "before": 0.14,
-        "after": 20201214.0
-      },
-      {
-        "code": "371150",
-        "name": "RISE 차이나항셍테크",
-        "field": "기타비용",
-        "before": 0.3,
-        "after": 0.4421
+        "before": 20201214.0,
+        "after": 0.106
       },
       {
         "code": "371150",
         "name": "RISE 차이나항셍테크",
         "field": "실부담비용",
-        "before": 0.6769,
-        "after": 20201214.679
+        "before": 20201214.679,
+        "after": 0.785
       },
       {
         "code": "371160",
         "name": "TIGER 차이나항셍테크",
         "field": "총보수",
-        "before": 0.09,
-        "after": 20201214.0
-      },
-      {
-        "code": "371160",
-        "name": "TIGER 차이나항셍테크",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.4421
+        "before": 20201214.0,
+        "after": 0.059
       },
       {
         "code": "371160",
         "name": "TIGER 차이나항셍테크",
         "field": "실부담비용",
-        "before": 0.2612,
-        "after": 20201214.5433
+        "before": 20201214.5433,
+        "after": 0.6023
       },
       {
         "code": "371870",
         "name": "ACE 차이나항셍테크",
         "field": "총보수",
-        "before": 0.25,
-        "after": 20201211.0
-      },
-      {
-        "code": "371870",
-        "name": "ACE 차이나항셍테크",
-        "field": "기타비용",
-        "before": 0.31,
-        "after": 0.4421
+        "before": 20201211.0,
+        "after": 0.2
       },
       {
         "code": "371870",
         "name": "ACE 차이나항셍테크",
         "field": "실부담비용",
-        "before": 0.6757,
-        "after": 20201211.5578
+        "before": 20201211.5578,
+        "after": 0.7578
       },
       {
         "code": "372330",
         "name": "KODEX 차이나항셍테크",
         "field": "총보수",
-        "before": 0.12,
-        "after": 20201214.0
-      },
-      {
-        "code": "372330",
-        "name": "KODEX 차이나항셍테크",
-        "field": "기타비용",
-        "before": 0.11,
-        "after": 0.4421
+        "before": 20201214.0,
+        "after": 0.079
       },
       {
         "code": "372330",
         "name": "KODEX 차이나항셍테크",
         "field": "실부담비용",
-        "before": 0.4147,
-        "after": 20201214.6268
+        "before": 20201214.6268,
+        "after": 0.7058
       },
       {
         "code": "379780",
         "name": "RISE 미국S&P500",
         "field": "총보수",
-        "before": 0.0047,
-        "after": 20210407.0
-      },
-      {
-        "code": "379780",
-        "name": "RISE 미국S&P500",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.4421
+        "before": 20210407.0,
+        "after": 0.0001
       },
       {
         "code": "379780",
         "name": "RISE 미국S&P500",
         "field": "실부담비용",
-        "before": 0.1013,
-        "after": 20210407.4787
+        "before": 20210407.4787,
+        "after": 0.4788
       },
       {
         "code": "379800",
         "name": "KODEX 미국S&P500",
         "field": "총보수",
-        "before": 0.0062,
-        "after": 20210407.0
-      },
-      {
-        "code": "379800",
-        "name": "KODEX 미국S&P500",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.4421
+        "before": 20210407.0,
+        "after": 0.0001
       },
       {
         "code": "379800",
         "name": "KODEX 미국S&P500",
         "field": "실부담비용",
-        "before": 0.1099,
-        "after": 20210407.4758
+        "before": 20210407.4758,
+        "after": 0.4759
       },
       {
         "code": "379810",
         "name": "KODEX 미국나스닥100",
         "field": "총보수",
-        "before": 0.0062,
-        "after": 20210407.0
-      },
-      {
-        "code": "379810",
-        "name": "KODEX 미국나스닥100",
-        "field": "기타비용",
-        "before": 0.09,
-        "after": 0.4421
+        "before": 20210407.0,
+        "after": 0.0001
       },
       {
         "code": "379810",
         "name": "KODEX 미국나스닥100",
         "field": "실부담비용",
-        "before": 0.1514,
-        "after": 20210407.4973
+        "before": 20210407.4973,
+        "after": 0.4974
       },
       {
         "code": "381170",
         "name": "TIGER 미국테크TOP10 INDXX",
         "field": "총보수",
-        "before": 0.49,
-        "after": 20210408.0
-      },
-      {
-        "code": "381170",
-        "name": "TIGER 미국테크TOP10 INDXX",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.4421
+        "before": 20210408.0,
+        "after": 0.439
       },
       {
         "code": "381170",
         "name": "TIGER 미국테크TOP10 INDXX",
         "field": "실부담비용",
-        "before": 0.5919,
-        "after": 20210408.484
+        "before": 20210408.484,
+        "after": 0.923
       },
       {
         "code": "402970",
         "name": "ACE 미국배당다우존스",
         "field": "총보수",
-        "before": 0.01,
-        "after": 20211019.0
-      },
-      {
-        "code": "402970",
-        "name": "ACE 미국배당다우존스",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.4421
+        "before": 20211019.0,
+        "after": 0.0005
       },
       {
         "code": "402970",
         "name": "ACE 미국배당다우존스",
         "field": "실부담비용",
-        "before": 0.1407,
-        "after": 20211019.5128
+        "before": 20211019.5128,
+        "after": 0.5133
       },
       {
         "code": "429760",
         "name": "PLUS 미국S&P500",
         "field": "총보수",
-        "before": 0.07,
-        "after": 20220527.0
-      },
-      {
-        "code": "429760",
-        "name": "PLUS 미국S&P500",
-        "field": "기타비용",
-        "before": 0.13,
-        "after": 0.4421
+        "before": 20220527.0,
+        "after": 0.05
       },
       {
         "code": "429760",
         "name": "PLUS 미국S&P500",
         "field": "실부담비용",
-        "before": 0.33,
-        "after": 20220527.5721
+        "before": 20220527.5721,
+        "after": 0.6221
       },
       {
         "code": "432840",
         "name": "HANARO 미국S&P500",
         "field": "총보수",
-        "before": 0.045,
-        "after": 20220607.0
-      },
-      {
-        "code": "432840",
-        "name": "HANARO 미국S&P500",
-        "field": "기타비용",
-        "before": 0.3,
-        "after": 0.4421
+        "before": 20220607.0,
+        "after": 0.02
       },
       {
         "code": "432840",
         "name": "HANARO 미국S&P500",
         "field": "실부담비용",
-        "before": 0.3539,
-        "after": 20220607.451
+        "before": 20220607.451,
+        "after": 0.471
       },
       {
         "code": "433330",
         "name": "SOL 미국S&P500",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20220617.0
-      },
-      {
-        "code": "433330",
-        "name": "SOL 미국S&P500",
-        "field": "기타비용",
-        "before": 0.08,
-        "after": 0.4421
+        "before": 20220617.0,
+        "after": 0.034
       },
       {
         "code": "433330",
         "name": "SOL 미국S&P500",
         "field": "실부담비용",
-        "before": 0.1843,
-        "after": 20220617.4964
+        "before": 20220617.4964,
+        "after": 0.5304
       },
       {
         "code": "444490",
         "name": "WON 미국S&P500",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20220930.0
-      },
-      {
-        "code": "444490",
-        "name": "WON 미국S&P500",
-        "field": "기타비용",
-        "before": 0.13,
-        "after": 0.4421
+        "before": 20220930.0,
+        "after": 0.029
       },
       {
         "code": "444490",
         "name": "WON 미국S&P500",
         "field": "실부담비용",
-        "before": 0.2953,
-        "after": 20220930.5574
+        "before": 20220930.5574,
+        "after": 0.5864
       },
       {
         "code": "446720",
         "name": "SOL 미국배당다우존스",
         "field": "총보수",
-        "before": 0.01,
-        "after": 20221111.0
-      },
-      {
-        "code": "446720",
-        "name": "SOL 미국배당다우존스",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.4421
+        "before": 20221111.0,
+        "after": 0.003
       },
       {
         "code": "446720",
         "name": "SOL 미국배당다우존스",
         "field": "실부담비용",
-        "before": 0.1703,
-        "after": 20221111.5424
+        "before": 20221111.5424,
+        "after": 0.5454
       },
       {
         "code": "448100",
         "name": "WON 200",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20221215.0
-      },
-      {
-        "code": "448100",
-        "name": "WON 200",
-        "field": "기타비용",
-        "before": 0.01,
-        "after": 0.4421
+        "before": 20221215.0,
+        "after": 0.029
       },
       {
         "code": "448100",
         "name": "WON 200",
         "field": "실부담비용",
-        "before": 0.0773,
-        "after": 20221215.4594
+        "before": 20221215.4594,
+        "after": 0.4884
       },
       {
         "code": "448290",
         "name": "TIGER 미국S&P500(H)",
         "field": "총보수",
-        "before": 0.07,
-        "after": 20221123.0
-      },
-      {
-        "code": "448290",
-        "name": "TIGER 미국S&P500(H)",
-        "field": "기타비용",
-        "before": 0.09,
-        "after": 0.3434
+        "before": 20221123.0,
+        "after": 0.05
       },
       {
         "code": "448290",
         "name": "TIGER 미국S&P500(H)",
         "field": "실부담비용",
-        "before": 0.2308,
-        "after": 20221123.4142
+        "before": 20221123.4142,
+        "after": 0.4642
       },
       {
         "code": "448300",
         "name": "TIGER 미국나스닥100(H)",
         "field": "총보수",
-        "before": 0.07,
-        "after": 20221123.0
-      },
-      {
-        "code": "448300",
-        "name": "TIGER 미국나스닥100(H)",
-        "field": "기타비용",
-        "before": 0.11,
-        "after": 0.3434
+        "before": 20221123.0,
+        "after": 0.05
       },
       {
         "code": "448300",
         "name": "TIGER 미국나스닥100(H)",
         "field": "실부담비용",
-        "before": 0.2786,
-        "after": 20221123.442
+        "before": 20221123.442,
+        "after": 0.492
       },
       {
         "code": "449180",
         "name": "KODEX 미국S&P500(H)",
         "field": "총보수",
-        "before": 0.0099,
-        "after": 20221130.0
-      },
-      {
-        "code": "449180",
-        "name": "KODEX 미국S&P500(H)",
-        "field": "기타비용",
-        "before": 0.1,
-        "after": 0.4421
+        "before": 20221130.0,
+        "after": 0.0009
       },
       {
         "code": "449180",
         "name": "KODEX 미국S&P500(H)",
         "field": "실부담비용",
-        "before": 0.1617,
-        "after": 20221130.4939
+        "before": 20221130.4939,
+        "after": 0.4948
       },
       {
         "code": "449190",
         "name": "KODEX 미국나스닥100(H)",
         "field": "총보수",
-        "before": 0.0099,
-        "after": 20221130.0
-      },
-      {
-        "code": "449190",
-        "name": "KODEX 미국나스닥100(H)",
-        "field": "기타비용",
-        "before": 0.11,
-        "after": 0.4421
+        "before": 20221130.0,
+        "after": 0.0009
       },
       {
         "code": "449190",
         "name": "KODEX 미국나스닥100(H)",
         "field": "실부담비용",
-        "before": 0.1827,
-        "after": 20221130.5049
+        "before": 20221130.5049,
+        "after": 0.5058
       },
       {
         "code": "449770",
         "name": "KIWOOM 미국S&P500",
         "field": "총보수",
-        "before": 0.021,
-        "after": 20221216.0
-      },
-      {
-        "code": "449770",
-        "name": "KIWOOM 미국S&P500",
-        "field": "기타비용",
-        "before": 0.14,
-        "after": 0.4421
+        "before": 20221216.0,
+        "after": 0.001
       },
       {
         "code": "449770",
         "name": "KIWOOM 미국S&P500",
         "field": "실부담비용",
-        "before": 0.2284,
-        "after": 20221216.5095
+        "before": 20221216.5095,
+        "after": 0.5105
       },
       {
         "code": "449780",
         "name": "KIWOOM 미국S&P500(H)",
         "field": "총보수",
-        "before": 0.04,
-        "after": 20221216.0
-      },
-      {
-        "code": "449780",
-        "name": "KIWOOM 미국S&P500(H)",
-        "field": "기타비용",
-        "before": 0.24,
-        "after": 0.4421
+        "before": 20221216.0,
+        "after": 0.02
       },
       {
         "code": "449780",
         "name": "KIWOOM 미국S&P500(H)",
         "field": "실부담비용",
-        "before": 0.4872,
-        "after": 20221216.6493
+        "before": 20221216.6493,
+        "after": 0.6693
       },
       {
         "code": "452360",
         "name": "SOL 미국배당다우존스(H)",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20230317.0
-      },
-      {
-        "code": "452360",
-        "name": "SOL 미국배당다우존스(H)",
-        "field": "기타비용",
-        "before": 0.08,
-        "after": 0.4421
+        "before": 20230317.0,
+        "after": 0.034
       },
       {
         "code": "452360",
         "name": "SOL 미국배당다우존스(H)",
         "field": "실부담비용",
-        "before": 0.2382,
-        "after": 20230317.5503
+        "before": 20230317.5503,
+        "after": 0.5843
       },
       {
         "code": "453080",
         "name": "KIWOOM 미국나스닥100(H)",
         "field": "총보수",
-        "before": 0.04,
-        "after": 20230310.0
-      },
-      {
-        "code": "453080",
-        "name": "KIWOOM 미국나스닥100(H)",
-        "field": "기타비용",
-        "before": 0.14,
-        "after": 0.4421
+        "before": 20230310.0,
+        "after": 0.02
       },
       {
         "code": "453080",
         "name": "KIWOOM 미국나스닥100(H)",
         "field": "실부담비용",
-        "before": 0.3951,
-        "after": 20230310.6572
+        "before": 20230310.6572,
+        "after": 0.6772
       },
       {
         "code": "453330",
         "name": "RISE 미국S&P500(H)",
         "field": "총보수",
-        "before": 0.0047,
-        "after": 20230317.0
-      },
-      {
-        "code": "453330",
-        "name": "RISE 미국S&P500(H)",
-        "field": "기타비용",
-        "before": 0.13,
-        "after": 0.4421
+        "before": 20230317.0,
+        "after": 0.0001
       },
       {
         "code": "453330",
         "name": "RISE 미국S&P500(H)",
         "field": "실부담비용",
-        "before": 0.2164,
-        "after": 20230317.5238
+        "before": 20230317.5238,
+        "after": 0.5239
       },
       {
         "code": "453810",
         "name": "KODEX 인도Nifty50",
         "field": "총보수",
-        "before": 0.19,
-        "after": 20230419.0
-      },
-      {
-        "code": "453810",
-        "name": "KODEX 인도Nifty50",
-        "field": "기타비용",
-        "before": 0.08,
-        "after": 0.3434
+        "before": 20230419.0,
+        "after": 0.169
       },
       {
         "code": "453810",
         "name": "KODEX 인도Nifty50",
         "field": "실부담비용",
-        "before": 0.2877,
-        "after": 20230419.3611
+        "before": 20230419.3611,
+        "after": 0.5301
       },
       {
         "code": "453850",
         "name": "ACE 미국30년국채액티브(H)",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20230310.0
-      },
-      {
-        "code": "453850",
-        "name": "ACE 미국30년국채액티브(H)",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.1361
+        "before": 20230310.0,
+        "after": 0.035
       },
       {
         "code": "453850",
         "name": "ACE 미국30년국채액티브(H)",
         "field": "실부담비용",
-        "before": 0.1313,
-        "after": 20230310.1474
+        "before": 20230310.1474,
+        "after": 0.1824
       },
       {
         "code": "453870",
         "name": "TIGER 인도니프티50",
         "field": "총보수",
-        "before": 0.19,
-        "after": 20230412.0
-      },
-      {
-        "code": "453870",
-        "name": "TIGER 인도니프티50",
-        "field": "기타비용",
-        "before": 0.12,
-        "after": 0.3434
+        "before": 20230412.0,
+        "after": 0.149
       },
       {
         "code": "453870",
         "name": "TIGER 인도니프티50",
         "field": "실부담비용",
-        "before": 0.3673,
-        "after": 20230412.4007
+        "before": 20230412.4007,
+        "after": 0.5497
       },
       {
         "code": "458730",
         "name": "TIGER 미국배당다우존스",
         "field": "총보수",
-        "before": 0.01,
-        "after": 20230616.0
-      },
-      {
-        "code": "458730",
-        "name": "TIGER 미국배당다우존스",
-        "field": "기타비용",
-        "before": 0.05,
-        "after": 0.4421
+        "before": 20230616.0,
+        "after": 0.003
       },
       {
         "code": "458730",
         "name": "TIGER 미국배당다우존스",
         "field": "실부담비용",
-        "before": 0.1019,
-        "after": 20230616.484
+        "before": 20230616.484,
+        "after": 0.487
       },
       {
         "code": "461600",
         "name": "SOL 미국30년국채액티브(H)",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20230707.0
-      },
-      {
-        "code": "461600",
-        "name": "SOL 미국30년국채액티브(H)",
-        "field": "기타비용",
-        "before": 0.04,
-        "after": 0.1361
+        "before": 20230707.0,
+        "after": 0.039
       },
       {
         "code": "461600",
         "name": "SOL 미국30년국채액티브(H)",
         "field": "실부담비용",
-        "before": 0.0934,
-        "after": 20230707.1395
+        "before": 20230707.1395,
+        "after": 0.1785
       },
       {
         "code": "461900",
         "name": "PLUS 미국테크TOP10",
         "field": "총보수",
-        "before": 0.01,
-        "after": 20230714.0
-      },
-      {
-        "code": "461900",
-        "name": "PLUS 미국테크TOP10",
-        "field": "기타비용",
-        "before": 0.1,
-        "after": 0.4421
+        "before": 20230714.0,
+        "after": 0.0005
       },
       {
         "code": "461900",
         "name": "PLUS 미국테크TOP10",
         "field": "실부담비용",
-        "before": 0.159,
-        "after": 20230714.4911
+        "before": 20230714.4911,
+        "after": 0.4916
       },
       {
         "code": "463300",
         "name": "RISE 중국본토CSI300",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20230804.0
-      },
-      {
-        "code": "463300",
-        "name": "RISE 중국본토CSI300",
-        "field": "기타비용",
-        "before": 0.18,
-        "after": 0.4421
+        "before": 20230804.0,
+        "after": 0.01
       },
       {
         "code": "463300",
         "name": "RISE 중국본토CSI300",
         "field": "실부담비용",
-        "before": 0.273,
-        "after": 20230804.4851
+        "before": 20230804.4851,
+        "after": 0.4951
       },
       {
         "code": "465580",
         "name": "ACE 미국빅테크TOP7 Plus",
         "field": "총보수",
-        "before": 0.3,
-        "after": 20230907.0
-      },
-      {
-        "code": "465580",
-        "name": "ACE 미국빅테크TOP7 Plus",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.4421
+        "before": 20230907.0,
+        "after": 0.27
       },
       {
         "code": "465580",
         "name": "ACE 미국빅테크TOP7 Plus",
         "field": "실부담비용",
-        "before": 0.4506,
-        "after": 20230907.5227
+        "before": 20230907.5227,
+        "after": 0.7927
       },
       {
         "code": "472160",
         "name": "TIGER 미국테크TOP10 INDXX(H)",
         "field": "총보수",
-        "before": 0.49,
-        "after": 20231201.0
-      },
-      {
-        "code": "472160",
-        "name": "TIGER 미국테크TOP10 INDXX(H)",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.4421
+        "before": 20231201.0,
+        "after": 0.439
       },
       {
         "code": "472160",
         "name": "TIGER 미국테크TOP10 INDXX(H)",
         "field": "실부담비용",
-        "before": 0.7645,
-        "after": 20231201.6466
+        "before": 20231201.6466,
+        "after": 1.0856
       },
       {
         "code": "476030",
         "name": "SOL 미국나스닥100",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20240308.0
-      },
-      {
-        "code": "476030",
-        "name": "SOL 미국나스닥100",
-        "field": "기타비용",
-        "before": 0.11,
-        "after": 0.4421
+        "before": 20240308.0,
+        "after": 0.029
       },
       {
         "code": "476030",
         "name": "SOL 미국나스닥100",
         "field": "실부담비용",
-        "before": 0.2477,
-        "after": 20240308.5298
+        "before": 20240308.5298,
+        "after": 0.5588
       },
       {
         "code": "476760",
         "name": "ACE 미국30년국채액티브",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20240308.0
-      },
-      {
-        "code": "476760",
-        "name": "ACE 미국30년국채액티브",
-        "field": "기타비용",
-        "before": 0.06,
-        "after": 0.1361
+        "before": 20240308.0,
+        "after": 0.035
       },
       {
         "code": "476760",
         "name": "ACE 미국30년국채액티브",
         "field": "실부담비용",
-        "before": 0.1227,
-        "after": 20240308.1488
+        "before": 20240308.1488,
+        "after": 0.1838
       },
       {
         "code": "481190",
         "name": "SOL 미국테크TOP10",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20240517.0
-      },
-      {
-        "code": "481190",
-        "name": "SOL 미국테크TOP10",
-        "field": "기타비용",
-        "before": 0.04,
-        "after": 0.4421
+        "before": 20240517.0,
+        "after": 0.029
       },
       {
         "code": "481190",
         "name": "SOL 미국테크TOP10",
         "field": "실부담비용",
-        "before": 0.1844,
-        "after": 20240517.5365
+        "before": 20240517.5365,
+        "after": 0.5655
       },
       {
         "code": "481340",
         "name": "RISE 미국30년국채액티브",
         "field": "총보수",
-        "before": 0.05,
-        "after": 20240524.0
-      },
-      {
-        "code": "481340",
-        "name": "RISE 미국30년국채액티브",
-        "field": "기타비용",
-        "before": 0.08,
-        "after": 0.1361
+        "before": 20240524.0,
+        "after": 0.039
       },
       {
         "code": "481340",
         "name": "RISE 미국30년국채액티브",
         "field": "실부담비용",
-        "before": 0.1445,
-        "after": 20240524.1506
+        "before": 20240524.1506,
+        "after": 0.1896
       },
       {
         "code": "484790",
         "name": "KODEX 미국30년국채액티브(H)",
         "field": "총보수",
-        "before": 0.015,
-        "after": 20240614.0
-      },
-      {
-        "code": "484790",
-        "name": "KODEX 미국30년국채액티브(H)",
-        "field": "기타비용",
-        "before": 0.03,
-        "after": 0.7126
+        "before": 20240614.0,
+        "after": 0.004
       },
       {
         "code": "484790",
         "name": "KODEX 미국30년국채액티브(H)",
         "field": "실부담비용",
-        "before": 0.0801,
-        "after": 20240614.7477
+        "before": 20240614.7477,
+        "after": 0.7517
       },
       {
         "code": "485540",
         "name": "KODEX 미국AI테크TOP10",
         "field": "총보수",
-        "before": 0.3,
-        "after": 20240621.0
-      },
-      {
-        "code": "485540",
-        "name": "KODEX 미국AI테크TOP10",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.4421
+        "before": 20240621.0,
+        "after": 0.269
       },
       {
         "code": "485540",
         "name": "KODEX 미국AI테크TOP10",
         "field": "실부담비용",
-        "before": 0.5215,
-        "after": 20240621.5936
+        "before": 20240621.5936,
+        "after": 0.8626
       },
       {
         "code": "489250",
         "name": "KODEX 미국배당다우존스",
         "field": "총보수",
-        "before": 0.0099,
-        "after": 20240809.0
-      },
-      {
-        "code": "489250",
-        "name": "KODEX 미국배당다우존스",
-        "field": "기타비용",
-        "before": 0.08,
-        "after": 0.4421
+        "before": 20240809.0,
+        "after": 0.0029
       },
       {
         "code": "489250",
         "name": "KODEX 미국배당다우존스",
         "field": "실부담비용",
-        "before": 0.1898,
-        "after": 20240809.542
+        "before": 20240809.542,
+        "after": 0.5449
       },
       {
         "code": "490090",
         "name": "TIGER 미국AI빅테크10",
         "field": "총보수",
-        "before": 0.3,
-        "after": 20240823.0
-      },
-      {
-        "code": "490090",
-        "name": "TIGER 미국AI빅테크10",
-        "field": "기타비용",
-        "before": 0.07,
-        "after": 0.4421
+        "before": 20240823.0,
+        "after": 0.259
       },
       {
         "code": "490090",
         "name": "TIGER 미국AI빅테크10",
         "field": "실부담비용",
-        "before": 0.4799,
-        "after": 20240823.552
+        "before": 20240823.552,
+        "after": 0.811
       }
     ]
   }
