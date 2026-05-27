@@ -82,10 +82,10 @@ def setup_driver():
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
-    # Explicitly enable downloads via CDP (headless prefs fix)
+    # Browser-level download enable (Page.setDownloadBehavior is deprecated)
     driver.execute_cdp_cmd(
-        "Page.setDownloadBehavior",
-        {"behavior": "allow", "downloadPath": abs_download},
+        "Browser.setDownloadBehavior",
+        {"behavior": "allow", "downloadPath": abs_download, "eventsEnabled": True},
     )
     return driver
 
@@ -147,7 +147,7 @@ def download_kofia_excel():
             # 그리드 행 선택자는 WebSquare 공통 패턴인 tr[id*='gridView'] 사용
             wait.until(
                 EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "tr[id*='gridView'], div[id*='gridView'] tr")
+                    (By.CSS_SELECTOR, "[id='row1'], [id='gRow1']")
                 )
             )
             print("Data grid loaded.")
