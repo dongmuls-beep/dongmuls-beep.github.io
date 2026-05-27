@@ -206,92 +206,58 @@ def download_kofia_excel():
                 print("Excel button not found!")
                 return None
 
-        # Inject JS form interceptor BEFORE clicking — captures WebSquare's form POST details
-        driver.execute_script("""
-            window._downloadCapture = null;
+        # Use browser fetch() to download — same session/cookies/SSL as browser, no external requests needed
+        print("Clicking Excel Download (browser fetch mode)...")
+        driver.set_script_timeout(120)
+        fetch_result = driver.execute_async_script("""
+            var callback = arguments[arguments.length - 1];
             var origSubmit = HTMLFormElement.prototype.submit;
             HTMLFormElement.prototype.submit = function() {
-                var fd = {};
-                try { for (var p of new FormData(this).entries()) { fd[p[0]] = p[1]; } } catch(e) {}
-                window._downloadCapture = {
-                    action: this.action, method: this.method,
-                    enctype: this.enctype, data: fd
-                };
-                origSubmit.call(this);
+                var formEl = this;
+                var url = this.action;
+                var fd = new FormData(this);
+                origSubmit.call(this);  // let Chrome try normal download too
+                HTMLFormElement.prototype.submit = origSubmit;
+                fetch(url, {method: 'POST', body: fd})
+                    .then(function(r) {
+                        if (!r.ok) { callback({ok: false, status: r.status}); return; }
+                        return r.blob();
+                    })
+                    .then(function(blob) {
+                        if (!blob) return;
+                        var reader = new FileReader();
+                        reader.onloadend = function() {
+                            callback({ok: true, data: reader.result, size: blob.size, type: blob.type});
+                        };
+                        reader.readAsDataURL(blob);
+                    })
+                    .catch(function(e) { callback({ok: false, error: String(e)}); });
             };
+            // Trigger download button
+            try { fnExcelDownBtn(); } catch(e) { HTMLFormElement.prototype.submit = origSubmit; callback({ok: false, error: 'fnExcelDownBtn: ' + e}); }
         """)
+        print(f"fetch result: ok={fetch_result.get('ok') if fetch_result else None}, size={fetch_result.get('size') if fetch_result else None}, type={fetch_result.get('type','') if fetch_result else ''}")
 
-        print("Clicking Excel Download...")
-        driver.execute_script("arguments[0].click();", excel_btn)
-        # Dismiss any JS alert (e.g. "데이터가 없습니다.") that blocks download
-        try:
-            from selenium.webdriver.common.alert import Alert
-            alert = Alert(driver)
-            alert_text = alert.text
-            print(f"Alert dismissed: {alert_text}")
-            alert.accept()
-            if "데이터" in alert_text:
-                print("Search returned no data — aborting download.")
-                return None
-        except Exception:
-            pass  # No alert, proceed normally
+        # 6b. If fetch returned file data, save it
+        if fetch_result and fetch_result.get('ok') and fetch_result.get('data', '').startswith('data:'):
+            import base64
+            data_url = fetch_result['data']
+            # data:<mime>;base64,<content>
+            b64 = data_url.split(',', 1)[1]
+            file_bytes = base64.b64decode(b64)
+            fetch_path = os.path.join(DOWNLOAD_DIR, f"kofia_fetch_{datetime.now().strftime('%Y%m%d%H%M%S')}.xls")
+            with open(fetch_path, 'wb') as fp:
+                fp.write(file_bytes)
+            print(f"Browser fetch saved: {fetch_path} ({len(file_bytes)} bytes)")
+            return fetch_path
 
-        # 6a. Diagnostic — find XLS files anywhere on system 10s after click
-        time.sleep(10)
-        try:
-            import subprocess as _sp
-            find_out = _sp.run(
-                'find /home /tmp /root -maxdepth 5 \\( -name "*.xls" -o -name "*.xlsx" -o -name "*.crdownload" \\) 2>/dev/null | head -20',
-                shell=True, capture_output=True, text=True, timeout=10
-            )
-            print(f"XLS files on system after click: {repr(find_out.stdout.strip()) or 'none'}")
-        except Exception as find_err:
-            print(f"find diagnostic failed: {find_err}")
-
-        # Check if form was intercepted
-        captured = driver.execute_script("return window._downloadCapture;")
-        print(f"JS form capture: {str(captured)[:300] if captured else 'none'}")
-
-        # 6b. Wait for download — 지수 백오프 재시도 (최대 3회, 각 90초)
-        print("Waiting for file download...")
-        result = _wait_for_download(DOWNLOAD_DIR, timeout=80, max_retries=2)
+        # 6c. Also wait briefly for Chrome's native download (may have also triggered)
+        print("Waiting for Chrome native download...")
+        result = _wait_for_download(DOWNLOAD_DIR, timeout=30, max_retries=1)
         if result:
             return result
 
-        # 6c. Fallback: use requests + browser cookies to replay captured form POST
-        if captured and captured.get('action'):
-            print(f"Chrome download missed. Replaying via requests: {captured['action']}")
-            try:
-                session = requests.Session()
-                for ck in driver.get_cookies():
-                    session.cookies.set(ck['name'], ck['value'], domain=ck.get('domain', ''))
-                session.headers.update({
-                    'User-Agent': driver.execute_script("return navigator.userAgent;"),
-                    'Referer': driver.current_url,
-                })
-                resp = session.post(
-                    captured['action'],
-                    data=captured.get('data', {}),
-                    stream=True,
-                    timeout=60,
-                    verify=False,
-                )
-                resp.raise_for_status()
-                ctype = resp.headers.get('Content-Type', '')
-                print(f"requests response: status={resp.status_code} content-type={ctype}")
-                if resp.status_code == 200 and ('excel' in ctype.lower() or 'octet' in ctype.lower() or 'xls' in ctype.lower()):
-                    fallback_path = os.path.join(DOWNLOAD_DIR, f"kofia_fallback_{datetime.now().strftime('%Y%m%d%H%M%S')}.xls")
-                    with open(fallback_path, 'wb') as fb:
-                        for chunk in resp.iter_content(chunk_size=65536):
-                            fb.write(chunk)
-                    print(f"Fallback download saved: {fallback_path}")
-                    return fallback_path
-                else:
-                    print(f"Fallback response not a file: {resp.text[:200]}")
-            except Exception as fb_err:
-                print(f"Fallback download failed: {fb_err}")
-        else:
-            print("No form capture available — cannot attempt fallback download.")
+        print(f"fetch error: {fetch_result.get('error','') if fetch_result else 'no result'}")
 
         print("Download failed after all retries. Capturing debug info...")
         try:
