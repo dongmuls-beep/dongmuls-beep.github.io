@@ -266,13 +266,14 @@ def download_kofia_excel():
             'admFee': '사무관리보수', 'adm_fee': '사무관리보수',
         }
         # Hardcoded position-based fallback for standard 17-column KOFIA fee table
-        # Confirmed: col0=운용사, col1=펀드명, col4=설정일(YYYYMMDD), col5=합계(A),
-        #            col10=기타비용(B), col15=매매·중개수수료율(D), col16=표준코드
+        # Verified by row0 math: col5+col6+col7+col8=col9 → col9=합계(A)
+        #                        col9+col11≈col12 → col11=기타비용(B), col12=총보수비용(A+B)
+        #            col4=설정일(YYYYMMDD), col15=매매·중개수수료율(D), col16=표준코드
         _KOFIA_17_COLS = [
             '운용사', '펀드명', '펀드유형', '법인구분', '설정일',
-            '합계(A)', '운용보수', '판매보수', '수탁보수', '사무관리보수',
-            '기타비용(B)', '총보수비용(A+B)', '판매·매수보수환급금(E)', '기준일',
-            '기타2', '매매·중개수수료율(D)', '표준코드',
+            '운용보수', '판매보수', '수탁보수', '사무관리보수', '합계(A)',
+            '기타보수', '기타비용(B)', '총보수비용(A+B)', '판매·매수보수환급금(E)',
+            '기준일', '매매·중개수수료율(D)', '표준코드',
         ]
 
         if grid_json:
