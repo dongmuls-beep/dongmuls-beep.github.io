@@ -266,10 +266,11 @@ def download_kofia_excel():
             'admFee': '사무관리보수', 'adm_fee': '사무관리보수',
         }
         # Hardcoded position-based fallback for standard 17-column KOFIA fee table
-        # Confirmed from CI data: col0=운용사, col1=펀드명, col15=매매수수료, col16=표준코드
+        # Confirmed: col0=운용사, col1=펀드명, col4=설정일(YYYYMMDD), col5=합계(A),
+        #            col10=기타비용(B), col15=매매·중개수수료율(D), col16=표준코드
         _KOFIA_17_COLS = [
-            '운용사', '펀드명', '펀드유형', '법인구분',
-            '합계(A)', '운용보수', '판매보수', '수탁보수', '사무관리보수', '기타보수',
+            '운용사', '펀드명', '펀드유형', '법인구분', '설정일',
+            '합계(A)', '운용보수', '판매보수', '수탁보수', '사무관리보수',
             '기타비용(B)', '총보수비용(A+B)', '판매·매수보수환급금(E)', '기준일',
             '기타2', '매매·중개수수료율(D)', '표준코드',
         ]
@@ -311,9 +312,7 @@ def download_kofia_excel():
                     print(f"Columns via 17-col positional fallback: {list(df.columns)}")
 
                 # Safety override: auto-detect 표준코드 column by Korean fund code regex
-                # (overrides any wrong positional guess — standard codes are unique values)
                 import re as _re
-                _std_code_re = _re.compile(r'^K[A-Z0-9]{9,12}$')
                 for _col in list(df.columns):
                     try:
                         _samp = df[_col].dropna().head(30).astype(str)
@@ -322,10 +321,26 @@ def download_kofia_excel():
                                 if '표준코드' in df.columns:
                                     df.rename(columns={'표준코드': '구_표준코드'}, inplace=True)
                                 df.rename(columns={_col: '표준코드'}, inplace=True)
-                                print(f"표준코드 auto-detected at col '{_col}' via regex — overriding positional guess")
+                                print(f"표준코드 auto-detected at col '{_col}' via regex")
                             break
                     except Exception:
                         pass
+
+                # Safety override: if 합계(A) values look like dates (> 1000), find correct fee col
+                if '합계(A)' in df.columns:
+                    _total_med = _pd.to_numeric(df['합계(A)'], errors='coerce').median()
+                    if _total_med is not None and _total_med > 1:
+                        print(f"WARNING: 합계(A) median={_total_med:.0f} looks like date — scanning for fee column")
+                        for _col in df.columns:
+                            try:
+                                _vals = _pd.to_numeric(df[_col], errors='coerce').dropna()
+                                _med = _vals.median()
+                                if 0.0001 < _med < 0.02 and len(_vals) > 100:
+                                    df.rename(columns={'합계(A)': '설정일_wrong', _col: '합계(A)'}, inplace=True)
+                                    print(f"합계(A) re-mapped to col '{_col}' (median={_med:.4f})")
+                                    break
+                            except Exception:
+                                pass
 
                 print(f"Final columns: {list(df.columns)}")
                 print(f"Row 0 sample: {df.iloc[0].to_dict() if len(df) > 0 else 'empty'}")
