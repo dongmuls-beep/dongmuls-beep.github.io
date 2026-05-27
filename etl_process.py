@@ -58,28 +58,35 @@ def setup_driver():
     Sets up the Chrome WebDriver with options for downloading files.
     """
     options = webdriver.ChromeOptions()
-    
+
     # Check if running in GitHub Actions (Headless Mode)
     if os.environ.get('GITHUB_ACTIONS') == 'true':
         print("Running in GitHub Actions (Headless Mode)")
-        options.add_argument("--headless")
+        options.add_argument("--headless=new")
         options.add_argument("--window-size=1920,1080")
-    # else:
-    #    options.add_argument("--headless") # Uncomment for local headless
+        options.add_argument("--disable-gpu")
 
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+    options.add_argument("--disable-popup-blocking")
+
+    abs_download = os.path.abspath(DOWNLOAD_DIR)
     prefs = {
-        "download.default_directory": DOWNLOAD_DIR,
+        "download.default_directory": abs_download,
         "download.prompt_for_download": False,
         "download.directory_upgrade": True,
-        "safebrowsing.enabled": True
+        "safebrowsing.enabled": True,
+        "profile.default_content_settings.popups": 0,
     }
     options.add_experimental_option("prefs", prefs)
-    
+
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
+    # Explicitly enable downloads via CDP (headless prefs fix)
+    driver.execute_cdp_cmd(
+        "Page.setDownloadBehavior",
+        {"behavior": "allow", "downloadPath": abs_download},
+    )
     return driver
 
 def download_kofia_excel():
@@ -91,9 +98,23 @@ def download_kofia_excel():
     try:
         print("Opening KOFIA website...")
         driver.get("https://dis.kofia.or.kr/websquare/index.jsp?w2xPath=/wq/fundann/DISFundFeeCMS.xml&divisionId=MDIS01005001000000&serviceId=SDIS01005001000")
-        
+
+        main_handle = driver.current_window_handle
+
+        # Close any popup windows (KOFIA notice/event popups at popup/view.do)
+        time.sleep(2)
+        for handle in list(driver.window_handles):
+            if handle != main_handle:
+                try:
+                    driver.switch_to.window(handle)
+                    print(f"Closing popup: {driver.current_url}")
+                    driver.close()
+                except Exception as popup_err:
+                    print(f"Failed to close popup {handle}: {popup_err}")
+        driver.switch_to.window(main_handle)
+
         wait = WebDriverWait(driver, 30)
-        
+
         # 1. Wait for page load
         print("Waiting for page load...")
         search_btn = wait.until(EC.element_to_be_clickable((By.ID, "btnSear")))
@@ -155,7 +176,15 @@ def download_kofia_excel():
         if result:
             return result
 
-        print("Download failed after all retries.")
+        print("Download failed after all retries. Capturing debug info...")
+        try:
+            driver.save_screenshot("selenium_error.png")
+            with open("page_source.html", "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+            print(f"window_handles count: {len(driver.window_handles)}")
+            print("Saved selenium_error.png and page_source.html")
+        except Exception as dbg:
+            print(f"Debug capture failed: {dbg}")
         return None
 
     except Exception as e:

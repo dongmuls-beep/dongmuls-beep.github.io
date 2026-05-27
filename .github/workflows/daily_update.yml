@@ -36,6 +36,18 @@ jobs:
           GAS_WEB_APP_URL: ${{ secrets.GAS_WEB_APP_URL }}
         run: python etl_process.py
 
+      - name: Upload Selenium debug artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-debug
+          path: |
+            selenium_error.png
+            page_source.html
+            downloads/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Build Changelog
         run: python scripts/build_changelog.py
 
