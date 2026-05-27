@@ -212,29 +212,103 @@ def download_kofia_excel():
         grid_json = driver.execute_script("""
             var count = grdMain.getRowCount();
             if (!count) return JSON.stringify({error: 'empty', count: 0});
-            // Discover column IDs from first row
-            var firstRow = null;
-            try { firstRow = grdMain.getRowData(0); } catch(e) {}
-            var colIds = firstRow ? Object.keys(firstRow) : [];
-            if (!colIds.length) {
-                return JSON.stringify({error: 'no_cols', firstRow: JSON.stringify(firstRow), count: count});
+
+            // Column count
+            var colCount = 0;
+            try { colCount = grdMain.getColumnCount(); } catch(e) {}
+            if (!colCount) { var fr0 = null; try { fr0 = grdMain.getRowData(0); } catch(e) {} colCount = fr0 ? Object.keys(fr0).length : 17; }
+
+            // Column IDs via WebSquare API
+            var colIds = [];
+            for (var i = 0; i < colCount; i++) {
+                try { colIds.push(grdMain.getColumnId(i)); } catch(e) { colIds.push(String(i)); }
             }
+
+            // DOM header texts — try multiple selector patterns
+            var headerTexts = [];
+            var sels = [
+                '#grdMain_head td', 'table[id*="grdMain_head"] td',
+                '[id*="grdMain"][id*="head"] td', '[id*="grdMain"][id*="Head"] td',
+                '.w2grid_header td', '.w2grid_hcell'
+            ];
+            for (var si = 0; si < sels.length; si++) {
+                var els = document.querySelectorAll(sels[si]);
+                if (els.length >= 3) {
+                    headerTexts = Array.from(els).map(function(e) {
+                        return (e.innerText || e.textContent || '').trim().replace(/\\n/g,' ');
+                    }).filter(function(t) { return t.length > 0; });
+                    if (headerTexts.length >= 3) break;
+                }
+            }
+
             var rows = [];
             for (var i = 0; i < count; i++) {
                 try { rows.push(grdMain.getRowData(i)); } catch(e) { rows.push(null); }
             }
-            return JSON.stringify({count: count, cols: colIds, rows: rows});
+            return JSON.stringify({count: count, colIds: colIds, headerTexts: headerTexts, rows: rows});
         """)
+
+        # Known mapping: WebSquare internal column IDs → Korean names used by process_data()
+        _WS_ID_MAP = {
+            'fundNm': '펀드명', 'fund_nm': '펀드명', 'fnm': '펀드명',
+            'stdCode': '표준코드', 'std_code': '표준코드', 'isinCode': '표준코드',
+            'isinCd': '표준코드', 'isin_cd': '표준코드',
+            'sumAmt': '합계(A)', 'totFee': '합계(A)', 'totalFee': '합계(A)',
+            'tot_fee': '합계(A)', 'totFeeRt': '합계(A)', 'tot': '합계(A)',
+            'sumA': '합계(A)', 'sum_a': '합계(A)', 'feeAmt': '합계(A)',
+            'etcCost': '기타비용(B)', 'etc_cost': '기타비용(B)', 'etcExpense': '기타비용(B)',
+            'etcCostRt': '기타비용(B)', 'costB': '기타비용(B)',
+            'trdBrkFeeRt': '매매·중개수수료율(D)', 'trd_fee_rt': '매매·중개수수료율(D)',
+            'trdFeeRt': '매매·중개수수료율(D)', 'm매매': '매매·중개수수료율(D)',
+            'operFee': '운용보수', 'oper_fee': '운용보수', 'mgmtFee': '운용보수',
+            'saleFee': '판매보수', 'sale_fee': '판매보수',
+            'custFee': '수탁보수', 'cust_fee': '수탁보수',
+            'admFee': '사무관리보수', 'adm_fee': '사무관리보수',
+        }
+        # Hardcoded position-based fallback for standard 17-column KOFIA fee table
+        _KOFIA_17_COLS = [
+            '번호', '펀드명', '펀드유형', '표준코드', '운용사',
+            '합계(A)', '운용보수', '판매보수', '수탁보수', '사무관리보수',
+            '기타보수', '기타비용(B)', '매매·중개수수료율(D)', '총보수비용(A+B)',
+            '판매·매수보수환급금(E)', '기준일', '기타',
+        ]
 
         if grid_json:
             import json as _json
             gdata = _json.loads(grid_json)
-            print(f"grdMain extract: count={gdata.get('count')}, cols={gdata.get('cols','?')[:5] if isinstance(gdata.get('cols'), list) else gdata.get('cols','?')}, error={gdata.get('error','none')}")
-            if gdata.get('rows') and not gdata.get('error'):
+            col_ids = gdata.get('colIds', [])
+            header_texts = gdata.get('headerTexts', [])
+            rows = gdata.get('rows') or []
+            print(f"grdMain extract: count={gdata.get('count')}, error={gdata.get('error','none')}")
+            print(f"colIds (all): {col_ids}")
+            print(f"headerTexts (first 5): {header_texts[:5]}")
+            if rows and not gdata.get('error'):
                 import pandas as _pd
-                df = _pd.DataFrame(gdata['rows'])
-                print(f"DataFrame columns: {list(df.columns)}")
-                # Write to Excel so process_data() can read it unchanged
+                df = _pd.DataFrame(rows)
+                print(f"DataFrame columns (raw): {list(df.columns)}")
+                n = len(df.columns)
+
+                # Priority 1: DOM headers contain Korean fee column names
+                dom_has_korean = any('표준코드' in t or '합계' in t or '펀드명' in t for t in header_texts)
+                if dom_has_korean and len(header_texts) >= n:
+                    rename = {df.columns[i]: header_texts[i] for i in range(n)}
+                    df.rename(columns=rename, inplace=True)
+                    print(f"Columns via DOM headers: {list(df.columns)}")
+
+                # Priority 2: map via known WebSquare ID → Korean dict
+                elif col_ids:
+                    rename = {}
+                    for i, cid in enumerate(col_ids[:n]):
+                        rename[df.columns[i]] = _WS_ID_MAP.get(cid, cid)
+                    df.rename(columns=rename, inplace=True)
+                    print(f"Columns via ID map: {list(df.columns)}")
+
+                # Priority 3: position-based fallback for standard 17-column table
+                if n == 17 and not any('표준코드' in str(c) for c in df.columns):
+                    rename = {df.columns[i]: _KOFIA_17_COLS[i] for i in range(n)}
+                    df.rename(columns=rename, inplace=True)
+                    print(f"Columns via 17-col positional fallback: {list(df.columns)}")
+
                 ws_path = os.path.join(DOWNLOAD_DIR, f"kofia_ws_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx")
                 df.to_excel(ws_path, index=False)
                 print(f"WebSquare model saved to Excel: {ws_path}")
