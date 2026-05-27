@@ -593,12 +593,11 @@ def update_google_sheets(data):
     return True
 
 if __name__ == "__main__":
-    # 필수 환경 변수 검사
+    # GAS URL 검사 — 없으면 경고 후 mock 폴백으로 계속 진행
     if not GAS_WEB_APP_URL:
-        print("ERROR: 환경 변수 GAS_WEB_APP_URL이 설정되지 않았습니다.")
+        print("WARNING: GAS_WEB_APP_URL 미설정. mock 데이터로 ETF 목록 대체.")
         print("  로컬: export GAS_WEB_APP_URL='https://script.google.com/...'")
         print("  GitHub Actions: repository Settings > Secrets > GAS_WEB_APP_URL 추가")
-        sys.exit(1)
 
     if not os.path.isdir(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR, exist_ok=True)
