@@ -59,12 +59,15 @@ def setup_driver():
     """
     options = webdriver.ChromeOptions()
 
-    # Check if running in GitHub Actions (Headless Mode)
-    if os.environ.get('GITHUB_ACTIONS') == 'true':
-        print("Running in GitHub Actions (Headless Mode)")
+    has_display = bool(os.environ.get('DISPLAY'))
+    if not has_display:
+        print("No display detected — headless Chrome")
         options.add_argument("--headless=new")
         options.add_argument("--window-size=1920,1080")
         options.add_argument("--disable-gpu")
+    else:
+        print(f"Display detected ({os.environ.get('DISPLAY')}) — headed Chrome via Xvfb")
+        options.add_argument("--window-size=1920,1080")
 
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")

@@ -34,7 +34,8 @@ jobs:
       - name: Run ETL Script
         env:
           GAS_WEB_APP_URL: ${{ secrets.GAS_WEB_APP_URL }}
-        run: python etl_process.py
+          PYTHONUNBUFFERED: '1'
+        run: xvfb-run --server-args="-screen 0 1920x1080x24" python etl_process.py
 
       - name: Upload Selenium debug artifacts on failure
         if: failure()
