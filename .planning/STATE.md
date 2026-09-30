@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-09-30)
 
 Phase: 16 (통합·검증) — planning; Phases 10-15 complete
 Plan: —
-Status: Phase 16 planning; Phase 14/15 warning fixes in progress
+Status: Phase 16 executing (16-01 wiring, 16-02 audit) — resume: check 16-*-SUMMARY.md
 Last activity: 2026-09-30 — Phases 14-15 executed in parallel (human UAT deferred to Phase 16)
 
 Progress: [░░░░░░░░░░] 0% (0/7 phases)
@@ -75,3 +75,15 @@ Progress: [░░░░░░░░░░] 0% (0/7 phases)
 **Last session:** 2026-09-30
 **Stopped at:** v1.4 roadmap created
 **Next action:** Wave 0 실행 — /gsd:execute-phase 10, 11, 12, 13 (병렬). Phase 14 plan에 table_value_missing i18n 키 8개 언어 추가 필수 (Phase 11 요구)
+
+
+## Resume Handoff (2026-09-30 ~16:45)
+
+- Phases 10-15 complete + review fixes (27/28 reqs). Phase 16 (FEED-04 + integration) was executing in background at session end.
+- On resume: `git log --oneline -15`; check `.planning/phases/16-integration/` for 16-01/16-02 SUMMARY, 16-VERIFICATION.md, 16-HUMAN-UAT.md.
+  - If SUMMARYs missing → rerun `/gsd-execute-phase 16` (plans already committed; skip done plans).
+  - If done → mark FEED-04 + Phase 16 complete in REQUIREMENTS/ROADMAP/STATE.
+- Then: user does human UAT (16-HUMAN-UAT.md: browser 320/375/desktop, screen reader, th/tl/km/vi/ja/zh disclaimer review) → `/gsd-audit-milestone` → `/gsd-complete-milestone`.
+- Nothing pushed yet. Before push: `git pull --rebase origin main` (CI auto-commits daily).
+- Deferred: 14 IN-01 (double column label SR), 15 info items, 12 IN-01/02, backlog items in REQUIREMENTS Future.
+- config: workflow.use_worktrees=false (OneDrive). Parallel agents must commit with `git commit --only -- <paths>`.
