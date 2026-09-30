@@ -137,7 +137,7 @@ def test_empty_changelog():
 def test_cap_50():
     entries = []
     for d in range(1, 61):
-        day = "2026-01-%02d" % d if d <= 28 else "2026-02-%02d" % (d - 28)
+        day = "2026-%02d-%02d" % (1 + (d - 1) // 28, 1 + (d - 1) % 28)
         entries.append(entry(day, [change("C%d" % d, "n", "총보수", 0.1, 0.2)]))
     items = br.build_items(entries, 1000)
     assert len(items) == 50

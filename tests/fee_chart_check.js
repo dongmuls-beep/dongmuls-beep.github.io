@@ -112,4 +112,50 @@ assert.strictEqual(context.formatFeeAxisValue(0.0047), "0.0047%");
 assert.strictEqual(context.formatFeeAxisValue(1), "1.00%");
 assert.strictEqual(context.formatFeeAxisDate("2026-02-12"), "2026.02");
 
+// DATA-10 null-safe + seam (Phase 11)
+for (const v of [0, 0.0045, "0.05", "0.05%"]) assert.strictEqual(context.isValidFee(v), true, String(v));
+for (const v of [null, undefined, "", "-", "abc", NaN, Infinity]) assert.strictEqual(context.isValidFee(v), false, String(v));
+
+const feeFixture = [0.3, null, 0.1, "-", NaN, 0.2, undefined];
+const ascSorted = [...feeFixture].sort((a, b) => context.compareFeeNullLast(a, b, "asc"));
+assert.deepStrictEqual(ascSorted.slice(0, 3), [0.1, 0.2, 0.3]);
+assert.ok(ascSorted.slice(3).every((v) => !context.isValidFee(v)), String(ascSorted));
+const descSorted = [...feeFixture].sort((a, b) => context.compareFeeNullLast(a, b, "desc"));
+assert.deepStrictEqual(descSorted.slice(0, 3), [0.3, 0.2, 0.1]);
+assert.ok(descSorted.slice(3).every((v) => !context.isValidFee(v)), String(descSorted));
+const defSorted = [...feeFixture].sort((a, b) => context.compareFeeNullLast(a, b));
+assert.deepStrictEqual(defSorted.slice(0, 3), ascSorted.slice(0, 3));
+assert.ok(defSorted.slice(3).every((v) => !context.isValidFee(v)));
+
+assert.strictEqual(context.missingValueText(), "-");
+
+const missingCell = context.feeCellHtml(null, "360200", "A", "real");
+assert.strictEqual(missingCell, "-");
+assert.ok(!missingCell.includes("fee-history-btn"));
+assert.strictEqual(context.feeCellHtml("abc", "360200", "A", "real"), "-");
+const validCell = context.feeCellHtml(0.05, "360200", "A", "real");
+assert.ok(validCell.includes("fee-history-btn") && validCell.includes("0.0500%"), validCell);
+
+assert.strictEqual(context.changelogEntryFromChange({ before: null, after: 0.05 }), null);
+assert.strictEqual(context.changelogEntryFromChange({ before: 0.05, after: null }), null);
+assert.strictEqual(context.changelogEntryFromChange({ before: "x", after: 0.05 }), null);
+assert.strictEqual(context.changelogEntryFromChange(null), null);
+const clEntry = context.changelogEntryFromChange({ before: 0.05, after: 0.045 });
+assert.ok(clEntry && clEntry.diff === -0.005, JSON.stringify(clEntry));
+
+assert.strictEqual(context.buildChangeBadgeHtml(null, 0.05), "");
+assert.strictEqual(context.buildChangeBadgeHtml({ diff: -0.005 }, null), "");
+assert.strictEqual(context.buildChangeBadgeHtml({ diff: NaN }, 0.05), "");
+assert.strictEqual(context.buildChangeBadgeHtml({ diff: 0 }, 0.05), "");
+const downBadge = context.buildChangeBadgeHtml({ diff: -0.005 }, 0.045);
+assert.ok(downBadge.includes("fee-change down") && downBadge.includes("▼"), downBadge);
+const upBadge = context.buildChangeBadgeHtml({ diff: 0.01 }, 0.05);
+assert.ok(upBadge.includes("fee-change up") && upBadge.includes("▲"), upBadge);
+
+const startPts = [{ date: "2026-03-01", value: 0.0055 }, { date: "2026-06-01", value: 0.0045 }];
+assert.strictEqual(context.buildFeeLinePath(startPts, sc, "2026-09-30", undefined), context.buildFeeLinePath(startPts, sc, "2026-09-30"));
+const dStart = context.buildFeeLinePath(startPts, sc, "2026-09-30", "2026-01-01");
+const startX = Number.parseFloat(/^M(-?[\d.]+)/.exec(dStart)[1]);
+assert.ok(startX > 12 && !/NaN|Infinity/.test(dStart), dStart);
+
 console.log("fee_chart_check OK");

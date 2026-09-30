@@ -669,11 +669,8 @@ async function fetchData() {
                     if (latest && Array.isArray(latest.changes)) {
                         latest.changes.forEach((change) => {
                             if (change.field === "실부담비용") {
-                                changelogLatestByCode[change.code] = {
-                                    before: change.before,
-                                    after: change.after,
-                                    diff: Number((change.after - change.before).toFixed(4)),
-                                };
+                                const entry = changelogEntryFromChange(change);
+                                if (entry) changelogLatestByCode[change.code] = entry;
                             }
                         });
                     }
@@ -698,6 +695,7 @@ async function fetchData() {
         renderTabs(allData);
         filterAndRenderTable();
         updateLastUpdated(false);
+        if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent("etf:data-ready"));
     } catch (error) {
         console.error("Error fetching data:", error);
         tbody.innerHTML = `<tr><td colspan="8" class="loading-text error-text">${getTranslation("table_error")}</td></tr>`;
@@ -865,14 +863,11 @@ function renderTable(rows) {
 
     if (!rows || rows.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_empty")}</td></tr>`;
+        if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent("etf:table-rendered"));
         return;
     }
 
-    const sorted = [...rows].sort((a, b) => {
-        const aValue = toNumber(a[dataKeys.real]);
-        const bValue = toNumber(b[dataKeys.real]);
-        return aValue - bValue;
-    });
+    const sorted = [...rows].sort((a, b) => compareFeeNullLast(a[dataKeys.real], b[dataKeys.real], "asc"));
 
     trackEvent("table_sort", {
         sort_field: "real_cost",
@@ -884,6 +879,7 @@ function renderTable(rows) {
         const row = document.createElement("tr");
 
         const code = valueOrDash(item[dataKeys.code]);
+        if (code !== "-") row.dataset.code = String(code);
         const name = valueOrDash(item[dataKeys.name]);
         const naverCode = code === "-" ? "" : String(code);
         const naverUrl = naverCode
@@ -891,14 +887,7 @@ function renderTable(rows) {
             : "#";
 
         const changeData = changelogLatestByCode[String(code)] || null;
-        let changeHtml = "";
-        if (changeData) {
-            const diff = changeData.diff;
-            const sign = diff > 0 ? "+" : "";
-            const cls = diff > 0 ? "fee-change up" : "fee-change down";
-            const arrow = diff > 0 ? "▲" : "▼";
-            changeHtml = `<span class="${cls}">${arrow}${sign}${Math.abs(diff).toFixed(4)}%p</span>`;
-        }
+        const changeHtml = buildChangeBadgeHtml(changeData, item[dataKeys.real]);
 
         row.innerHTML = `
             <td class="clickable code-cell" data-label="${escapeHtml(getTranslation("table_code"))}" title="${escapeHtml(getTranslation("aria_copy_code"))}">${escapeHtml(code)}</td>
@@ -933,6 +922,8 @@ function renderTable(rows) {
 
         tbody.appendChild(row);
     });
+
+    if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent("etf:table-rendered"));
 }
 
 function initShareButton() {
@@ -1315,6 +1306,7 @@ function getFeeFieldLabel(field) {
 }
 
 function feeCellHtml(value, code, name, field) {
+    if (!isValidFee(value)) return escapeHtml(missingValueText());
     const text = formatPercent(value);
     if (code === "-") return text;
 
@@ -1691,6 +1683,46 @@ function formatPercent(value) {
     return `${number.toFixed(4)}%`;
 }
 
+// DATA-10: a fee is "missing" when it is not a finite number (0 is valid).
+function isValidFee(value) {
+    return Number.isFinite(toNumber(value));
+}
+
+// Missing values always sort last, in both directions.
+function compareFeeNullLast(aRaw, bRaw, direction = "asc") {
+    const a = toNumber(aRaw);
+    const b = toNumber(bRaw);
+    const aOk = Number.isFinite(a);
+    const bOk = Number.isFinite(b);
+    if (!aOk && !bOk) return 0;
+    if (!aOk) return 1;
+    if (!bOk) return -1;
+    return direction === "desc" ? b - a : a - b;
+}
+
+function missingValueText() {
+    const t = getTranslation("table_value_missing");
+    return typeof t === "string" && t && t !== "table_value_missing" ? t : "-";
+}
+
+function changelogEntryFromChange(entry) {
+    if (!entry || typeof entry !== "object") return null;
+    const before = toNumber(entry.before);
+    const after = toNumber(entry.after);
+    if (!Number.isFinite(before) || !Number.isFinite(after)) return null;
+    return { before: entry.before, after: entry.after, diff: Number((after - before).toFixed(4)) };
+}
+
+function buildChangeBadgeHtml(changeData, realValue) {
+    if (!changeData || !isValidFee(realValue)) return "";
+    const diff = changeData.diff;
+    if (!Number.isFinite(diff) || diff === 0) return "";
+    const sign = diff > 0 ? "+" : "";
+    const cls = diff > 0 ? "fee-change up" : "fee-change down";
+    const arrow = diff > 0 ? "▲" : "▼";
+    return `<span class="${cls}">${arrow}${sign}${Math.abs(diff).toFixed(4)}%p</span>`;
+}
+
 function getKstToday() {
     return new Intl.DateTimeFormat("en-CA", {
         timeZone: "Asia/Seoul",
@@ -1796,8 +1828,8 @@ function feeChartRound(n) {
 }
 
 // Monotone cubic (Fritsch-Carlson): smooth, but never overshoots between points, so no fake fee levels appear.
-function buildFeeLinePath(points, scale, today) {
-    const start = points[0].date;
+function buildFeeLinePath(points, scale, today, startDate) {
+    const start = startDate || points[0].date;
     const pts = points.map((p) => [feeChartX(p.date, start, today), feeChartY(p.value, scale)]);
     const r = feeChartRound;
     let d = `M${r(pts[0][0])} ${r(pts[0][1])}`;
