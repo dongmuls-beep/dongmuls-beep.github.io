@@ -15,9 +15,9 @@
 
 ### 과거 복원 (BACK)
 
-- [ ] **BACK-01**: 운영자가 로컬에서 backfill 스크립트를 1회 실행해 2026-02 이후 data.json git 히스토리로부터 시계열을 생성할 수 있다
-- [ ] **BACK-02**: 2026-05-27 매핑 보정 이전의 잘못된 값이 시계열에 남지 않는다 (그날 마지막 커밋 규칙 + 감지 기반 재기준화 — Phase 8 CONTEXT 결정)
-- [ ] **BACK-03**: backfill 실행 시 리포트가 출력된다 — 항목별 변동 수, 건너뛴 커밋, A→B→A 의심 패턴
+- [x] **BACK-01**: 운영자가 로컬에서 backfill 스크립트를 1회 실행해 2026-02 이후 data.json git 히스토리로부터 시계열을 생성할 수 있다
+- [x] **BACK-02**: 2026-05-27 매핑 보정 이전의 잘못된 값이 시계열에 남지 않는다 (그날 마지막 커밋 규칙 + 감지 기반 재기준화 — Phase 8 CONTEXT 결정)
+- [x] **BACK-03**: backfill 실행 시 리포트가 출력된다 — 항목별 변동 수, 건너뛴 커밋, A→B→A 의심 패턴
 
 ### 그래프 UI (CHART)
 
@@ -51,9 +51,9 @@
 | HIST-02 | Phase 7 | Complete |
 | HIST-03 | Phase 7 | Complete |
 | HIST-04 | Phase 7 | Complete |
-| BACK-01 | Phase 8 | Pending |
-| BACK-02 | Phase 8 | Pending |
-| BACK-03 | Phase 8 | Pending |
+| BACK-01 | Phase 8 | Complete |
+| BACK-02 | Phase 8 | Complete |
+| BACK-03 | Phase 8 | Complete |
 | CHART-01 | Phase 9 | Pending |
 | CHART-02 | Phase 9 | Pending |
 | CHART-03 | Phase 9 | Pending |

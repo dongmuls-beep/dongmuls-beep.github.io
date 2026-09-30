@@ -33,7 +33,7 @@ Full details: [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 ### 🚧 v1.3 수수료 변동 그래프 (In Progress)
 
 - [x] **Phase 7: 수수료 이력 저장소 및 일일 추가** - 매일 ETL 후 변동된 수수료만 fee-history.json에 기록 (completed 2026-09-30)
-- [ ] **Phase 8: Git 히스토리 과거 복원** - data.json git 히스토리로부터 2026-02 이후 시계열 backfill
+- [x] **Phase 8: Git 히스토리 과거 복원** - data.json git 히스토리로부터 2026-02 이후 시계열 backfill (completed 2026-09-30)
 - [ ] **Phase 9: 수수료 변동 그래프 모달** - 수수료 셀 클릭 시 계단형 SVG 차트 모달 표시
 
 ## Phase Details
@@ -63,7 +63,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 08-01-PLAN.md — backfill_fee_history.py (pure replay + report + --dry-run), tests, regenerated fee-history.json
+- [x] 08-01-PLAN.md — backfill_fee_history.py (pure replay + report + --dry-run), tests, regenerated fee-history.json
 
 ### Phase 9: 수수료 변동 그래프 모달
 **Goal**: 사용자가 ETF 수수료 셀을 클릭하면 해당 항목의 과거 변동 추이를 그래프와 내역으로 볼 수 있다
@@ -89,5 +89,5 @@ Plans:
 | 5. 신규 코드 시장데이터 매칭 | v1.2 | 1/1 | Complete | 2026-09-30 |
 | 6. 변경 이력 정합성 | v1.2 | 1/1 | Complete | 2026-09-30 |
 | 7. 수수료 이력 저장소 및 일일 추가 | v1.3 | 1/1 | Complete    | 2026-09-30 |
-| 8. Git 히스토리 과거 복원 | v1.3 | 0/0 | Not started | - |
+| 8. Git 히스토리 과거 복원 | v1.3 | 1/1 | Complete   | 2026-09-30 |
 | 9. 수수료 변동 그래프 모달 | v1.3 | 0/0 | Not started | - |
