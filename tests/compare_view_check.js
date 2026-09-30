@@ -134,4 +134,171 @@ assert.ok(html.includes('<span class="cmp-best">최저</span>'));
 const cvSrc = readSrc("compare-view.js");
 assert.strictEqual((cvSrc.match(/^(const|let|function|class) /gm) || []).length, 0);
 
-console.log("compare_view_check OK");
+// ---------- Task 2: runtime with fake DOM ----------
+function makeEl(id) {
+    const node = {
+        id,
+        attrs: {},
+        textContent: "",
+        innerHTML: "",
+        listeners: {},
+        classes: new Set(),
+        setAttribute(k, v) { this.attrs[k] = String(v); },
+        removeAttribute(k) { delete this.attrs[k]; },
+        hasAttribute(k) { return k in this.attrs; },
+        addEventListener(type, fn) { (this.listeners[type] = this.listeners[type] || []).push(fn); },
+        classList: null,
+        scrollWidth: 0,
+        clientWidth: 0,
+    };
+    node.classList = {
+        add: (c) => node.classes.add(c),
+        remove: (c) => node.classes.delete(c),
+    };
+    return node;
+}
+
+const FIXTURE = [
+    { "구분": "국내", "종목코드": "360200", "종목명": "ETF A", "총보수": 0.1, "기타비용": 0.02, "매매중개수수료": 0.01, "실부담비용": 0.15, "AUM": 12000 },
+    { "구분": "국내", "종목코드": "0026S0", "종목명": "ETF B", "총보수": 0.2, "기타비용": 0.02, "매매중개수수료": 0.01, "실부담비용": null, "AUM": 500 },
+    { "구분": "국내", "종목코드": "069500", "종목명": "ETF C", "총보수": 0.09, "기타비용": 0.03, "매매중개수수료": 0.01, "실부담비용": 0.3, "AUM": 800 },
+];
+
+function tick() {
+    return new Promise((resolve) => setImmediate(resolve));
+}
+async function settle() {
+    for (let i = 0; i < 4; i++) await tick();
+}
+
+function bootRuntime(search, fetchImpl) {
+    const ids = ["cmp-live", "cmp-app", "cmp-toolbar", "cmp-copy", "cmp-notices", "cmp-state", "cmp-table-section",
+        "cmp-table-h", "cmp-table-body", "cmp-chart", "cmp-calc", "cmp-title"];
+    const els = {};
+    ids.forEach((id) => (els[id] = makeEl(id)));
+    const calls = { fetch: 0 };
+    const doc = {
+        readyState: "complete",
+        body: { dataset: { page: "compare" } },
+        addEventListener: noop,
+        getElementById: (id) => els[id] || null,
+        querySelector: () => null,
+        querySelectorAll: () => [],
+    };
+    const sandbox = {
+        document: doc,
+        window: { addEventListener: noop, location: { href: "https://etfsave.life/compare/" + search }, matchMedia: () => ({ matches: false, addEventListener: noop }) },
+        navigator: { language: "ko" },
+        localStorage: { getItem: () => null, setItem: noop },
+        console: { log: noop, error: noop, warn: noop },
+        Intl, URL, URLSearchParams, setTimeout, clearTimeout, Promise, Map, Set,
+        location: { search, href: "https://etfsave.life/compare/" + search },
+        MutationObserver: class { observe() {} },
+        fetch: (...args) => { calls.fetch++; return fetchImpl(...args); },
+    };
+    const c = vm.createContext(sandbox);
+    vm.runInContext(readSrc("script.js"), c, { filename: "script.js" });
+    vm.runInContext("currentTranslations = " + JSON.stringify(TRANSLATIONS), c);
+    vm.runInContext(readSrc("compare-view.js"), c, { filename: "compare-view.js" });
+    return { c, els, calls };
+}
+
+const okFetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(FIXTURE) });
+
+(async () => {
+    // (a) two valid, one invalid
+    {
+        const rt = bootRuntime("?compare=360200,0026s0,zzz", okFetch);
+        const seen = [];
+        rt.c.CompareView.onRender((ctxArg) => seen.push(plain(ctxArg)));
+        await settle();
+        const tbl = rt.els["cmp-table-body"].innerHTML;
+        assert.strictEqual((tbl.match(/<th scope="col">[^<]/g) || []).length, 2, "2 ETF column headers");
+        assert.ok(rt.els["cmp-notices"].innerHTML.includes("ZZZ"), "dropped notice lists ZZZ");
+        assert.strictEqual(seen.length, 1);
+        assert.deepStrictEqual(seen[0].items.map((i) => i.code), ["360200", "0026S0"]);
+        assert.strictEqual(seen[0].items[1].real, null);
+        assert.ok(!rt.els["cmp-table-section"].hasAttribute("hidden"));
+        assert.strictEqual(rt.els["cmp-app"].attrs["aria-busy"], "false");
+        let late = 0;
+        rt.c.CompareView.onRender(() => late++);
+        assert.strictEqual(late, 1, "late registration called immediately");
+        rt.c.CompareView.onRender(() => { throw new Error("boom"); });
+        // XSS: raw token escaped
+        const rt2 = bootRuntime("?compare=360200,0026S0,%3Cscript%3E", okFetch);
+        await settle();
+        const n = rt2.els["cmp-notices"].innerHTML;
+        assert.ok(!n.includes("<script>") && n.includes("&lt;SCRIPT&gt;"), "notice escaped");
+    }
+    // (b) fewer than 2 valid
+    {
+        const rt = bootRuntime("?compare=360200", okFetch);
+        let called = 0;
+        rt.c.CompareView.onRender(() => called++);
+        await settle();
+        assert.ok(rt.els["cmp-state"].innerHTML.includes("cmp-empty"));
+        assert.ok(rt.els["cmp-chart"].hasAttribute("hidden"));
+        assert.ok(rt.els["cmp-calc"].hasAttribute("hidden"));
+        assert.ok(rt.els["cmp-table-section"].hasAttribute("hidden"));
+        assert.strictEqual(called, 0);
+    }
+    // (c) fetch rejection + idempotent retry
+    {
+        const rt = bootRuntime("?compare=360200,0026S0", () => Promise.reject(new Error("net")));
+        await settle();
+        assert.ok(rt.els["cmp-state"].innerHTML.includes("data-cmp-retry"));
+        assert.strictEqual(rt.calls.fetch, 1);
+        const click = () => rt.els["cmp-app"].listeners.click.forEach((fn) =>
+            fn({ target: { closest: (sel) => (sel === "[data-cmp-retry]" ? {} : null) } }));
+        assert.strictEqual(rt.els["cmp-app"].listeners.click.length, 1, "single delegated listener");
+        click(); await settle();
+        click(); await settle();
+        assert.strictEqual(rt.calls.fetch, 3, "exactly 2 more fetches");
+        assert.strictEqual(rt.els["cmp-app"].listeners.click.length, 1, "no duplicate listeners");
+        assert.strictEqual(rt.els["cmp-copy"].listeners.click.length, 1);
+    }
+    // (d) copy link success/failure
+    {
+        const rt = bootRuntime("?compare=360200,0026S0&amt=5", okFetch);
+        await settle();
+        let flushed = 0;
+        rt.c.CompareView.onBeforeCopy(() => flushed++);
+        let copied = null;
+        vm.runInContext("copyText = async function (text) { globalThis.__copied = text; }", rt.c);
+        const btn = makeEl("btn");
+        await rt.c.CompareView.copyCurrentUrl(btn);
+        copied = rt.c.__copied;
+        assert.strictEqual(flushed, 1);
+        assert.ok(copied && copied.includes("compare=360200") && copied.includes("amt=5"), "url preserves params: " + copied);
+        assert.strictEqual(btn.textContent, "복사했어요");
+        vm.runInContext("copyText = async function () { throw new Error('nope'); }", rt.c);
+        await rt.c.CompareView.copyCurrentUrl(btn);
+        assert.strictEqual(btn.textContent, "복사하지 못했어요.");
+    }
+
+    // ---------- Task 3: static page assertions ----------
+    const pageBuf = fs.readFileSync(path.join(ROOT, "compare", "index.html"));
+    assert.ok(!(pageBuf[0] === 0xef && pageBuf[1] === 0xbb && pageBuf[2] === 0xbf), "no BOM");
+    const page = pageBuf.toString("utf8");
+    assert.ok(page.includes('data-page="compare"'));
+    assert.ok(page.includes('content="noindex,follow"'));
+    assert.ok(page.includes('href="https://etfsave.life/compare/"'));
+    assert.ok(!page.includes('id="tableBody"'));
+    assert.ok(!page.includes("adsbygoogle"));
+    [
+        "cmp-title", "cmp-live", "cmp-app", "cmp-toolbar", "cmp-copy", "cmp-notices", "cmp-state",
+        "cmp-table-section", "cmp-table-body", "cmp-chart", "cmp-chart-body", "cmp-calc", "cmp-calc-body",
+    ].forEach((id) => assert.ok(page.includes('id="' + id + '"'), "missing #" + id));
+    const order = ["/script.js", "/compare-calc.js", "/compare-view.js", "/compare-chart.js", "/compare-calculator.js"]
+        .map((src) => page.indexOf('<script src="' + src + '" defer>'));
+    order.forEach((i, k) => {
+        assert.ok(i > -1, "script " + k + " present");
+        if (k > 0) assert.ok(i > order[k - 1], "script order " + k);
+    });
+    assert.ok(page.indexOf("/compare.css") > page.indexOf("/style.css"), "compare.css after style.css");
+
+    console.log("compare_view_check OK");
+})().catch((e) => {
+    console.error(e);
+    process.exit(1);
+});
