@@ -8,10 +8,10 @@
 
 ### 데이터 신뢰성 (DATA)
 
-- [ ] **DATA-07**: 수수료 값을 파싱할 수 없거나 NaN/inf이면 `p_float`가 0.0 대신 `None`을 반환하고, `data.json`에는 `null`로 기록된다 (`json.dump(allow_nan=False)`로 무효 JSON 차단)
-- [ ] **DATA-08**: 수수료 구성요소 중 하나라도 결측이면 실부담비용도 결측이 되며, 검증(`validate_etl_results`)이 결측 때문에 ETL을 중단하지 않고 soft-warning으로 알린다
-- [ ] **DATA-09**: 결측이 끼인 전·후 쌍은 changelog와 fee-history에 변동으로 기록되지 않는다 (가짜 변동 없음)
-- [ ] **DATA-10**: 사용자는 결측 수수료를 "-"(번역된 표시)로 보고, 결측 종목은 정렬 시 맨 뒤에 오며 가짜 변동 배지·최저 표시를 받지 않는다
+- [x] **DATA-07**: 수수료 값을 파싱할 수 없거나 NaN/inf이면 `p_float`가 0.0 대신 `None`을 반환하고, `data.json`에는 `null`로 기록된다 (`json.dump(allow_nan=False)`로 무효 JSON 차단)
+- [x] **DATA-08**: 수수료 구성요소 중 하나라도 결측이면 실부담비용도 결측이 되며, 검증(`validate_etl_results`)이 결측 때문에 ETL을 중단하지 않고 soft-warning으로 알린다
+- [x] **DATA-09**: 결측이 끼인 전·후 쌍은 changelog와 fee-history에 변동으로 기록되지 않는다 (가짜 변동 없음)
+- [x] **DATA-10**: 사용자는 결측 수수료를 "-"(번역된 표시)로 보고, 결측 종목은 정렬 시 맨 뒤에 오며 가짜 변동 배지·최저 표시를 받지 않는다
 
 ### 모바일 접근성·UI (A11Y)
 
@@ -37,16 +37,16 @@
 ### 누적 비용 계산기 (CALC)
 
 - [ ] **CALC-01**: 사용자가 일시금, 보유기간(1~50년), 월 적립금, 기대수익률(기본 0%, "가정"으로 표시)을 입력할 수 있고, 쉼표·전각 숫자 입력이 처리된다
-- [ ] **CALC-02**: 종목별 총 부담 비용(원)과 비용으로 줄어든 금액(수수료 없을 때와의 차이)이 월 복리(월말 납입, 실부담비용 연율의 월 환산) 기준으로 계산된다
+- [x] **CALC-02**: 종목별 총 부담 비용(원)과 비용으로 줄어든 금액(수수료 없을 때와의 차이)이 월 복리(월말 납입, 실부담비용 연율의 월 환산) 기준으로 계산된다
 - [ ] **CALC-03**: 비교 페이지에서 선택 ETF 간 차이가 "N년간 A보다 B가 약 X원 더 부담" 형태로 표시되고, 결측 수수료 종목은 계산에서 제외·안내된다
 - [ ] **CALC-04**: 결과 옆에 투자 권유가 아니라는 면책 문구가 8개 언어로 표시된다
 - [ ] **CALC-05**: 계산기 입력값이 URL에 담겨 공유 링크로 같은 결과를 재현할 수 있다
 
 ### 수수료 변동 피드 (FEED)
 
-- [ ] **FEED-01**: 매일 CI가 changelog에서 총보수·기타비용 변동(인상·인하)만 항목으로 담은 RSS 2.0 `feed.xml`을 생성·커밋한다 (실부담비용 등은 본문 참고 정보, 결측·대량 보정 항목 제외)
-- [ ] **FEED-02**: 항목 GUID와 날짜가 재실행해도 바뀌지 않고, 변동이 없으면 `feed.xml`이 바이트 단위로 동일하다
-- [ ] **FEED-03**: 종목명의 특수문자(`&` 등)가 올바르게 이스케이프되어 피드가 유효한 XML이다
+- [x] **FEED-01**: 매일 CI가 changelog에서 총보수·기타비용 변동(인상·인하)만 항목으로 담은 RSS 2.0 `feed.xml`을 생성·커밋한다 (실부담비용 등은 본문 참고 정보, 결측·대량 보정 항목 제외)
+- [x] **FEED-02**: 항목 GUID와 날짜가 재실행해도 바뀌지 않고, 변동이 없으면 `feed.xml`이 바이트 단위로 동일하다
+- [x] **FEED-03**: 종목명의 특수문자(`&` 등)가 올바르게 이스케이프되어 피드가 유효한 XML이다
 - [ ] **FEED-04**: 사용자가 메인·변경 이력 페이지에서 피드를 발견·구독할 수 있다 (autodiscovery `<link>` + 보이는 링크)
 
 ## Future Requirements
@@ -72,14 +72,14 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| DATA-07 | Phase 10 | Pending |
-| DATA-08 | Phase 10 | Pending |
-| DATA-09 | Phase 10 | Pending |
-| DATA-10 | Phase 11 | Pending |
-| FEED-01 | Phase 12 | Pending |
-| FEED-02 | Phase 12 | Pending |
-| FEED-03 | Phase 12 | Pending |
-| CALC-02 | Phase 13 | Pending |
+| DATA-07 | Phase 10 | Complete |
+| DATA-08 | Phase 10 | Complete |
+| DATA-09 | Phase 10 | Complete |
+| DATA-10 | Phase 11 | Complete |
+| FEED-01 | Phase 12 | Complete |
+| FEED-02 | Phase 12 | Complete |
+| FEED-03 | Phase 12 | Complete |
+| CALC-02 | Phase 13 | Complete |
 | A11Y-01 | Phase 14 | Pending |
 | A11Y-02 | Phase 14 | Pending |
 | A11Y-03 | Phase 14 | Pending |

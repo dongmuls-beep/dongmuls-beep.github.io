@@ -64,10 +64,10 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
 - i18n 키는 EOF에 append 금지. Phase 14는 `aria_copy_code` 근처, Phase 15는 `fee_history_*` 뒤에 삽입. 키 패리티 테스트 확장.
 - `document.dispatchEvent`는 `fetchData`/`renderTable` 안에서만 사용 (`tests/fee_chart_check.js` vm stub에 없음).
 
-- [ ] **Phase 10: 데이터 신뢰성** - 결측 수수료를 0.0이 아닌 null로 처리하고 가짜 변동을 차단
-- [ ] **Phase 11: script.js seam + null-safe 프런트엔드** - 결측 표시·정렬·배지 처리와 신규 스크립트용 이음새 (직렬 게이트)
-- [ ] **Phase 12: RSS 피드** - 총보수/기타비용 변동만 담은 결정적 RSS 2.0 feed.xml 생성
-- [ ] **Phase 13: 계산기 엔진** - 누적 비용 순수 함수와 node 테스트
+- [x] **Phase 10: 데이터 신뢰성** - 결측 수수료를 0.0이 아닌 null로 처리하고 가짜 변동을 차단 — completed 2026-09-30
+- [x] **Phase 11: script.js seam + null-safe 프런트엔드** - 결측 표시·정렬·배지 처리와 신규 스크립트용 이음새 (직렬 게이트) — completed 2026-09-30
+- [x] **Phase 12: RSS 피드** - 총보수/기타비용 변동만 담은 결정적 RSS 2.0 feed.xml 생성 — completed 2026-09-30
+- [x] **Phase 13: 계산기 엔진** - 누적 비용 순수 함수와 node 테스트 — completed 2026-09-30
 - [ ] **Phase 14: 모바일 접근성** - Critical/Major 모바일 a11y·UI 수정과 8개 언어 ARIA
 - [ ] **Phase 15: 직접 비교 + 계산기 UI** - 2~4개 ETF 선택, /compare/ 페이지, 겹침 차트, 계산기 UI
 - [ ] **Phase 16: 통합·검증** - 피드 구독 링크, 사이트맵/태그 연결, CI 단계, 8개 언어·기기 스모크
@@ -86,9 +86,9 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   3. 결측이 낀 전·후 쌍은 changelog와 fee-history 어디에도 변동으로 기록되지 않는다 (e2e 체인 테스트 통과)
   4. 모든 신규/갱신 pytest가 fixture JSON만 사용하고 통과한다
 **Plans**: 3 plans
-- [ ] 10-01-PLAN.md — p_float None + process_data/validate None-aware + allow_nan=False
-- [ ] 10-02-PLAN.md — build_changelog None 쌍 skip
-- [ ] 10-03-PLAN.md — e2e null chain 테스트 (wave 2)
+- [x] 10-01-PLAN.md — p_float None + process_data/validate None-aware + allow_nan=False
+- [x] 10-02-PLAN.md — build_changelog None 쌍 skip
+- [x] 10-03-PLAN.md — e2e null chain 테스트 (wave 2)
 
 ### Phase 11: script.js seam + null-safe 프런트엔드
 **Goal**: 사용자가 결측 수수료를 "-"로 보고, 결측 종목이 정렬 맨 뒤에 놓이며 가짜 배지가 없고, 이후 스크립트가 붙을 이음새가 준비된다
@@ -102,7 +102,7 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   3. 결측 종목은 최저 표시와 변동(하락/상승) 배지를 받지 않는다
   4. 기존 `tests/fee_chart_check.js`가 통과하고 `script.js`의 BOM+CRLF가 보존된다
 **Plans**: 1 plans
-- [ ] 11-01-PLAN.md — script.js seam + null-safe 표시/정렬/배지
+- [x] 11-01-PLAN.md — script.js seam + null-safe 표시/정렬/배지
 **UI hint**: yes
 
 ### Phase 12: RSS 피드
@@ -117,8 +117,8 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   3. `1Q 미국S&P500` 같은 종목명이 올바르게 이스케이프되어 XML 파서로 읽힌다
   4. CI 워크플로가 Build Changelog 다음 단계에서 피드를 만들고 `feed.xml`을 커밋 대상에 포함한다
 **Plans**: 2 plans
-- [ ] 12-01-PLAN.md — build_rss.py + test_rss.py (TDD)
-- [ ] 12-02-PLAN.md — workflow 단계 + 첫 feed.xml (wave 2)
+- [x] 12-01-PLAN.md — build_rss.py + test_rss.py (TDD)
+- [x] 12-02-PLAN.md — workflow 단계 + 첫 feed.xml (wave 2)
 
 ### Phase 13: 계산기 엔진
 **Goal**: 실부담비용으로 누적 비용과 비용 감소액을 정확하게 계산하는 순수 함수가 테스트와 함께 준비된다
@@ -132,7 +132,7 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   3. 수수료 0%·기대수익률 0%·1년/50년 경계 입력이 올바르게 처리된다
   4. 결측(null) 수수료 종목은 계산에서 제외 표시가 반환된다
 **Plans**: 1 plans
-- [ ] 13-01-PLAN.md — compare-calc.js 순수 함수 + node 테스트 (TDD)
+- [x] 13-01-PLAN.md — compare-calc.js 순수 함수 + node 테스트 (TDD)
 
 ### Phase 14: 모바일 접근성
 **Goal**: 모바일 사용자가 대비·터치·스크린리더·키보드 장벽 없이 표와 이력을 읽고 조작할 수 있다
