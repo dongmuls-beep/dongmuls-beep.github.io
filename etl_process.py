@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import json
+import math
 import os
 import glob
 import time
@@ -426,15 +427,25 @@ def get_mock_managed_items():
 
 def p_float(v):
     """
-    수수료 문자열을 float로 파싱한다.
-    - '%' 제거: "0.05%" → 0.05
-    - ',' 제거: "1,234" → 1234.0
-    - 파싱 불가 (None, "", "N/A" 등) → 0.0
+    수수료 셀을 유한 float 또는 None으로 변환한다.
+    - '%' / ',' 제거: "0.05%" -> 0.05, "1,234" -> 1234.0
+    - 숫자 0 ("0", "0.00", "0%", 0)은 정상적인 0 수수료이므로 0.0 유지
+    - 결측/파싱 불가 (None, 공백, "-", "N/A", NaN, inf, bool 등) -> None
+      ("-"는 결측으로 취급 — 가정 A1, 실제 의미 확인 시 한 줄 변경)
     """
+    if v is None or isinstance(v, bool):
+        return None
     try:
-        return float(str(v).replace(',', '').replace('%', ''))
-    except (ValueError, TypeError, AttributeError):
-        return 0.0
+        if isinstance(v, str):
+            s = v.replace(',', '').replace('%', '').strip()
+            if s == '':
+                return None
+            x = float(s)
+        else:
+            x = float(v)
+    except (ValueError, TypeError):
+        return None
+    return x if math.isfinite(x) else None
 
 
 def process_data(managed_df, file_path):
@@ -558,15 +569,25 @@ def process_data(managed_df, file_path):
             col_sell = next((c for c in df.columns if '매매' in c and '수수료' in c), None) # 매매·중개수수료율(D)
             
             # Extract Values
-            total = p_float(row.get(col_total, 0)) if col_total else 0
-            other = p_float(row.get(col_other, 0)) if col_other else 0
-            sell = p_float(row.get(col_sell, 0)) if col_sell else 0
+            total = p_float(row.get(col_total)) if col_total else None
+            other = p_float(row.get(col_other)) if col_other else None
+            sell = p_float(row.get(col_sell)) if col_sell else None
             
-            # TER = 총보수 + 기타비용
-            ter = total + other
-            
-            # Final Real Cost
-            real_cost = ter + sell
+            # Final Real Cost = 총보수 + 기타비용 + 매매중개수수료 (any missing -> None)
+            parts = {'총보수': total, '기타비용': other, '매매중개수수료': sell}
+            missing = [k for k, v in parts.items() if v is None]
+            if missing:
+                real_cost = None
+                raw = [
+                    repr(row.get(c)) if c else 'column absent'
+                    for c in (col_total, col_other, col_sell)
+                ]
+                print(
+                    f"[WARNING] DATA-07: {target_name}({target_code}) 결측 구성요소 {missing} "
+                    f"raw={raw} -> 실부담비용=null"
+                )
+            else:
+                real_cost = round(total + other + sell, 4)
             
             # Debug: Print values for verification
             print(f"   Values -> Total: {total} (from {col_total}), Other: {other}, Sell: {sell}, Real: {real_cost}")
@@ -578,9 +599,13 @@ def process_data(managed_df, file_path):
                 '총보수': total,
                 '기타비용': other,
                 '매매중개수수료': sell,
-                '실부담비용': round(real_cost, 4)
+                '실부담비용': real_cost
             })
             
+        null_cost = sum(1 for r in results if r['실부담비용'] is None)
+        if null_cost > 0:
+            print(f"[WARNING] DATA-08: {null_cost}/{len(results)} 종목 실부담비용 null")
+
         print(f"Processed {len(results)} items.")
         return results
         
@@ -617,7 +642,13 @@ def validate_etl_results(results, prev_data):
     COST_MIN = 0.0
     COST_MAX = 5.0
     for item in results:
-        cost = item.get('실부담비용', 0.0)
+        cost = item.get('실부담비용')
+        if cost is None:
+            print(
+                f"[WARNING] DATA-07: {item.get('종목명', item.get('종목코드', '?'))} "
+                f"실부담비용 결측(null) — 범위 검증 생략"
+            )
+            continue
         if not (COST_MIN <= cost <= COST_MAX):
             print(
                 f"[WARNING] DATA-01: {item.get('종목명', item.get('종목코드', '?'))} "
@@ -642,9 +673,9 @@ def validate_etl_results(results, prev_data):
         prev_map = {item.get('종목코드'): item.get('실부담비용') for item in prev_data}
         for item in results:
             code = item.get('종목코드', '')
-            new_cost = item.get('실부담비용', 0.0)
+            new_cost = item.get('실부담비용')
             prev_cost = prev_map.get(code)
-            if prev_cost is not None:
+            if new_cost is not None and prev_cost is not None:
                 delta = abs(new_cost - prev_cost)
                 if delta >= ANOMALY_THRESHOLD:
                     print(
@@ -691,6 +722,18 @@ def fetch_market_data_batch(codes):
         "Referer": "https://finance.naver.com/",
     }
 
+    def _finite_or_none(v):
+        """NaN/inf/비수치 -> None (data.json은 allow_nan=False)."""
+        if v is None or isinstance(v, bool):
+            return None
+        try:
+            x = float(str(v).replace(',', '').strip()) if isinstance(v, str) else float(v)
+        except (ValueError, TypeError):
+            return None
+        if not math.isfinite(x):
+            return None
+        return v if not isinstance(v, str) else x
+
     def _normalize_code(code):
         s = str(code).strip()
         return s.zfill(6) if s.isdigit() else s.upper()
@@ -715,8 +758,8 @@ def fetch_market_data_batch(codes):
         for code in codes:
             item = naver_map.get(_normalize_code(code))
             if item:
-                aum_eok = item.get("marketSum")  # 이미 억원 단위
-                volume = item.get("quant")
+                aum_eok = _finite_or_none(item.get("marketSum"))  # 이미 억원 단위
+                volume = _finite_or_none(item.get("quant"))
                 result[code] = {"AUM": aum_eok, "거래량": volume}
                 print(f"  {code}: AUM={aum_eok}억, 거래량={volume}")
             else:
@@ -762,8 +805,9 @@ def update_google_sheets(data):
     # 1. Save as local JSON (Static Hosting Support)
     try:
         json_path = os.path.join(os.getcwd(), 'data.json')
+        text = json.dumps(data, ensure_ascii=False, indent=4, allow_nan=False)
         with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            f.write(text)
         print(f"Saved data to {json_path}")
     except Exception as e:
         print(f"Error saving JSON: {e}")
