@@ -102,7 +102,9 @@ def test_byte_identical_rerun():
     e = entry("2026-03-11", [change("A", "n", "총보수", 0.1, 0.2)])
     items = br.build_items([e], 100)
     assert br.build_feed_bytes(items) == br.build_feed_bytes(items)
-    assert "datetime.now" not in inspect.getsource(br)
+    src = inspect.getsource(br)
+    for banned in ("datetime.now", "date.today", "time.time"):
+        assert banned not in src
 
 
 def test_escaping_ampersand():
@@ -180,3 +182,68 @@ def test_main_uses_given_paths(tmp_path):
     out2 = tmp_path / "out2.xml"
     assert br.main(["--changelog", str(tmp_path / "missing.json"), "--data", str(dt), "--output", str(out2)]) == 0
     assert ET.fromstring(out2.read_bytes()).findall("channel/item") == []
+
+
+# --- Phase 12 review fixes (WR-01..WR-05) ---
+
+
+def test_code_control_chars_sanitised_in_guid():  # WR-01
+    e = entry("2026-03-11", [
+        change("A\x01", "n", "총보수", 0.1, 0.2),
+        change(" A ", "n", "기타비용", 0.1, 0.2),
+    ])
+    items = br.build_items([e], 100)
+    root = ET.fromstring(br.build_feed_bytes(items))
+    assert len(items) == 1
+    assert root.find("channel/item/guid").text == "tag:etfsave.life,2026-03-11:A"
+    assert "(A)" in root.find("channel/item/title").text
+
+
+def test_xml_illegal_chars_stripped():  # WR-02
+    e = entry("2026-03-11", [
+        change("A", "x￾y￿z\ud800w", "총보수", 0.1, 0.2),
+        change("B\udfff", "n", "총보수", 0.1, 0.2),
+    ])
+    data = br.build_feed_bytes(br.build_items([e], 100))
+    root = ET.fromstring(data)
+    titles_ = [t.text for t in root.findall("channel/item/title")]
+    assert any(t.startswith("xyzw (A)") for t in titles_)
+    assert b"&#55296;" not in data and b"&#57343;" not in data
+
+
+def test_malformed_code_and_huge_numbers_skipped():  # WR-03
+    e = entry("2026-03-11", [
+        change(["A"], "n", "총보수", 0.1, 0.2),
+        change({"x": 1}, "n", "총보수", 0.1, 0.2),
+        change(True, "n", "총보수", 0.1, 0.2),
+        change(None, "n", "총보수", 0.1, 0.2),
+        change("X" * 100, "n", "총보수", 0.1, 0.2),
+        change(10 ** 400, "n", "총보수", 0.1, 0.2),
+        change("C", "n", "총보수", 10 ** 400, 0.2),
+        change(12345, "n", "총보수", 0.1, 0.2),
+        change("D", "n", "총보수", 0.1, 0.2),
+    ])
+    items = br.build_items([e], 100)
+    assert [i["code"] for i in items] == ["12345", "D"]
+    ET.fromstring(br.build_feed_bytes(items))
+
+
+def test_main_never_fails_and_keeps_feed(tmp_path, monkeypatch, capsys):  # WR-04
+    out = tmp_path / "feed.xml"
+    out.write_bytes(b"OLD")
+
+    def boom(*a, **k):
+        raise RuntimeError("kaboom")
+
+    monkeypatch.setattr(br, "build_items", boom)
+    argv = ["--changelog", str(tmp_path / "x.json"), "--data", str(tmp_path / "y.json"), "--output", str(out)]
+    assert br.main(argv) == 0
+    assert out.read_bytes() == b"OLD"
+    assert "kaboom" in capsys.readouterr().err
+    assert not (tmp_path / "feed.xml.tmp").exists()
+
+
+def test_date_trailing_newline_rejected():  # WR-05
+    bad = {"month": "2026-03", "updatedAt": "2026-03-11\n",
+           "changes": [change("A", "n", "총보수", 0.1, 0.2)]}
+    assert br.build_items([bad], 100) == []

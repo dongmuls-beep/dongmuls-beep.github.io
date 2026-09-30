@@ -57,6 +57,7 @@ jobs:
 
       - name: Build RSS Feed
         run: python scripts/build_rss.py
+        continue-on-error: true
 
       - name: Build Fee History
         run: python scripts/build_fee_history.py

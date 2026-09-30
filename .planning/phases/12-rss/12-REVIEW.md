@@ -13,7 +13,8 @@ findings:
   warning: 5
   info: 5
   total: 10
-status: issues_found
+status: fixed
+fixed: [WR-01, WR-02, WR-03, WR-04, WR-05, IN-03, IN-04-partial, IN-05-partial]
 ---
 
 # Phase 12: Code Review Report
@@ -132,3 +133,19 @@ Both are minor.
 _Reviewed: 2026-09-30_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
+
+## Fix Log (2026-09-30, `--fix`)
+
+| ID | Status | Change |
+|----|--------|--------|
+| WR-04 | fixed | `continue-on-error: true` on `Build RSS Feed`; `main()` wraps `_run()` in `try/except Exception`, logs to stderr, returns 0, leaves feed.xml untouched |
+| WR-01 | fixed | `clean_code()` normalises code once; used for group key, guid and title |
+| WR-02 | fixed | `CONTROL_RE` also strips U+D800-DFFF, U+FFFE, U+FFFF |
+| WR-03 | fixed | `valid_number` catches `OverflowError`; `valid_change` rejects non-str/int/bool/empty/oversized (>32 chars) codes; bulk guard uses `clean_code` |
+| WR-05 | fixed | `DATE_RE.fullmatch` (anchors dropped) |
+| IN-03 | fixed | Comment documents the bulk-guard difference |
+| IN-04 | partial | Source grep extended to `date.today`/`time.time`; code control-char case added (WR-01 test) |
+| IN-05 | partial | `write_if_changed` unlinks `.tmp` on failure; `.gitattributes` skipped (out of edit scope) |
+| IN-01, IN-02 | skipped | Not trivial / would change output semantics; no real-data impact today |
+
+Tests: `pytest tests/test_rss.py` 20 passed (5 new). feed.xml regenerated from HEAD changelog.json/data.json is byte-identical.

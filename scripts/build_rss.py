@@ -16,6 +16,9 @@ from pathlib import Path
 from typing import Any
 
 # Constants mirrored from build_changelog.py (not imported on purpose).
+# The bulk guard here is a backstop, not an exact mirror: it counts only valid
+# rows against len(data.json), while build_changelog.py counts all rows and uses
+# max(total, distinct). The changelog filter runs first and is the stricter one.
 TRIGGER_FIELDS = ("총보수", "기타비용")
 SUPPORT_FIELDS = ("매매중개수수료", "실부담비용")
 BULK_CORRECTION_RATIO = 0.5
@@ -25,8 +28,10 @@ FEED_URL = SITE + "/feed.xml"
 CHANGELOG_URL = SITE + "/changelog/"
 KST = timezone(timedelta(hours=9))
 ATOM_NS = "http://www.w3.org/2005/Atom"
-DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")  # use with fullmatch (no "\n" leak)
+# XML 1.0 illegal: C0 controls (except tab/LF/CR), lone surrogates, U+FFFE/U+FFFF.
+CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff￾￿]")
+CODE_MAX_LEN = 32
 
 ET.register_namespace("atom", ATOM_NS)
 
@@ -34,11 +39,25 @@ ET.register_namespace("atom", ATOM_NS)
 def valid_number(v: Any) -> float | None:
     if isinstance(v, bool) or not isinstance(v, (int, float)):
         return None
-    return float(v) if math.isfinite(v) else None
+    try:
+        f = float(v)
+    except OverflowError:
+        return None
+    return f if math.isfinite(f) else None
+
+
+def clean_code(v: Any) -> str | None:
+    """Normalised ETF code, or None for non-str/int, empty or oversized values."""
+    if isinstance(v, bool) or not isinstance(v, (str, int)):
+        return None
+    if isinstance(v, int) and abs(v) >= 10 ** CODE_MAX_LEN:
+        return None
+    code = clean_text(v)
+    return code if code and len(code) <= CODE_MAX_LEN else None
 
 
 def valid_change(row: Any) -> bool:
-    if not isinstance(row, dict):
+    if not isinstance(row, dict) or clean_code(row.get("code")) is None:
         return False
     before, after = valid_number(row.get("before")), valid_number(row.get("after"))
     return before is not None and after is not None and before != after
@@ -58,7 +77,7 @@ def is_bulk_entry(entry: dict, total_count: int | None) -> bool:
         return False
     rows = valid_rows(entry)
     for field in TRIGGER_FIELDS:
-        codes = {r.get("code") for r in rows if r.get("field") == field}
+        codes = {clean_code(r.get("code")) for r in rows if r.get("field") == field}
         if len(codes) / total_count >= BULK_CORRECTION_RATIO:
             return True
     return False
@@ -85,7 +104,7 @@ def make_item(updated_at: str, code: str, rows: list[dict]) -> dict:
     ]
     return {
         "guid": "tag:etfsave.life,%s:%s" % (updated_at, code),
-        "title": "%s (%s) %s" % (name, clean_text(code), kinds),
+        "title": "%s (%s) %s" % (name, code, kinds),
         "description": "\n".join(lines),
         "pubDate": pub_date(updated_at),
         "updatedAt": updated_at,
@@ -99,7 +118,7 @@ def build_items(entries: list, total_count: int | None) -> list[dict]:
         if not isinstance(entry, dict):
             continue
         updated_at = entry.get("updatedAt")
-        if not isinstance(updated_at, str) or not DATE_RE.match(updated_at):
+        if not isinstance(updated_at, str) or not DATE_RE.fullmatch(updated_at):
             continue
         try:
             pub_date(updated_at)
@@ -108,8 +127,9 @@ def build_items(entries: list, total_count: int | None) -> list[dict]:
         if is_bulk_entry(entry, total_count):
             continue
         for row in valid_rows(entry):
-            if row.get("field") in TRIGGER_FIELDS + SUPPORT_FIELDS and row.get("code"):
-                key = (updated_at, str(row["code"]))
+            code = clean_code(row["code"])  # WR-01: one normalised code for key/guid/title
+            if row.get("field") in TRIGGER_FIELDS + SUPPORT_FIELDS:
+                key = (updated_at, code)
                 groups.setdefault(key, []).append(
                     {**row, "before": valid_number(row["before"]), "after": valid_number(row["after"])}
                 )
@@ -160,8 +180,12 @@ def write_if_changed(path: Path, data: bytes) -> bool:
     if path.exists() and path.read_bytes() == data:
         return False
     tmp = path.with_name(path.name + ".tmp")
-    tmp.write_bytes(data)
-    os.replace(tmp, path)
+    try:
+        tmp.write_bytes(data)
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
     return True
 
 
@@ -175,6 +199,17 @@ def read_json(path: str) -> Any:
 
 
 def main(argv: list | None = None) -> int:
+    # WR-04: RSS is a derived, non-critical artifact; never fail the daily
+    # data pipeline. On any unexpected error, log and leave feed.xml untouched.
+    try:
+        return _run(argv)
+    except Exception as exc:  # noqa: BLE001
+        print("[build_rss] error: %s: %s (feed.xml left untouched)"
+              % (type(exc).__name__, exc), file=sys.stderr)
+        return 0
+
+
+def _run(argv: list | None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--changelog", default="changelog.json")
     p.add_argument("--data", default="data.json")
