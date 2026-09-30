@@ -199,6 +199,8 @@ def test_dump_rejects_non_finite():
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["20261001", 0.1]]}}},
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [[D2, 0.1], [D1, 0.2]]}}},
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [[D1, 0.1], [D1, 0.2]]}}},
+        {"version": 1, "updatedAt": "", "names": {"C": 123}, "series": {}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"bogus": []}}},
     ],
 )
 def test_validate_rejects(bad):
@@ -278,6 +280,8 @@ def test_main_bad_data_leaves_history(env):
     hist.write_text(fh.dump_history(fh.empty_history()), encoding="utf-8")
     before = hist.read_bytes()
     data.write_text('{"a": 1}', encoding="utf-8")
+    assert fh.main([]) != 0
+    data.write_text('[1, "x"]', encoding="utf-8")
     assert fh.main([]) != 0
     data.unlink()
     assert fh.main([]) != 0

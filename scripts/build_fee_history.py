@@ -112,12 +112,17 @@ def validate_history(obj: Any) -> None:
         raise ValueError("updatedAt must be a string")
     if not isinstance(obj.get("names"), dict):
         raise ValueError("names must be an object")
+    for code, name in obj["names"].items():
+        if not isinstance(name, str):
+            raise ValueError(f"names[{code}] must be a string")
     if not isinstance(obj.get("series"), dict):
         raise ValueError("series must be an object")
     for code, fields in obj["series"].items():
         if not isinstance(fields, dict):
             raise ValueError(f"series[{code}] must be an object")
         for field, points in fields.items():
+            if field not in FIELDS:
+                raise ValueError(f"unknown field in series[{code}]: {field!r}")
             if not isinstance(points, list):
                 raise ValueError(f"series[{code}][{field}] must be a list")
             prev_date = ""
@@ -174,6 +179,8 @@ def load_rows(path: Path) -> list[dict[str, Any]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, list):
         raise ValueError(f"{path} must contain a JSON list")
+    if not all(isinstance(r, dict) for r in payload):
+        raise ValueError(f"{path} must contain only JSON objects")
     return payload
 
 
