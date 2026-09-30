@@ -21,6 +21,7 @@ from datetime import datetime
 from typing import Any
 
 from build_changelog import (
+    BULK_CORRECTION_FIELDS,
     FIELDS,
     build_changes,
     count_compared,
@@ -80,6 +81,14 @@ def check_rows(data: Any, prev_len: int | None) -> str | None:
             value = to_float(r.get(field))
             if value is not None and not (0 <= value <= MAX_FEE):
                 return "out-of-range"
+    # A bulk field that is blank/zero for most rows is a scrape/parse glitch
+    # (e.g. p_float -> 0.0), not a correction; accepting it would trigger a
+    # spurious re-baseline that wipes earlier history.
+    if data:
+        for field in BULK_CORRECTION_FIELDS:
+            blank = sum(1 for r in data if not to_float(r.get(field)))
+            if blank / len(data) >= ROW_COLLAPSE_RATIO:
+                return f"field-blank-or-zero: {field}"
     return None
 
 

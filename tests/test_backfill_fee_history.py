@@ -142,6 +142,25 @@ def test_bulk_correction_rebaselines():
     assert rb["fields"] == ["총보수", "실부담비용"]
 
 
+@pytest.mark.parametrize("glitch", [None, 0.0, ""])
+def test_blank_or_zero_bulk_field_skipped_not_rebaselined(glitch):
+    bad = four()
+    for r in bad:
+        r["총보수"] = glitch
+    snaps = [
+        snap("a" * 40, day(1), four()),
+        snap("b" * 40, day(2), bad),
+        snap("c" * 40, day(3), four()),
+    ]
+    h, rep = bf.replay(snaps)
+    assert rep["rebaselines"] == []
+    assert [(s["sha"], s["reason"]) for s in rep["skipped"]] == [
+        ("b" * 40, "field-blank-or-zero: 총보수")
+    ]
+    for i in range(4):
+        assert h["series"][f"C00{i}"]["총보수"] == [["2026-03-01", 0.1]]
+
+
 def test_partial_change_no_rebaseline():
     r3 = four()
     r3[0]["총보수"] = 0.3
