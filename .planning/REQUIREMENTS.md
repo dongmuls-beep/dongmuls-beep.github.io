@@ -47,3 +47,18 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
+| HIST-01 | Phase 7 | Pending |
+| HIST-02 | Phase 7 | Pending |
+| HIST-03 | Phase 7 | Pending |
+| HIST-04 | Phase 7 | Pending |
+| BACK-01 | Phase 8 | Pending |
+| BACK-02 | Phase 8 | Pending |
+| BACK-03 | Phase 8 | Pending |
+| CHART-01 | Phase 9 | Pending |
+| CHART-02 | Phase 9 | Pending |
+| CHART-03 | Phase 9 | Pending |
+| CHART-04 | Phase 9 | Pending |
+| CHART-05 | Phase 9 | Pending |
+| CHART-06 | Phase 9 | Pending |
+
+**Coverage:** 13/13 v1.3 requirements mapped
