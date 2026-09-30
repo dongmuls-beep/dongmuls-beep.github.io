@@ -1433,6 +1433,18 @@ async function renderFeeHistoryModal() {
 
     if (feeHistoryTarget !== target || modal.hasAttribute("hidden")) return;
 
+    try {
+        renderFeeHistoryContent(history, target, title, body, row, rowName, fieldLabel);
+    } catch (error) {
+        if (feeHistoryTarget === target && !modal.hasAttribute("hidden")) {
+            setFeeHistoryState(body, getTranslation("fee_history_error"), true);
+        }
+    }
+}
+
+function renderFeeHistoryContent(history, target, title, body, row, rowName, fieldLabel) {
+    const { code, field } = target;
+
     if (rowName === "-") {
         const historyName = history.names && typeof history.names[code] === "string" ? history.names[code] : "";
         if (historyName) {
