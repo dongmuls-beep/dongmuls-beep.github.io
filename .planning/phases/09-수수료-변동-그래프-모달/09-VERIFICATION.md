@@ -1,7 +1,7 @@
 ---
 phase: 09-수수료-변동-그래프-모달
 verified: 2026-09-30T00:00:00Z
-status: human_needed
+status: passed
 score: 6/6 must-haves verified
 overrides_applied: 0
 human_verification:
@@ -81,3 +81,9 @@ There are no code gaps. All six requirements are implemented and wired, and the 
 
 _Verified: 2026-09-30_
 _Verifier: Claude (gsd-verifier)_
+
+
+## Post-verification update (2026-09-30)
+
+- Human re-check of 5 review-fix items: all pass (09-HUMAN-UAT.md).
+- User-requested visual polish (deviation from UI-SPEC geometry/step line): chart drawn at modal width, monotone cubic smooth line instead of step, gradient area, inline Y labels, YYYY.MM x labels, end-value highlight. User approved in browser. Change-date precision preserved in the change list.
