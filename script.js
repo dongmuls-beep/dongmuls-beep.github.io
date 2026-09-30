@@ -1447,7 +1447,9 @@ async function renderFeeHistoryModal() {
         return;
     }
 
-    const nodes = [renderFeeHistoryChart(points, fieldLabel, today)];
+    const lastDate = points[points.length - 1].date;
+    const chartEnd = lastDate > today ? lastDate : today;
+    const nodes = [renderFeeHistoryChart(points, fieldLabel, chartEnd)];
     if (points.length === 1) {
         const caption = document.createElement("p");
         caption.className = "fee-history-caption";
@@ -1682,7 +1684,8 @@ function buildFeeHistoryPoints(raw, currentValue, today) {
 
     points.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
-    if (Number.isFinite(currentValue)) {
+    // Skip the "today" point when the device clock is behind the history (WR-03).
+    if (Number.isFinite(currentValue) && points[points.length - 1].date <= today) {
         const last = points[points.length - 1];
         if (currentValue.toFixed(4) !== last.value.toFixed(4)) {
             if (last.date === today) {

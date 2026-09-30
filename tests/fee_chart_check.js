@@ -55,6 +55,11 @@ assert.deepStrictEqual(r, [{ date: "2026-02-12", value: 0.0055 }]);
 r = plain(build([["2026-01-01", 0.01], ["2026-02-01", 0.01], ["2026-03-01", 0.02], ["2026-04-01", 0.020000001]], 0.02, "2026-09-30"));
 assert.deepStrictEqual(r.map((p) => p.date), ["2026-01-01", "2026-03-01"]);
 
+// WR-03: device today earlier than last history date -> no today point, order kept
+r = plain(build([["2026-02-12", 0.0055], ["2026-10-05", 0.006]], 0.0045, "2026-09-30"));
+assert.deepStrictEqual(r.map((p) => p.date), ["2026-02-12", "2026-10-05"]);
+assert.strictEqual(r[1].value, 0.006);
+
 // non-array / empty
 assert.strictEqual(build(null, 0.1, "2026-09-30").length, 0);
 assert.strictEqual(build([], 0.1, "2026-09-30").length, 0);
