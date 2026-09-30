@@ -1,6 +1,13 @@
 ﻿const GAS_API_URL = "/data.json";
 const CHANGELOG_URL = "/changelog.json";
 const UPDATE_META_URL = "/update-meta.json";
+const FEE_HISTORY_URL = "/fee-history.json";
+const FEE_HISTORY_FIELDS = {
+    fee: { historyKey: "총보수", labelKey: "table_fee" },
+    other: { historyKey: "기타비용", labelKey: "table_other" },
+    trade: { historyKey: "매매중개수수료", labelKey: "table_trade" },
+    real: { historyKey: "실부담비용", labelKey: "table_real" },
+};
 const I18N_DIR = "/i18n";
 
 const SUPPORTED_LANGS = ["ko", "vi", "zh", "en", "ja", "th", "tl", "km"];
@@ -1350,6 +1357,52 @@ function formatPercent(value) {
     const number = toNumber(value);
     if (!Number.isFinite(number)) return "-";
     return `${number.toFixed(4)}%`;
+}
+
+function getKstToday() {
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Seoul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).format(new Date());
+}
+
+function formatFeeTemplate(template, vars) {
+    return String(template).replace(/\{([a-z]+)\}/g, (match, key) =>
+        Object.prototype.hasOwnProperty.call(vars, key) ? String(vars[key]) : match
+    );
+}
+
+function buildFeeHistoryPoints(raw, currentValue, today) {
+    if (!Array.isArray(raw)) return [];
+
+    const points = [];
+    raw.forEach((entry) => {
+        if (!Array.isArray(entry)) return;
+        const date = entry[0];
+        const value = typeof entry[1] === "number" ? entry[1] : NaN;
+        if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+        if (!Number.isFinite(value)) return;
+        points.push({ date, value });
+    });
+
+    if (points.length === 0) return [];
+
+    points.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+
+    if (Number.isFinite(currentValue)) {
+        const last = points[points.length - 1];
+        if (currentValue.toFixed(4) !== last.value.toFixed(4)) {
+            if (last.date === today) {
+                last.value = currentValue;
+            } else {
+                points.push({ date: today, value: currentValue });
+            }
+        }
+    }
+
+    return points;
 }
 
 function valueOrDash(value) {
