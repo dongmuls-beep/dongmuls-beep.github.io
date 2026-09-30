@@ -10,8 +10,15 @@
         MAX_YEARS: 50,
         MIN_RETURN_PCT: -99,
         MAX_RETURN_PCT: 100,
-        MAX_AMOUNT: 1e13 // 10조 원; bounds lumpSum/monthly so results stay finite
+        MAX_AMOUNT: 1e12, // 1조 원; bounds lumpSum/monthly so results stay finite
+        FEE_HIGH_PCT: 5 // real 실부담비용 is 0-5%; above this is flagged as a likely unit error
     });
+
+    // Accepts finite numbers and numeric strings ("1000000", " 0.5 "); anything else -> NaN.
+    function toNum(v) {
+        if (typeof v === "string" && v.trim() !== "") v = Number(v);
+        return typeof v === "number" && isFinite(v) ? v : NaN;
+    }
 
     function isFiniteNumber(v) {
         return typeof v === "number" && isFinite(v);
@@ -21,37 +28,52 @@
         return v < lo ? lo : v > hi ? hi : v;
     }
 
-    function nonNegative(v) {
-        return isFiniteNumber(v) && v >= 0 ? Math.min(v, LIMITS.MAX_AMOUNT) : 0;
+    // Non-negative amount clamped to MAX_AMOUNT; invalid -> 0.
+    function amount(v) {
+        var x = toNum(v);
+        return x >= 0 ? Math.min(x, LIMITS.MAX_AMOUNT) : 0;
     }
 
     function normalizeInputs(inputs) {
         var src = inputs || {};
-        var years = isFiniteNumber(src.years) ? Math.round(src.years) : LIMITS.MIN_YEARS;
-        var ret = isFiniteNumber(src.annualReturnPct) ? src.annualReturnPct : 0;
+        var y = toNum(src.years);
+        var r = toNum(src.annualReturnPct);
+        var years = isFiniteNumber(y) ? Math.round(y) : LIMITS.MIN_YEARS;
+        var ret = isFiniteNumber(r) ? r : 0;
         return {
-            lumpSum: nonNegative(src.lumpSum),
+            lumpSum: amount(src.lumpSum),
             years: clamp(years, LIMITS.MIN_YEARS, LIMITS.MAX_YEARS),
-            monthly: nonNegative(src.monthly),
+            monthly: amount(src.monthly),
             annualReturnPct: clamp(ret, LIMITS.MIN_RETURN_PCT, LIMITS.MAX_RETURN_PCT)
         };
     }
 
     // Returns null when valid, otherwise "fee_missing" or "fee_invalid". Never coerces to 0.
+    // Numeric strings are accepted (same policy as the other inputs).
     function validateFee(feePct) {
-        if (!isFiniteNumber(feePct)) return "fee_missing";
-        if (feePct < 0 || feePct >= 100) return "fee_invalid";
+        var f = toNum(feePct);
+        if (!isFiniteNumber(f)) return "fee_missing";
+        if (f < 0 || f >= 100) return "fee_invalid";
         return null;
     }
 
     function simulate(inputs) {
         var n = normalizeInputs(inputs);
         var months = n.years * 12;
-        var feePct = inputs ? inputs.feePct : undefined;
-        var reason = validateFee(feePct);
+        var rawFee = inputs ? inputs.feePct : undefined;
+        var reason = validateFee(rawFee);
+        var base = {
+            years: n.years,
+            months: months,
+            lumpSum: n.lumpSum,
+            monthly: n.monthly,
+            annualReturnPct: n.annualReturnPct,
+            totalContributed: n.lumpSum + n.monthly * months
+        };
         if (reason) {
-            return { excluded: true, reason: reason, years: n.years, months: months };
+            return Object.assign({ excluded: true, reason: reason }, base);
         }
+        var feePct = toNum(rawFee);
         var g = Math.pow(1 + n.annualReturnPct / 100, 1 / 12);
         var h = Math.pow(1 - feePct / 100, 1 / 12);
         var balance = n.lumpSum;
@@ -63,21 +85,19 @@
             balance = grown * h + n.monthly;
             balanceNoFee = balanceNoFee * g + n.monthly;
         }
-        if (!isFinite(balance) || !isFinite(balanceNoFee) || !isFinite(totalFees)) {
-            return { excluded: true, reason: "overflow", years: n.years, months: months };
+        var costDrag = balanceNoFee - balance;
+        if (!isFinite(balance) || !isFinite(balanceNoFee) || !isFinite(totalFees) || !isFinite(costDrag)) {
+            return Object.assign({ excluded: true, reason: "overflow" }, base);
         }
-        return {
+        return Object.assign({
             excluded: false,
-            years: n.years,
-            months: months,
             feePct: feePct,
-            annualReturnPct: n.annualReturnPct,
-            totalContributed: n.lumpSum + n.monthly * months,
+            warning: feePct > LIMITS.FEE_HIGH_PCT ? "fee_high" : null,
             fvWithFee: balance,
             fvNoFee: balanceNoFee,
             totalFees: totalFees,
-            costDrag: balanceNoFee - balance
-        };
+            costDrag: costDrag
+        }, base);
     }
 
     function withFee(inputs, fee) {

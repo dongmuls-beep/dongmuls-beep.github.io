@@ -12,11 +12,11 @@ function approx(actual, expected, tol = 0.01, label = "") {
 }
 
 // shape
-["normalizeInputs", "simulate", "compare", "simulateMany"].forEach((fn) => {
+["normalizeInputs", "validateFee", "simulate", "compare", "simulateMany"].forEach((fn) => {
     assert.strictEqual(typeof C[fn], "function", `missing function ${fn}`);
 });
 assert.ok(Object.isFrozen(C.LIMITS), "LIMITS must be frozen");
-assert.deepStrictEqual({ ...C.LIMITS }, { MIN_YEARS: 1, MAX_YEARS: 50, MIN_RETURN_PCT: -99, MAX_RETURN_PCT: 100, MAX_AMOUNT: 1e13 });
+assert.deepStrictEqual({ ...C.LIMITS }, { MIN_YEARS: 1, MAX_YEARS: 50, MIN_RETURN_PCT: -99, MAX_RETURN_PCT: 100, MAX_AMOUNT: 1e12, FEE_HIGH_PCT: 5 });
 
 // zero case
 {
@@ -134,7 +134,7 @@ approx(h6.costDrag, 488898.6953, 0.01, "H6 costDrag literal");
 // excluded
 {
     const base = { lumpSum: 1e6, years: 5, monthly: 10000, annualReturnPct: 5 };
-    [null, undefined, NaN, Infinity, "abc", "0.5"].forEach((fee) => {
+    [null, undefined, NaN, Infinity, "abc", "", "  "].forEach((fee) => {
         const r = C.simulate({ ...base, feePct: fee });
         assert.strictEqual(r.excluded, true, `fee ${String(fee)} should be excluded`);
         assert.strictEqual(r.reason, "fee_missing", `fee ${String(fee)} reason`);
@@ -214,6 +214,65 @@ approx(h6.costDrag, 488898.6953, 0.01, "H6 costDrag literal");
     const n = C.normalizeInputs({ lumpSum: 1e308, monthly: 1e308 });
     assert.strictEqual(n.lumpSum, C.LIMITS.MAX_AMOUNT);
     assert.strictEqual(n.monthly, C.LIMITS.MAX_AMOUNT);
+}
+
+// WR-01: numeric strings are accepted for every input, including fee
+{
+    const num = C.simulate({ lumpSum: 1000000, years: 20, monthly: 50000, annualReturnPct: 5, feePct: 0.5 });
+    const str = C.simulate({ lumpSum: "1000000", years: "20", monthly: "50000", annualReturnPct: "5", feePct: " 0.5 " });
+    assert.deepStrictEqual(str, num);
+    assert.strictEqual(C.validateFee("0.5"), null);
+    assert.strictEqual(C.validateFee("abc"), "fee_missing");
+    assert.strictEqual(C.validateFee("100"), "fee_invalid");
+    assert.strictEqual(C.normalizeInputs({ lumpSum: "abc" }).lumpSum, 0);
+    assert.strictEqual(C.normalizeInputs({ years: "x" }).years, 1);
+}
+
+// WR-02: normalized inputs are echoed in both result shapes
+{
+    const r = C.simulate({ lumpSum: -5, years: 99, monthly: 1e15, annualReturnPct: 900, feePct: 0.2 });
+    assert.strictEqual(r.lumpSum, 0);
+    assert.strictEqual(r.monthly, C.LIMITS.MAX_AMOUNT);
+    assert.strictEqual(r.years, 50);
+    assert.strictEqual(r.annualReturnPct, 100);
+    const x = C.simulate({ lumpSum: 1e6, years: 2, monthly: 1000, annualReturnPct: 3, feePct: null });
+    assert.strictEqual(x.excluded, true);
+    assert.strictEqual(x.lumpSum, 1e6);
+    assert.strictEqual(x.monthly, 1000);
+    assert.strictEqual(x.annualReturnPct, 3);
+    assert.strictEqual(x.totalContributed, 1e6 + 1000 * 24);
+}
+
+// WR-03: fee above FEE_HIGH_PCT is still computed but flagged
+{
+    const base = { lumpSum: 1e6, years: 5, monthly: 0, annualReturnPct: 5 };
+    assert.strictEqual(C.simulate({ ...base, feePct: 5 }).warning, null);
+    assert.strictEqual(C.simulate({ ...base, feePct: 0.5 }).warning, null);
+    const hi = C.simulate({ ...base, feePct: 50 });
+    assert.strictEqual(hi.excluded, false);
+    assert.strictEqual(hi.warning, "fee_high");
+    assert.ok(Number.isFinite(hi.fvWithFee));
+}
+
+// IN-01: validateFee direct
+assert.strictEqual(C.validateFee(null), "fee_missing");
+assert.strictEqual(C.validateFee(undefined), "fee_missing");
+assert.strictEqual(C.validateFee(100), "fee_invalid");
+assert.strictEqual(C.validateFee(-0.01), "fee_invalid");
+assert.strictEqual(C.validateFee(0), null);
+assert.strictEqual(C.validateFee(99.99), null);
+
+// IN-04: negative return and compare sign / equality
+{
+    const neg = C.simulate({ lumpSum: 1e7, years: 10, monthly: 100000, annualReturnPct: -10, feePct: 1 });
+    assert.strictEqual(neg.excluded, false);
+    assert.ok(neg.costDrag > 0, "negative return costDrag > 0");
+    assert.ok(neg.costDrag < neg.totalFees, "negative return costDrag < totalFees");
+    const inputs = { lumpSum: 1e7, years: 20, monthly: 500000, annualReturnPct: 6 };
+    assert.ok(C.compare(inputs, 0.5, 0.1).difference < 0, "more expensive A should end lower");
+    const eq = C.compare(inputs, 0.3, 0.3);
+    assert.strictEqual(eq.difference, 0);
+    assert.strictEqual(eq.feesDifference, 0);
 }
 
 console.log("compare_calc_check: all assertions passed");
