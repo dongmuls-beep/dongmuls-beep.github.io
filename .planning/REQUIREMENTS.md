@@ -72,5 +72,33 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
+| DATA-07 | Phase 10 | Pending |
+| DATA-08 | Phase 10 | Pending |
+| DATA-09 | Phase 10 | Pending |
+| DATA-10 | Phase 11 | Pending |
+| FEED-01 | Phase 12 | Pending |
+| FEED-02 | Phase 12 | Pending |
+| FEED-03 | Phase 12 | Pending |
+| CALC-02 | Phase 13 | Pending |
+| A11Y-01 | Phase 14 | Pending |
+| A11Y-02 | Phase 14 | Pending |
+| A11Y-03 | Phase 14 | Pending |
+| A11Y-04 | Phase 14 | Pending |
+| A11Y-05 | Phase 14 | Pending |
+| A11Y-06 | Phase 14 | Pending |
+| A11Y-07 | Phase 14 | Pending |
+| A11Y-08 | Phase 14 | Pending |
+| A11Y-09 | Phase 14 | Pending |
+| CMP-01 | Phase 15 | Pending |
+| CMP-02 | Phase 15 | Pending |
+| CMP-03 | Phase 15 | Pending |
+| CMP-04 | Phase 15 | Pending |
+| CMP-05 | Phase 15 | Pending |
+| CMP-06 | Phase 15 | Pending |
+| CALC-01 | Phase 15 | Pending |
+| CALC-03 | Phase 15 | Pending |
+| CALC-04 | Phase 15 | Pending |
+| CALC-05 | Phase 15 | Pending |
+| FEED-04 | Phase 16 | Pending |
 
-**Coverage:** 0/28 v1.4 requirements mapped (roadmap pending)
+**Coverage:** 28/28 v1.4 requirements mapped

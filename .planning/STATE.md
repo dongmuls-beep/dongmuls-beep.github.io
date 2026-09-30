@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 신뢰성·접근성·비교 도구
-status: planning
-last_updated: "2026-09-30T05:40:04.145Z"
+status: ready_to_plan
+last_updated: "2026-09-30T06:00:00.000Z"
 last_activity: 2026-09-30
 progress:
-  total_phases: 0
+  total_phases: 7
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,73 +20,58 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-30)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
-**Current milestone:** v1.3 — 수수료 변동 그래프
-**Current focus:** Milestone complete
+**Current milestone:** v1.4 — 신뢰성·접근성·비교 도구
+**Current focus:** Wave 0 계획 (Phase 10, 11, 12, 13 병렬)
 
-## Current Status
+## Current Position
 
-**Milestone:** v1.3 — 수수료 변동 그래프 — 진행 중
-**Status:** v1.3 milestone complete
-**Last action:** v1.3 roadmap created
-**Next action:** /gsd:plan-phase 7
+Phase: Not started (roadmap created, Phases 10-16)
+Plan: —
+Status: Ready to plan
+Last activity: 2026-09-30 — v1.4 roadmap created (28/28 requirements mapped)
 
-## Active Work
+Progress: [░░░░░░░░░░] 0% (0/7 phases)
 
-없음
+## Execution Waves
+
+- Wave 0 (병렬): Phase 10 데이터 신뢰성, Phase 11 script.js seam, Phase 12 RSS, Phase 13 계산기 엔진
+- Wave 1 (병렬): Phase 14 모바일 접근성, Phase 15 비교 + 계산기 UI (Phase 11 선행, Phase 15는 Phase 13도)
+- Wave 2 (직렬): Phase 16 통합·검증
 
 ## Completed Milestones
 
 - **v1.1 안정성·보안·품질 개선** — Phases 1-4, 14/14 요구사항 (shipped 2026-09-30)
-- **v1.2 데이터 정확성 보강** — Phases 5-6, 3/3 요구사항 (shipped 2026-09-30) — see .planning/MILESTONES.md
+- **v1.2 데이터 정확성 보강** — Phases 5-6, 3/3 요구사항 (shipped 2026-09-30)
+- **v1.3 수수료 변동 그래프** — Phases 7-9 (shipped 2026-09-30) — see .planning/MILESTONES.md
 
-## Decisions Log
+## Accumulated Context
 
-| Date | Decision | Reason |
-|------|----------|--------|
-| 2026-04-07 | .planning/codebase/ 분석 문서 기반으로 GSD 초기화 | 기존 코드베이스 분석 완료 상태 |
-| 2026-04-07 | v1.1 마일스톤 = 안정성·보안·품질 개선으로 설정 | CONCERNS.md에서 식별된 기술 부채 해소 우선 |
-| 2026-04-07 | research 에이전트 비활성화 | 기존 코드베이스 분석 이미 완료됨 |
-| 2026-05-20 | DATA-01/02/03 모두 soft-warning 방식 채택 | ETL 파싱 버그 조기 감지 목적 — 데이터 손실 없이 경고만 출력 |
-| 2026-05-20 | validate_etl_results()를 순수 함수로 설계 (파일 I/O 없음) | Phase 4 단위 테스트 용이성 확보 |
-| 2026-05-20 | DATA-03 이상치 기준 ±1.0%p 절대 변동폭 (상대 변동률 아님) | 소규모 수수료에서 상대값 과민 문제 방지 |
-| 2026-05-20 | applyTranslations() el.innerHTML 유지, SECURITY 주석 추가 (D-01) | i18n JSON에 의도적 HTML 포함, textContent 전환 불가 |
-| 2026-05-20 | getTranslation() 반환값 innerHTML 현행 유지 (D-03) | 번역 JSON 시스템 통제 소스, escapeHtml 추가 시 <br> 깨짐 |
-| 2026-05-20 | RAF 콜백 early return 전 rafPending = false 실행 (BUG-01) | nav-open 상태 early return 시 rafPending 리셋 누락 시 이후 스크롤 이벤트 전체 무시됨 |
-| 2026-05-20 | changes.length === 0 시 테이블 블록 전체 생략, <p> 단독 렌더링 (D-06/D-07) | 빈 changes 배열에서 orphaned thead 노출 방지 (BUG-02) |
-| 2026-05-20 | changelog_no_changes 번역값에 escapeHtml() 추가 적용 | 번역 소스 통제되나 일관된 이스케이핑 패턴 유지 |
-| 2026-05-20 | openpyxl로 fixture 코드 생성 (실제 파일 저장 없음, D-04) | 실제 KOFIA 파일 코드베이스 보관 없음, tmp_path로 테스트별 격리 |
-| 2026-05-20 | CI pip install -r requirements.txt 방식으로 의존성 설치 일원화 (D-12) | 직접 패키지 나열 방식 제거, pytest 포함 모든 의존성 requirements.txt로 관리 |
-| 2026-05-20 | Run unit tests 단계를 Run ETL Script 앞에 배치 (D-10/D-11) | 테스트 실패 시 ETL 자동 차단 — 단계 순서로 보장, 별도 조건 불필요 |
-| 2026-05-20 | p_float()를 process_data() 중첩 함수에서 모듈 수준으로 이동 | from etl_process import p_float 직접 import 테스트 가능성 확보 |
-| 2026-05-20 | 실부담비용 계산 로직을 테스트에서 직접 재현 (ter = total + other, real_cost = ter + sell) | ETL 내부 공식을 화이트박스 방식으로 단위 테스트 검증 |
-| 2026-05-20 | capsys로 validate_etl_results() print 출력 검증 (D-09) | pytest-native, mock.patch 불필요 |
-| 2026-05-20 | etl_process.py 헤더 감지 row_str 변환 방식 변경 (Rule 1 bug fix) | row.astype(str).values → [str(x) for x in row] — mixed-type row TypeError 수정 |
+### Decisions (v1.4)
 
-## Blockers
+- 신규 의존성 0 (Python stdlib + 브라우저 API)
+- 결측은 `null` (0.0 아님), 프런트는 `Number.isFinite`로 가드
+- 비교는 새 정적 페이지 `/compare/`, RSS 2.0 `feed.xml`(총보수/기타비용 변동만)
+- 최대 병렬: 파일 소유권 분리 (OneDrive라 git worktree 불가)
+- 이전 결정 로그는 milestones/ 아카이브 및 PROJECT.md 참조
+
+### Constraints
+
+- `script.js`/`style.css` UTF-8 BOM + CRLF 보존, 신규 파일은 LF/BOM 없음
+- CI가 `fee-history.json` 단독 작성자; pre-commit 훅이 `changelog.json`/`data.json` 덮어씀 → 테스트는 fixture 사용
+- `daily_update.yml` 소유자는 Phase 12
+
+### Research Flags
+
+- Phase 10: KOFIA `-`/공백 의미 확인
+- Phase 14: C5 표 시맨틱 결정
+- Phase 15: 겹침 차트 설계, 면책 문구, 전역 스코프 스파이크
+
+### Blockers
 
 없음
 
 ## Session
 
-**Last session:** 2026-09-30T04:56:28.113Z
-**Stopped at:** Phase 6 planned
-**Resume file:** None
-
-
-
-Items acknowledged and deferred at milestone close on 2026-09-30:
-
-| Category | Item | Status |
-|----------|------|--------|
-| debug | knowledge-base | not a session — resolved-session knowledge base (audit false positive) |
-
-## Current Position
-
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-09-30 — Milestone v1.4 started
-
-## Operator Next Steps
-
-- Start the next milestone with /gsd-new-milestone
+**Last session:** 2026-09-30
+**Stopped at:** v1.4 roadmap created
+**Next action:** /gsd:plan-phase 10 (Phase 11, 12, 13과 병렬 가능)
