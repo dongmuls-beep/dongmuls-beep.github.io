@@ -75,7 +75,12 @@ Plans:
   3. 변동이 없거나 포인트가 하나면 평평한 선과 "기록 시작(2026-02) 이후 변동 없음" 안내가 보이고, 로딩·에러 상태도 표시된다
   4. ESC/닫기 버튼으로 모달이 닫히고 포커스가 원래 셀로 돌아오며, 모바일에서도 정상 동작한다
   5. 모달 문구가 8개 언어(ko, en, vi, zh, ja, th, tl, km)로 표시된다
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — 9 fee_history_* i18n keys x 8 languages + pytest parity test (wave 1)
+- [ ] 09-02-PLAN.md — fee cell buttons + hint, generalized modal, fee-history.json load, loading/error/empty states, change list (wave 1)
+- [ ] 09-03-PLAN.md — SVG step chart to today, no-change caption, chart CSS, human UAT (wave 2)
 **UI hint**: yes
 
 ## Progress
