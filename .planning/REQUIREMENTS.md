@@ -22,7 +22,7 @@
 ### 그래프 UI (CHART)
 
 - [x] **CHART-01**: 사용자가 테이블 수수료 셀을 클릭/탭/키보드로 열 수 있고, 클릭 가능함이 시각적으로 표시된다
-- [ ] **CHART-02**: 모달에 해당 ETF·항목의 계단형 SVG 차트가 표시되고 마지막 값은 오늘까지 연장된다
+- [x] **CHART-02**: 모달에 해당 ETF·항목의 계단형 SVG 차트가 표시되고 마지막 값은 오늘까지 연장된다
 - [x] **CHART-03**: 변동 없음/단일 포인트면 평평한 선과 "기록 시작(2026-02) 이후 변동 없음" 안내가 표시되고, 로딩·에러 상태가 표시된다
 - [x] **CHART-04**: 차트 아래 변동 내역 리스트(날짜·값·변동폭)가 표시된다
 - [x] **CHART-05**: ESC/닫기 버튼으로 모달이 닫히고 원래 셀로 포커스가 돌아가며, 모바일에서 정상 동작한다
@@ -55,7 +55,7 @@
 | BACK-02 | Phase 8 | Complete |
 | BACK-03 | Phase 8 | Complete |
 | CHART-01 | Phase 9 | Complete |
-| CHART-02 | Phase 9 | Pending |
+| CHART-02 | Phase 9 | Complete |
 | CHART-03 | Phase 9 | Complete |
 | CHART-04 | Phase 9 | Complete |
 | CHART-05 | Phase 9 | Complete |

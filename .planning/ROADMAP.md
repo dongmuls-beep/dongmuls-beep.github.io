@@ -34,7 +34,7 @@ Full details: [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 - [x] **Phase 7: 수수료 이력 저장소 및 일일 추가** - 매일 ETL 후 변동된 수수료만 fee-history.json에 기록 (completed 2026-09-30)
 - [x] **Phase 8: Git 히스토리 과거 복원** - data.json git 히스토리로부터 2026-02 이후 시계열 backfill (completed 2026-09-30)
-- [ ] **Phase 9: 수수료 변동 그래프 모달** - 수수료 셀 클릭 시 계단형 SVG 차트 모달 표시
+- [x] **Phase 9: 수수료 변동 그래프 모달** - 수수료 셀 클릭 시 계단형 SVG 차트 모달 표시 (completed 2026-09-30)
 
 ## Phase Details
 
@@ -80,7 +80,7 @@ Plans:
 Plans:
 - [x] 09-01-PLAN.md — 9 fee_history_* i18n keys x 8 languages + pytest parity test (wave 1)
 - [x] 09-02-PLAN.md — fee cell buttons + hint, generalized modal, fee-history.json load, loading/error/empty states, change list (wave 1)
-- [ ] 09-03-PLAN.md — SVG step chart to today, no-change caption, chart CSS, human UAT (wave 2)
+- [x] 09-03-PLAN.md — SVG step chart to today, no-change caption, chart CSS, human UAT (wave 2)
 **UI hint**: yes
 
 ## Progress
@@ -95,4 +95,4 @@ Plans:
 | 6. 변경 이력 정합성 | v1.2 | 1/1 | Complete | 2026-09-30 |
 | 7. 수수료 이력 저장소 및 일일 추가 | v1.3 | 1/1 | Complete    | 2026-09-30 |
 | 8. Git 히스토리 과거 복원 | v1.3 | 1/1 | Complete    | 2026-09-30 |
-| 9. 수수료 변동 그래프 모달 | v1.3 | 2/3 | In Progress|  |
+| 9. 수수료 변동 그래프 모달 | v1.3 | 3/3 | Complete   | 2026-09-30 |
