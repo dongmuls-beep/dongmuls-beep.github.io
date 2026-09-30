@@ -1,147 +1,181 @@
-# Domain Pitfalls: v1.3 Fee History Snapshots + Step Chart
+# Domain Pitfalls: v1.4 신뢰성·접근성·비교 도구
 
-**Domain:** Adding change-only fee history store, git backfill, and SVG modal to an existing static GitHub Pages + daily-ETL site
+**Domain:** Adding missing-value handling, mobile a11y fixes, ETF compare, cost calculator and RSS to an existing static GitHub Pages + daily-ETL vanilla-JS site (8 languages)
 **Researched:** 2026-09-30
-**Confidence:** MEDIUM-HIGH (code-verified against build_changelog.py, daily_update.yml, pre-commit hook; UI/a11y items are standard practice, not verified against this codebase's script.js)
+**Confidence:** MEDIUM-HIGH. ETL/changelog/fee-history items are code-verified (etl_process.py, scripts/build_changelog.py, scripts/build_fee_history.py, script.js, daily_update.yml, pre-commit hook). Financial-math, RSS and a11y items are standard practice and not verified against a running build. The KOFIA "-"/blank semantics are unverified (see Gaps).
 
-Verified facts from the repo: data.json has 156 commits of history. Fees are JSON floats (총보수 0.0047, 기타비용 0.06). build_changelog.py compares with exact `!=` after `to_float`, keys ETFs by `(종목코드, 종목명)`, and stamps dates with `datetime.now()`. The workflow uses `actions/checkout@v4` with default depth (1) and `git-auto-commit-action` with `file_pattern: "data.json changelog.json update-meta.json"`. The pre-commit hook only syncs changelog.json from production.
+Units to remember: all fee fields in data.json are percent numbers (0.09 means 0.09%), not fractions. Codes can be alphanumeric (0026S0, 0069M0), so never `parseInt`/`Number()` a code.
+
+---
 
 ## Critical Pitfalls
 
-### 1. Spurious change records from float noise and the wrong field set
-**What goes wrong:** History fills with points that are not real fee changes. 매매중개수수료 and 실부담비용 change for nearly every ETF every month (the code comment in build_changelog.py says so). If they are snapshotted "change-only", nearly every ETF gets a new point each month, and the store grows and the chart looks noisy. Values computed or scraped upstream (e.g. 0.30000000000000004 vs 0.3) also trip exact `!=`.
+### Pitfall 1: p_float returns NaN for blank Excel cells, so the "None" fix misses the real failure case
+**What goes wrong:** `p_float` does `float(str(v)...)`. A blank pandas cell is `float('nan')`, `str()` gives `'nan'`, and `float('nan')` succeeds, so no exception fires. NaN flows into `total + other`, then `round(nan, 4)`, then `json.dump`, which emits bare `NaN` (invalid JSON; `JSON.parse` fails and the whole site shows the error state). Strings like `'inf'`, `'-'` and `'—'` behave differently again. Only true junk hits the `except`.
+**Why it happens:** The v1.3 debt note says "parse failure returns 0.0", but only some failures do. NaN and inf need an explicit `math.isfinite` check.
+**Consequences:** Either a site-wide JSON parse break, or (after a naive None fix) NaN slips through `is None` checks.
 **Prevention:**
-- Decide fields explicitly. Recommended: chart 총보수 and 실부담비용 (or 총보수 only for v1.3), and treat 매매중개수수료 as a separate, noisy series or omit it.
-- Normalize before compare: `round(x, 6)` (or Decimal from `str`) on both sides, compare with a tolerance of about 1e-9. Store the rounded value.
-- Reuse `to_float`; treat None to value transitions carefully (a missing value must not create a "0" point or a change).
-**Detection:** After backfill, count records per ETF. A median much greater than 2-3 means noise. Unit test: 0.1+0.2 vs 0.3 produces no record.
-**Phase:** Snapshot-store design/ETL phase (the first phase).
+- Return None for anything that is not `math.isfinite(result)`. Add tests for `float('nan')`, `'nan'`, `'-'`, `'inf'`, `'1e400'`, `'0,05 %'`.
+- Write data.json with `json.dump(..., allow_nan=False)` so any leak fails CI loudly.
+- Keep "column absent" distinct from "cell unparseable". Today an absent column silently becomes int `0` (`if col_total else 0`), which is the same bug in a different branch.
+**Detection:** `grep -c NaN data.json`; a `JSON.parse` error on the live site; pytest with an all-blank row.
+**Phase:** p_float / data-integrity phase (first).
 
-### 2. Backfill ingests the known-bad history (2026-05-27 mapping correction, malformed commits)
-**What goes wrong:** Replaying 156 commits of data.json reproduces the column-remap fake changes. Old commits may also contain partial or malformed JSON, an empty list, a dict instead of a list, or a truncated ETF set (scrape failure). A partial commit followed by a full one yields a fake "delist then relist", or a value that flips and flips back.
-**Prevention:**
-- Backfill is a one-time local script (`git log --follow -- data.json`, `git show <sha>:data.json`), never run in Actions.
-- Wrap every `json.loads` in try/except and skip the commit. Require `isinstance(list)` and row count at least ~50% of the median, else skip.
-- Reuse `detect_bulk_correction` (BULK_CORRECTION_RATIO 0.5 on 총보수/기타비용): when a commit-to-commit diff is flagged, do NOT add the changes. Re-baseline instead (set the new value silently, or drop the pre-correction series for those ETFs). The 2026-05-27 commit needs a hard-coded explicit exclusion, since the ratio heuristic was tuned for monthly runs.
-- Compare each commit to the last accepted state, not to the immediate parent.
-- Dry-run mode that prints per-ETF series for spot-checking against the real fee (the scripts/_check_fees.py in the working tree hints this was already done manually).
-**Detection:** Many ETFs sharing an identical change date; a step on 2026-05-27; series with values that revert within a commit or two.
-**Phase:** Backfill phase (after the store schema exists).
+### Pitfall 2: None crashes the ETL arithmetic and validators, or gets re-coerced to 0
+**What goes wrong:**
+- `ter = total + other` and `real_cost = ter + sell` raise TypeError on None.
+- `validate_etl_results` does `COST_MIN <= cost <= COST_MAX` and `f"{cost:.4f}"`, and DATA-03 does `abs(new_cost - prev_cost)`. All raise TypeError on None.
+- The `except Exception: raise` at the end of `process_data` turns one bad cell into a whole-ETL failure (no data update at all).
+- The opposite mistake is `total or 0`, which reintroduces the exact bug.
+**Prevention:** Decide the contract once. Recommended: if 총보수 is None, skip the row (or carry forward the previous day's row) and log a WARNING. Never emit a partial `실부담비용`. If only 기타비용 or 매매중개수수료 is None, set `실부담비용` to None too (do not sum the known parts). Make the validators None-aware ("missing" warning, not crash). Carry-forward beats emitting null because it keeps every downstream consumer unchanged.
+**Detection:** Unit test that feeds process_data one row with a blank fee and asserts (a) no exception, (b) no 0.0 in output, (c) validators pass.
+**Phase:** p_float phase.
 
-### 3. Shallow checkout, and a history store that depends on git
-**What goes wrong:** `actions/checkout@v4` defaults to `fetch-depth: 1`. If the daily job (or the store builder) uses `git log`/`git show HEAD~1`, it silently gets nothing and either wipes the store or re-emits all history. Note build_changelog.py only needs `HEAD:data.json`, which exists in a depth-1 clone, so it works today. That masks the problem for anything deeper.
+### Pitfall 3: Null in data.json creates a fake changelog entry and a fake fee-history point
+**What goes wrong:** `build_changes` skips only when both sides are None. If yesterday was 0.09 and today is None, `before != after` is true, so it records `{before: 0.09, after: null}`. The next day it records `{before: null, after: 0.09}`. That is two junk entries, and the RSS feed will publish them as a "fee change". In `script.js` line 675, `Number((change.after - change.before).toFixed(4))` computes `null - 0.09`, which silently coerces null to 0 and shows a fake "-0.09%p" drop.
+**Why it happens:** to_float already returns None for empty values, so the diff logic looks null-safe but is not null-transition-safe.
 **Prevention:**
-- Daily job must be incremental against the committed history file (read history JSON, compare with today's data.json, append only on difference). Zero git-history dependency in Actions.
-- Do not change the checkout to `fetch-depth: 0` just for this.
-- The updater must fail loudly (non-zero exit) if the history file is missing/unparseable, instead of creating an empty one that gets committed over the real one. Read errors in `read_json_file` currently return the default silently; do not copy that pattern for the history store.
-**Detection:** History file shrinks in a commit diff; CI test asserting record count is non-decreasing.
-**Phase:** ETL integration phase.
+- In `build_changes`: `if before is None or after is None: continue`.
+- Carry the last known value forward in fee-history. `normalize()` returning None must mean "skip this point", never "record a drop".
+- Frontend: guard with `Number.isFinite(change.before) && Number.isFinite(change.after)` before computing diff; render "-" for missing values.
+- The v1.2 50% bulk-correction rule does not catch this (one code, not 50%).
+**Detection:** grep changelog.json for `null`; a test asserting `build_changes` yields nothing for a None transition and that fee-history gets no new point.
+**Phase:** p_float phase (same phase as Pitfall 2; test the whole chain ETL -> changelog -> fee-history).
 
-### 4. Workflow does not commit the new file, and local vs origin divergence
-**What goes wrong:** (a) `file_pattern` lists three files; a new history file (or directory of per-ETF files) is never committed, so the store never persists on Pages. (b) Local main diverges from origin daily and the pre-commit hook overwrites changelog.json with production. The history file will have the same problem: if it is edited locally (backfill, tests) and origin appends daily, every pull conflicts; a big single JSON conflicts on every line touch.
-**Prevention:**
-- Add the file(s) to `file_pattern` (glob if per-ETF files, e.g. `fee-history/*.json` or a single `fee-history.json`).
-- Extend `sync_server_changelog.py` (or a sibling) to sync the history file from production in the pre-commit hook, or add a documented rule: the backfilled file is committed once, then only Actions writes it. Do the backfill on a fresh `git pull` state and push promptly.
-- Put the history-build step AFTER the Build Changelog step and BEFORE auto-commit, with `--allow-fail` semantics not applied (a failure should block the commit rather than commit stale files).
-- Prefer stable key ordering and `sort_keys`, indent-free or consistent format so diffs stay small and rebase conflicts are resolvable.
-**Detection:** Pages shows no history after first daily run; `git pull` conflicts in the history file.
-**Phase:** ETL integration phase; hook change in the same phase.
+### Pitfall 4: Sorting and rendering with null/NaN silently reorders the "cheapest ETF" table
+**What goes wrong:** The table sorts by `실부담비용` ascending (script.js ~871). `null` compares as 0 in `a - b`, so a missing-fee ETF jumps to rank 1 as "cheapest", which is the fake-zero bug moved to the frontend. `.toFixed` on null throws and kills the whole render. The same applies to the compare view (best-value highlight) and the calculator (null becomes 0% fee, so the tool says the ETF is free).
+**Prevention:** One shared `isValidFee(x)` helper (`Number.isFinite`). Sort invalid values last, render "-" (or a localized "N/A" via i18n), and exclude them from "lowest" highlights, compare rows and calculator inputs (disable with a message). Prefer the ETL carry-forward so this is defense in depth only.
+**Detection:** Test fixture with one null fee; screenshot the sorted table.
+**Phase:** p_float phase for the table; re-check in the compare and calculator phases.
 
-### 5. Identity: renames, delisting, new listings, code reuse
-**What goes wrong:** build_changelog.py keys on `(code, name)`. An ETF rename (common for Korean ETFs: brand changes like KODEX/ACE prefix changes) looks like delist + new listing, splitting the series. Keying history on name orphans the old series. Delisted ETFs remain in the store forever and may render as a stale flat line; newly listed ETFs have a single point, which a step chart cannot draw. A null fee on one day (scrape gap) may create a phantom end or "0.00%" point.
+### Pitfall 5: `?compare=` URL is untrusted input, and it collides with the existing URL sync code
+**What goes wrong:**
+- Unknown or malicious codes: `?compare=<img src=x onerror=...>` is injected via innerHTML. The codebase has many innerHTML sites; `escapeHtml` exists but is not applied everywhere.
+- Shape assumptions: `parseInt(code)` or `/^\d{6}$/` breaks 0026S0 and 0069M0, so the alphanumeric ETFs (the ones already fixed in v1.2 DATA-04) become uncompare-able. Case: `0026s0` in a hand-typed URL will not match.
+- Duplicates (`a,a,a`), more than 4 codes, or 1 code all need defined behavior.
+- `syncLanguageParam` / `syncCategoryParam` use `new URL` + `replaceState`, so a naive `history.replaceState({}, "", "?compare=...")` deletes `lang` and `category`; language switching does the reverse and drops `compare`.
+- Category presets: on category-preset pages `syncCategoryParam` returns early. Compare must define whether it works on those pages.
 **Prevention:**
-- Key history by 종목코드 only; store the latest name as metadata (and optionally a names list).
-- Retain delisted ETF series but mark `lastSeen`; the UI only opens the chart from rows that exist in data.json, so orphan series are inert.
-- Single-point series: render a "no changes recorded since <date>" flat line/annotation, not an empty or broken SVG.
-- Never append a point when the new value is None; keep the last known value.
-- Do not reuse the (code,name) pair logic for the store; note this differs from the changelog and document why.
-**Detection:** Tests with fixtures: rename, delist, relist, null value, first appearance.
-**Phase:** Store design phase; single-point rendering in the chart phase.
+- Never render code strings from the URL. Build the selection as `allData.filter(d => wanted.has(d.종목코드))`, so only known data objects reach the DOM, and still `escapeHtml` any text.
+- Validate with `/^[0-9A-Z]{6}$/` after `.toUpperCase()`, dedupe, cap at 4 (ties to the 2~4 requirement), and silently drop unknown codes with a small localized notice ("N codes not found"). Fewer than 2 valid codes means show the normal table, not an error.
+- Use one shared `updateUrlParams({compare, lang, category})` helper built on `URL.searchParams` (never string concat). Use comma-separated values with `encodeURIComponent` not needed for `[0-9A-Z,]`.
+- Use `replaceState` for selection changes (avoid flooding history); parse once on load and again on `popstate`.
+- Selection state must survive re-render: `filterAndRenderTable` rebuilds every row, so checkbox `checked` state must be derived from a `Set`, not from the DOM. Also selected ETFs may be hidden by the category filter, so keep them in the sticky compare bar.
+**Detection:** Manual URLs: `?compare=0026S0,360750`, `?compare=zzz`, `?compare="><script>`, `?compare=` with 6 codes, `?lang=en&compare=...` then switch language.
+**Phase:** Compare phase.
 
-### 6. Timezone and date semantics
-**What goes wrong:** The cron is 00:00 UTC (09:00 KST). `datetime.now()` on the Actions runner returns UTC; on the local Windows machine it returns KST. The same run can produce different "today" strings around 15:00-24:00 UTC vs KST, giving off-by-one dates, local-vs-CI mismatch, and duplicate/skipped dates. Backfill dates from `git log` commit timestamps carry their own offsets. Also, the data date is not the same as the commit date (ETL runs at 09:00 KST, before the Korean market opens, so the data reflects the previous trading day/fee announcement).
-**Prevention:**
-- One helper: `datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()` everywhere (store, backfill via `%cI` converted to KST). Add `tzdata` to requirements.txt if not present (Windows has no system tz database; ZoneInfo fails without it).
-- Store plain `YYYY-MM-DD` strings, no time. Label as "recorded on" (fee first observed), not "effective date". Say so in the modal.
-- Same-day rerun (workflow_dispatch) must be idempotent: replace, not append (mirror the existing "updated today's existing entry" logic).
-**Detection:** Two entries for the same date, or dates differing by one between local and CI runs.
-**Phase:** Store design phase.
+### Pitfall 6: Cost-calculator compounding mistakes (fee as annual %, applied monthly)
+**What goes wrong:**
+- Fees are percent (0.09), so using `0.09` as a rate instead of `0.0009` overstates cost 100x.
+- Annual fee subtracted from annual return, then compounded monthly with the wrong periodization: `(1+r/12)^12` is not `1+r`. Use `(1+r)^(1/12)-1` consistently, or state the convention.
+- Contributions timing (start vs end of month) changes results by about one month of return; pick one and label it.
+- Fee drag definition is ambiguous: "total cost" as (gross final value - net final value) needs the same contribution stream on both paths; comparing against 0% fee vs against another ETF are different numbers.
+- Mixing 실부담비용 (already includes 매매중개수수료, which is a transaction-cost estimate, not an annual holding fee) as if it were a pure annual expense ratio. Users may read the output as an exact figure.
+- Float accumulation over 360 monthly steps is fine for display, but do not round inside the loop; round only at output. Do not use `toFixed` for currency (returns strings, banker-ish edge cases); use `Math.round` then `Intl.NumberFormat`.
+- Input handling: empty string becomes 0, negative, `NaN`, 1e21 lump sums, decimal "1,000,000" pasted with commas, and full-width digits from Korean IMEs. Use `type="text" inputmode="numeric"`, strip commas, clamp (for example 0..1e12 KRW, years 1..50).
+- Formatting: `toLocaleString("ko-KR")` is hard-coded in existing code; the calculator serves 8 languages, but KRW amounts should keep KRW (with 원 / 만원 / 억 units localized via i18n, not hard-coded Korean strings). Do not localize the currency itself.
+**Prevention:** Put the pure math in a separate function (no DOM) and unit test it with hand-computed cases (lump sum 1,000,000 x 10y x 0% fee equals a known value; 0% return equals sum of contributions minus simple fee). The repo has a node test precedent (`tests/fee_chart_check.js`), so add a node check to CI.
+**Detection:** Compare with a spreadsheet for 3 scenarios before shipping.
+**Phase:** Calculator phase.
 
-### 7. JSON growth and payload cost for a static site
-**What goes wrong:** One monolithic history file for all ETFs is fetched for every page view even though only one chart is ever opened; growth is small with change-only records but backfill noise (pitfall 1) can inflate it. GitHub Pages gzips but the file still competes with data.json on mobile.
-**Prevention:**
-- Lazy-load: fetch history only on first fee-cell click, cache in memory after.
-- Compact schema: `{code: [[date, fee], ...]}` or per-field arrays, not verbose objects with repeated keys. Estimate size after backfill (target: tens of KB gz).
-- Alternative if it exceeds about 200 KB raw: per-ETF files loaded on demand; note this raises the file_pattern glob need (pitfall 4).
-**Detection:** Check file size in a CI assertion or the backfill report.
-**Phase:** Store design phase (schema), chart phase (lazy load).
+### Pitfall 7: Calculator reads as financial advice (legal/trust risk in Korea)
+**What goes wrong:** Presenting a projected final amount with an "expected return" default (for example 7%) can be read as return prediction or investment solicitation. Korean regulation (Capital Markets Act, unregistered investment advice) makes this a real concern for a finance site, and the site already has a footer disclaimer.
+**Prevention:** Frame the output as "cost difference" (fee drag), not "expected wealth". No pre-filled return that looks like a forecast: default it to a clearly labelled hypothetical, or make the user enter it. Put a disclaimer adjacent to the result (not only in the footer), translated in all 8 packs. Show that past fee data is not a forecast, that 매매중개수수료 is an estimate, and that taxes/FX/tracking error are excluded.
+**Phase:** Calculator phase (copy review as an explicit task).
 
-### 8. Browser cache staleness of the history file on GitHub Pages
-**What goes wrong:** Pages serves with `Cache-Control: max-age=600`. A user can see yesterday's history against today's data.json, or a chart missing the latest point. Query-string versions do not exist for fetched JSON unless the code adds them. Service worker/PWA (site.webmanifest exists) caching may pin an old copy.
-**Prevention:**
-- Fetch with a version key derived from data already loaded, e.g. `fee-history.json?v=<update-meta.json updatedAt>`; follow whatever mechanism the site already uses for data.json/changelog.json (check script.js and match it, do not invent a second scheme).
-- If a service worker exists, confirm it does not cache-first the history file.
-- Chart must tolerate the last point being older than data.json's current fee: append the current data.json value client-side as the "now" point, so the chart never contradicts the table cell.
-**Detection:** Chart's latest value differs from the cell that was clicked.
-**Phase:** Chart/frontend integration phase.
+### Pitfall 8: RSS feed built in CI misses the CI-only writer rules and creates unstable GUIDs
+**What goes wrong:**
+- **Generating locally or in a step that the pre-commit hook affects.** The hook restores `data.json` from HEAD; `changelog.json` locally is stale/overwritten. Generate `feed.xml` only in the workflow after `Build Changelog` and add `feed.xml` to `file_pattern` in git-auto-commit-action, otherwise the file is generated but never committed (silent no-op). Never add it to the local sync path.
+- **Unstable GUIDs.** changelog.json has no per-change ID; entries are grouped by `month` with an `updatedAt`. Using `updatedAt` or an array index as GUID changes when the entry is regrouped or the v1.2 idempotent cleanup rewrites it, and every subscriber sees all items as new. Use a deterministic GUID: `sha1(code|field|after|month)` or `tag:etfsave.life,YYYY-MM-DD:{code}-{field}`, with `isPermaLink="false"`. Do not include `before` if the pre-cleanup corrections might change it (decide and document).
+- **pubDate.** RFC 822 requires English day/month names; `strftime('%a, %d %b %Y')` is locale-dependent (a Korean locale on a dev machine outputs Korean). Use `email.utils.format_datetime(dt)` with tz-aware KST (`+0900`) or UTC. Changelog dates are date-only (`updatedAt`), so pick a fixed time (for example 09:00 KST, matching the cron) and do not use `datetime.now()` (feed changes every run, and creates a commit every day).
+- **Byte-identical output.** The daily workflow commits on any diff. If `lastBuildDate` is now(), the feed creates a daily noise commit and cache churn. Derive `lastBuildDate` from the newest item, and write only if content changed (same idempotent pattern as fee-history).
+- **XML escaping.** Names like `S&P500` are in the data (`1Q 미국S&P500`); an unescaped `&` makes the feed invalid XML and readers drop the whole feed. Build with `xml.etree.ElementTree` or `xml.sax.saxutils.escape`, not f-strings. Write UTF-8 with an XML declaration; strip control characters.
+- **Junk items.** Feed only genuine fee decreases (per the milestone goal), not null transitions (Pitfall 3), not v1.2 bulk-correction entries, and only real `실부담비용`/`총보수` changes; cap at about 50 items or 6 months so the file stays small.
+- **Discovery and content type.** Add `<link rel="alternate" type="application/rss+xml" title="..." href="/feed.xml">` to every page head (not only index). GitHub Pages serves `.xml` as `application/xml`, which readers accept; do not rely on a custom Content-Type. Use absolute `https://etfsave.life/...` links (feed readers have no base URL), a valid `atom:link rel="self"`, and item links that resolve (`/changelog/` plus an anchor, since per-item pages do not exist).
+- **Language.** The feed is Korean-only; state `<language>ko</language>` and do not promise 8 languages.
+- Add feed.xml to sitemap.xml and robots (optional). Validate with the W3C feed validator or `feedparser` in a pytest.
+**Phase:** RSS phase (last; depends on Pitfall 3 clean data).
+
+---
 
 ## Moderate Pitfalls
 
-### 9. SVG scaling with tiny fees (0.0047%)
-**What goes wrong:** A y-axis from 0 to max with fees like 0.0047 vs 0.06 vs 0.3 shows either flat lines or overlapping labels. Steps of 0.0001 are invisible; auto "nice ticks" logic written for integers gives 0, 0, 0 labels; `toFixed(2)` prints 0.00%. Floating ticks print 0.30000000000000004%.
-**Prevention:** Compute the range per ETF from min/max of that series with padding (min-span floor, e.g. treat a span less than 1e-4 as centered flat). Format with adaptive precision: `toFixed(4)` or as many decimals as the underlying value needs (trim trailing zeros, cap at 4). Ticks: derive from step size via `10^floor(log10(span))` rounding, then round each tick value before printing. Never draw NaN paths when min==max (division by zero); handle that case explicitly. Render flat single-value series as a horizontal line.
-**Phase:** Chart phase. Test fixtures: 0.0047 constant, 0.0047 to 0.0050, 0.05 to 0.045 to 0.0453, and one-point series.
+### Pitfall 9: A11y "fixes" that regress the existing behavior
+**What goes wrong and prevention (from ui-review.md):**
+- **Sticky header (C2).** Switching `top:-80px` to `transform: translateY(-100%)` on a `position: sticky; backdrop-filter` element can create a new stacking context and change how the mobile nav dropdown positions; test with the hamburger open. The existing bug (nav open + scroll) is the same code path, so the fix should suppress hide while the nav is open or the header has focus (`:focus-within`, H5). Wrap the scroll handler in rAF (H10) in the same change, once.
+- **Table min-width (C3).** `min-width: 560px` on the changelog table requires `.table-container { overflow-x: auto }` to be the actual scrolling ancestor; check that a parent `overflow: hidden` (glass card) does not clip it. Apply it inside the mobile media query only.
+- **Touch targets (C4).** Raising `.tab-button`, `.share-button`, `.btn-link`, `.code-cell` to 44px makes wrapped tabs push the table down on 320px screens and can break the 2-column CTA layout; check at 320/375/414. The new compare checkboxes and calculator inputs must be built at 44px from the start, not retrofitted; the checkbox needs a 44px label hit area, not a 16px box.
+- **Contrast (C1/H3/H9).** Removing the h1 gradient means also deleting the duplicated "Additive UI Refinements" block (H8, `style.css:1436-1525`); editing one copy is silently overridden by the other. Delete the duplicate first, then edit. Replacing `#38bdf8` with a token needs the token to exist (`--primary`) and to pass 4.5:1 on the real backgrounds (compute, do not eyeball).
+- **ARIA i18n (C6).** Adding `data-i18n-aria-label` needs the keys in all 8 packs (`ko, en, vi, zh, ja, th, tl, km`) or the existing behavior shows the key name (the known `getTranslation` fallback bug). There is an i18n test in tests/, so extend it to assert key parity across the 8 files; also call the new attribute pass in the same `applyTranslations()` path that language switching calls, otherwise labels stay stale after switching.
+- **Mobile table semantics (C5).** The card-stack pattern hides `<thead>`. Adding `aria-label` per `<td>` bloats the DOM and is re-applied on every filter re-render; if compare/calculator introduce new tables, choose "real table + horizontal scroll" and do not extend the CSS-generated-label pattern.
+- **Loading/error states (H4).** `role="status" aria-live` on `#tableBody` announces the entire table on every re-render; put the live region on a separate status element, not on the tbody.
+- **Verification gap.** There is no live-browser or axe test. Add at least a contrast computation script and a manual 320px/VoiceOver/TalkBack checklist per phase.
+**Phase:** A11y phase. Do it before compare/calculator so their new UI inherits the fixed tokens and touch sizes.
 
-### 10. Modal accessibility and focus, especially on mobile
-**What goes wrong:** Clickable `<td>` is not keyboard reachable, has no role, and screen readers skip it. Modal opens without moving focus, so Tab continues behind it; Esc does not close; focus is not restored to the clicked cell; background scrolls (iOS scroll-through); the modal is taller than the viewport with a landscape keyboard; SVG chart has no text alternative.
-**Prevention:** Use `<dialog>` with `showModal()` (native focus trap, Esc, inert background) or add `role="dialog" aria-modal="true" aria-labelledby`, focus close button, restore focus to the trigger on close. Make the fee cell contain a real `<button>` (styled as text) rather than making the `td` clickable. Lock body scroll while open (`overflow: hidden` on body; verify on iOS Safari). Provide `<svg role="img" aria-label>` plus a visually available table/list of dates and values as text fallback (also useful for SEO/i18n). Use `max-height: 90dvh` with internal scroll. Respect `prefers-reduced-motion`.
-**Phase:** Chart/modal phase.
+### Pitfall 10: Editing script.js / style.css with the wrong encoding, and the OneDrive/hook traps
+**What goes wrong:** script.js and style.css are UTF-8 BOM + CRLF. Editing tools that rewrite whole files as LF/no-BOM produce a whole-file diff, break blame, and can garble Korean if re-encoded. New files (feed generator, calculator module) must follow repo convention deliberately, not accidentally. OneDrive breaks git worktrees, so do not use worktree-based parallel execution. The pre-commit hook overwrites local `data.json`, and `changelog.json` is overwritten by a local sync, so any local test of the RSS/ETL chain must use fixtures or temp copies and never commit regenerated data files. fee-history.json has CI as sole writer; do not have any new script (feed, backfill "fix" for None) write to it.
+**Prevention:** After every edit, `git diff --stat` should show small line counts; check BOM and CRLF are intact (`file script.js`). Keep new logic in separate new files where reasonable (for example `compare.js`, `calculator.js`) to shrink the CRLF blast radius, but note each needs a `<script>` tag on each page that uses it plus service worker/sitemap considerations (none exist).
+**Phase:** All phases.
 
-### 11. Touch target and layout conflicts with the mobile card-table layout
-**What goes wrong:** The mobile view turns table rows into cards; existing row-level tap handlers (expand, link to detail, sort headers) may swallow or double-fire the fee-cell tap. Fee text is small, giving a target under 44 px. Adding an icon/underline breaks the card grid alignment. Event delegation on `tbody` may attribute clicks to the wrong row after sort/filter re-render, opening the wrong ETF (code taken from an index rather than a `data-code` attribute).
-**Prevention:** Store `data-code` on the trigger button, not row index. Use one delegated listener with `stopPropagation` only on the button. Give the button min 44x44 px hit area (padding) without changing visible layout in the card mode; test at 360 px and 768 px. Do not add a new column: desktop table width and the 8-language headers are already tight. Only show the affordance (dotted underline) on fields that have history.
-**Phase:** Chart/UI integration phase; verify with the existing ui-review workflow (.planning/ui-review.md exists).
+### Pitfall 11: New features add pages/keys without i18n, SEO and analytics parity
+**What goes wrong:** Compare and calculator UI strings need 8 translations; missing keys render as raw key names (existing bug). If the calculator is a new page (`/calculator/`), it needs the shared header/footer/hamburger, hreflang alternates, sitemap entry, canonical, and structured data consistent with other pages (all pages duplicate the template, no partials, so changes need 6+ files). If compare is in-page, the `?compare=` URL is not indexable and should not create duplicate canonical URLs (canonical stays `https://etfsave.life/`).
+**Prevention:** Decide page vs in-page early. Add a CI check that every key used by `data-i18n` exists in all 8 packs. Use `trackEvent` consistent with existing events, not new ad-hoc ones.
+**Phase:** Compare and calculator phases.
 
-### 12. i18n of chart labels and dates (8 languages)
-**What goes wrong:** Hard-coded Korean/English strings in the modal ("총보수", "변경 없음", axis text); dates formatted `YYYY-MM-DD` vs locale; long translations (German, Vietnamese/Thai if present) overflow the modal title; number format with comma decimals in de/fr/es locales while other site numbers use dots; RTL if Arabic is among the 8 languages breaks SVG axis direction (SVG text-anchor, x-axis should remain chronological LTR).
-**Prevention:** Add all new strings to translations.js in all 8 languages in one pass (a missing-key test if the repo has one under tests/). Format dates with `Intl.DateTimeFormat(currentLang, {timeZone:'Asia/Seoul', ...})` on the parsed `YYYY-MM-DD` as UTC to avoid day shift (`new Date('2026-05-27')` parses as UTC, and local-time formatting in a negative-offset timezone shows the previous day; pass `timeZone:'UTC'`). Keep the numeric fee format consistent with the table's existing formatter. Language changes while the modal is open must re-render it. Force `dir="ltr"` on the SVG container.
-**Phase:** Chart phase; a final i18n pass task.
+### Pitfall 12: Overlaid comparison chart reuses the single-series chart with wrong assumptions
+**What goes wrong:** The v1.3 chart is single-series, monotone curve, and each ETF has different change dates and history starts (backfill from 2026-02, only 59 ETFs). Overlaying needs a shared x-domain and step-carry-forward per series; naive concatenation misaligns. Series with a single point draw nothing. Y-axis auto-scale with fees in 0.01 to 0.5 range makes near-identical ETFs indistinguishable. Color-only series distinction fails contrast/color-blind rules (the exact a11y issues being fixed), so add direct labels, distinct dash patterns or markers, and a text legend. Reuse the existing SVG escape/format helpers; monotone interpolation with different x-samples per series can visually cross incorrectly. Cap at 4 series so colors stay distinguishable. Also fetch `fee-history.json` once (cache), not per compare toggle. Extend `tests/fee_chart_check.js`.
+**Phase:** Compare phase (chart sub-step, after table compare works).
 
-### 13. Interaction with changelog dedup and DATA-06 logic
-**What goes wrong:** Building history from the same diff pass but skipping rows that DATA-06 suppresses makes the two views disagree (changelog says no change, chart shows a step), or history builds after a bulk correction and records it. build_changelog.py returns early on flagged bulk corrections, so an implementation hooked in after `return 0` never runs, or one hooked in before records the false changes.
-**Prevention:** Make the history updater a separate script/step with its own bulk-correction guard using the shared `detect_bulk_correction` (import it, do not copy). On bulk correction: re-baseline silently (update the current value, add no point) and log a warning, matching DATA-06 semantics.
-**Phase:** ETL integration phase.
+### Pitfall 13: Loading/error state and retry loops
+**What goes wrong:** Adding a retry button that re-runs `init` twice registers duplicate event listeners (the code has many `addEventListener` without removal), so one click fires N times. Compare selection and the calculator rely on `allData`; on fetch failure they must be disabled, not throw.
+**Prevention:** Use event delegation and idempotent init; test failure by blocking data.json.
+**Phase:** A11y phase (H4) and again for the features.
+
+---
 
 ## Minor Pitfalls
 
-### 14. Steps drawn as diagonals
-Use the horizontal-then-vertical path (`H x2 V y2`, or `stepAfter` semantics), extending the last segment to "today" so an unchanged fee shows as a line to the right edge.
+### Pitfall 14: Existing tests hard-code the buggy contract
+`tests/test_fees.py` asserts `p_float(None) == 0.0`, `p_float("") == 0.0`, `p_float("N/A") == 0.0`. These will fail after the fix; update them deliberately (they are the spec change), and do not "fix" the fix to satisfy stale tests. Also other tests (`test_process_data.py`, `test_validate.py`) may build rows via p_float; run the full suite (145 tests) before/after.
 
-### 15. Test suite gates the daily run
-`pytest tests/` runs before the ETL in the workflow, so a failing new test blocks the daily update. Keep new tests fast, network-free, and independent of the real history file's contents (use fixtures).
+### Pitfall 15: Sitemap and lastmod staleness
+sitemap.xml has all `lastmod` 2026-02-14. New pages or the feed should be added; do not add a hand-edited lastmod that goes stale. Low priority.
 
-### 16. Windows path/encoding issues in the local backfill
-`git show` output must be decoded as UTF-8 (`encoding="utf-8"` as build_changelog.py does; default cp949 on Korean Windows corrupts 종목명). Write output with `ensure_ascii=False`, UTF-8, and `\n` newlines (avoid CRLF diffs from OneDrive/Windows).
+### Pitfall 16: Copy-to-clipboard share link for compare
+The existing share button and clipboard fallback use `execCommand`. A compare share link must include the current `lang` param and use the shared URL helper; `navigator.clipboard` fails on non-secure/older in-app browsers (KakaoTalk in-app browser is a primary Korean channel), so keep the fallback and test in it. Also `Intl`/`replaceAll` are fine, but avoid newer syntax the older Samsung/Kakao webviews may not support.
 
-### 17. OneDrive-synced working directory
-The repo is in OneDrive; large backfill loops touching many files can trigger sync locks. Run `git show` to memory, not to temp files in the repo.
+---
 
 ## Phase-Specific Warnings
 
-| Phase Topic | Likely Pitfall | Mitigation |
+| Phase topic | Likely pitfall | Mitigation |
 |-------------|---------------|------------|
-| Schema/store design | Float noise, wrong field set, code-keyed identity, KST dates, size (1, 5, 6, 7) | Round + tolerance, key by code, ZoneInfo Asia/Seoul, compact schema, fixtures |
-| Backfill from git | Bad commits, 2026-05-27 correction, partial data (2) | Local one-time script, validate each commit, reuse bulk detector, explicit exclusion, dry-run report |
-| ETL/Actions integration | Shallow clone, file_pattern, local divergence, DATA-06 interplay (3, 4, 13) | Incremental from committed file, extend file_pattern, extend hook sync, separate guarded step |
-| Chart + modal | Tiny-value scaling, a11y, touch conflicts, cache, i18n (8-12) | Per-series range, native dialog + real button, data-code, versioned fetch, all-language strings |
+| p_float / None (do first; data foundation) | NaN passes through (P1); TypeError in sum/validators (P2); null creates fake changelog and fee-history entries (P3); null sorts as cheapest (P4); stale tests (P14) | isfinite check, carry-forward contract, `allow_nan=False`, end-to-end test ETL -> build_changelog -> build_fee_history, shared `isValidFee` in JS |
+| Mobile a11y/UI (before new UI) | Sticky/transform stacking, duplicate CSS block override (P9), CRLF/BOM churn (P10), missing translation keys, aria-live on tbody | Delete duplicate block first, key-parity test for 8 packs, verify at 320/375/414, contrast computed |
+| ETF compare | URL injection and alphanumeric codes (P5), lang/category param clobbering, selection lost on re-render, chart series misalignment (P12), null fees (P4) | Whitelist against `allData`, shared URL helper, Set-based state, cap at 4, extend node chart check |
+| Cost calculator | Percent vs fraction and monthly compounding (P6), advice framing (P7), locale/currency formatting, input parsing | Pure tested function, hand-computed cases, adjacent translated disclaimer, cost-difference framing |
+| RSS | Feed never committed (file_pattern), unstable GUID, non-English/locale dates, `&` escaping, daily noise commit, junk null/bulk items (P8, P3) | Generate only in CI after Build Changelog, hash GUID, `email.utils.format_datetime`, ElementTree, deterministic lastBuildDate, validate with feedparser in pytest |
+| Cross-cutting | OneDrive worktrees, pre-commit hook overwrites, fee-history CI-only writer (P10); i18n/SEO parity (P11) | No worktrees, fixtures not live data, no new writers of fee-history.json |
 
-## Research flags
-- Needs a look at script.js before planning the frontend phase: how data.json/changelog.json are currently fetched and cache-busted, whether a service worker exists, and which locales (RTL?) are among the 8.
-- Needs a look at `scripts/sync_server_changelog.py` to decide how to extend the hook for the history file.
-- Backfill phase should start with a dry run and manual verification on a handful of known ETFs (e.g. 360200 ACE 미국S&P500) before writing the file.
+## Suggested Ordering (from pitfall dependencies)
+
+1. p_float/None chain (RSS and compare both consume this data)
+2. Mobile a11y/UI fixes (new UI inherits tokens and 44px targets)
+3. Compare (table then chart)
+4. Calculator (independent; reuse the fee validity helper and URL helper)
+5. RSS (needs clean changelog; CI-only)
+
+Phases flagged for deeper research: Calculator (Korean regulatory wording and compounding convention decision), RSS (GUID scheme vs changelog regrouping; confirm the feed reader behaviors), p_float (what KOFIA actually emits for legitimately-zero versus missing 매매중개수수료: check `downloads/` sample files).
+
+## Gaps
+
+- Whether KOFIA uses "-" or blank for a legitimately zero fee (for example brand-new ETFs with no 매매중개수수료 yet). If "-" means 0, returning None for it would drop valid ETFs; inspect real Excel samples in `downloads/` before finalizing the per-field policy. (Not verified.)
+- Regulatory guidance on the calculator disclaimer is a general concern, not legal advice; not researched with a legal source.
+- Feed-reader behaviors (GUID handling, GitHub Pages `application/xml` type) are from standard practice, not tested against this deployment.
+- No live-device a11y test results exist; ui-review.md is a static code audit only.
 
 ## Sources
-- Repo inspection (HIGH): scripts/build_changelog.py, .github/workflows/daily_update.yml, .githooks/pre-commit, data.json (156 commits touching it)
-- actions/checkout default fetch-depth 1 (HIGH, documented behavior)
-- GitHub Pages default cache headers max-age=600 (MEDIUM, common knowledge, not re-verified this session)
-- Modal/dialog, touch target (44 px), Intl date and timezone behavior (MEDIUM, standard web practice)
+
+- Code reads (HIGH): `etl_process.py` (p_float, process_data, validate_etl_results), `scripts/build_changelog.py` (to_float, build_changes), `scripts/build_fee_history.py` (normalize), `script.js` (changelog diff ~L668-675, escapeHtml, URL param sync), `.github/workflows/daily_update.yml` (file_pattern, step order), `.git/hooks/pre-commit`.
+- `.planning/ui-review.md`, `.planning/codebase/CONCERNS.md`, `.planning/PROJECT.md` (HIGH for the project facts).
+- Python `float('nan')` behavior, RFC 822 / `email.utils.format_datetime`, RSS 2.0 GUID semantics, WCAG 2.5.5/2.5.8 (MEDIUM: standard knowledge, not re-fetched in this session).
