@@ -897,6 +897,14 @@ h1 {
     font-size: 0.82rem;
 }
 
+.changelog-no-changes {
+    margin: 0;
+    padding: var(--space-4);
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;

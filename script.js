@@ -175,6 +175,7 @@ function initSmartHeader() {
         requestAnimationFrame(() => {
             // BUG-01: skip scroll handling while mobile nav is open (D-04)
             if (document.body.classList.contains("nav-open")) {
+                header.classList.remove("header-hidden");
                 rafPending = false;
                 return;
             }
