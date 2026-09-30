@@ -89,12 +89,12 @@ assert.ok(sc.min >= 0);
 
 // step path
 sc = context.computeFeeChartScale([0.0055]);
-assert.strictEqual(context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }], sc, "2026-09-30"), "M48 82H308");
+assert.strictEqual(context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }], sc, "2026-09-30"), "M56 82H308");
 sc = context.computeFeeChartScale([0.0055, 0.0045]);
 const d2 = context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }, { date: "2026-06-01", value: 0.0045 }], sc, "2026-09-30");
-const m2 = /^M48 ([\d.]+)H([\d.]+)V([\d.]+)H308$/.exec(d2);
+const m2 = /^M56 ([\d.]+)H([\d.]+)V([\d.]+)H308$/.exec(d2);
 assert.ok(m2, d2);
-assert.ok(+m2[2] > 48 && +m2[2] < 308);
+assert.ok(+m2[2] > 56 && +m2[2] < 308);
 assert.ok(+m2[1] < +m2[3]);
 assert.ok(!/\d\.\d{3,}/.test(d2));
 const d3 = context.buildFeeStepPath([{ date: "2026-09-30", value: 0.0055 }], context.computeFeeChartScale([0.0055]), "2026-09-30");

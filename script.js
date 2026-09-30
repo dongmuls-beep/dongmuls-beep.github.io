@@ -1506,7 +1506,7 @@ function renderFeeHistoryChart(points, fieldLabel, today) {
     scale.ticks.forEach((tick) => {
         const y = feeChartRound(feeChartY(tick, scale));
         svg.appendChild(make("line", { class: "fee-chart-grid", x1: FEE_CHART.left, x2: FEE_CHART.right, y1: y, y2: y }));
-        const label = make("text", { class: "fee-chart-label is-y", x: 44, y, "text-anchor": "end", "dominant-baseline": "middle" });
+        const label = make("text", { class: "fee-chart-label is-y", x: FEE_CHART.left - 4, y, "text-anchor": "end", "dominant-baseline": "middle" });
         label.textContent = formatPercent(tick);
         svg.appendChild(label);
     });
@@ -1716,7 +1716,7 @@ function buildFeeHistoryPoints(raw, currentValue, today) {
     return points.filter((p, i) => i === 0 || p.value.toFixed(4) !== points[i - 1].value.toFixed(4));
 }
 
-const FEE_CHART = { width: 320, height: 180, left: 48, right: 308, top: 12, bottom: 152 };
+const FEE_CHART = { width: 320, height: 180, left: 56, right: 308, top: 12, bottom: 152 };
 
 function computeFeeChartScale(values) {
     const finite = values.filter((v) => Number.isFinite(v));
