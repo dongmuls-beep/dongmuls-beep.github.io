@@ -6,7 +6,7 @@
 
 ## Current State
 
-v1.3 진행 중 — Phase 7 완료: fee-history.json 일일 변동 기록 (HIST-01~04). 알려진 부채: etl_process.p_float 파싱 실패 시 0.0 반환(WR-04) → 가짜 0 기록 가능.
+v1.3 진행 중 — Phase 7 완료: fee-history.json 일일 변동 기록 (HIST-01~04). Phase 8 완료: git 히스토리 backfill, 59종목 1169포인트, changelog 912/912 일치 (BACK-01~03). 알려진 부채: etl_process.p_float 파싱 실패 시 0.0 반환(WR-04) → 가짜 0 기록 가능.
 
 v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누락 0건, changelog 가짜 변동 제거. 테스트 56개, 일일 ETL/배포 success.
 
@@ -49,7 +49,7 @@ v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누�
 ### Active
 
 - [x] 수수료 변동 시점만 기록하는 JSON 스냅샷 시계열 (v1.3) — Validated in Phase 7: 수수료 이력 저장소 및 일일 추가
-- [ ] git 히스토리 기반 과거 수수료 backfill (v1.3)
+- [x] git 히스토리 기반 과거 수수료 backfill (v1.3) — Validated in Phase 8: Git 히스토리 과거 복원
 - [ ] 수수료 셀 클릭 시 변동 추이 SVG 그래프 모달 (v1.3)
 
 ### Out of Scope
