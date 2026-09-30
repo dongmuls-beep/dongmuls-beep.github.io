@@ -31,6 +31,9 @@ jobs:
       - name: Run unit tests
         run: pytest tests/ -v
 
+      - name: Run fee chart check
+        run: node tests/fee_chart_check.js
+
       - name: Run ETL Script
         env:
           GAS_WEB_APP_URL: ${{ secrets.GAS_WEB_APP_URL }}
