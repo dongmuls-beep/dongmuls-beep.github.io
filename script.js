@@ -1295,7 +1295,9 @@ function handleModalFocusTrap(event) {
     const last = focusable[focusable.length - 1];
     const active = document.activeElement;
 
-    if (event.shiftKey && active === first) {
+    const content = modal.querySelector(".modal-content");
+
+    if (event.shiftKey && (active === first || active === content)) {
         event.preventDefault();
         last.focus();
     } else if (!event.shiftKey && active === last) {
