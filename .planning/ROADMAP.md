@@ -47,7 +47,10 @@ Full details: [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
   2. 신규 상장 종목은 첫 관측값으로 시계열이 시작되고, 종목명이 바뀌어도 종목코드 기준으로 같은 시계열이 이어진다
   3. fee-history.json이 없거나 파싱 불가한 상태에서 CI 단계가 실패하며 기존 파일은 덮어써지지 않는다
   4. 일일 자동 커밋에 fee-history.json 변경분이 포함된다
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md — build_fee_history.py (apply_snapshot, fail-closed load) + tests, seed fee-history.json, workflow step + file_pattern
 
 ### Phase 8: Git 히스토리 과거 복원
 **Goal**: 운영자가 1회 실행으로 data.json git 히스토리에서 신뢰할 수 있는 과거 수수료 시계열을 만들 수 있다
