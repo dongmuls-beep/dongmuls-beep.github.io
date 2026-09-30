@@ -60,7 +60,10 @@ Plans:
   1. 운영자가 로컬에서 backfill 스크립트를 실행하면 2026-02 이후 시계열이 fee-history.json 형식으로 생성된다
   2. 2026-05-27 매핑 보정 이전의 잘못된 값이 시계열에 남지 않고 보정일 기준으로 재기준화된다
   3. 실행 후 리포트에 항목별 변동 수, 건너뛴 커밋, A→B→A 의심 패턴이 출력된다
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — backfill_fee_history.py (pure replay + report + --dry-run), tests, regenerated fee-history.json
 
 ### Phase 9: 수수료 변동 그래프 모달
 **Goal**: 사용자가 ETF 수수료 셀을 클릭하면 해당 항목의 과거 변동 추이를 그래프와 내역으로 볼 수 있다
