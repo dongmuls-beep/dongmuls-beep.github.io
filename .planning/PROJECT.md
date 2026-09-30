@@ -6,18 +6,7 @@
 
 ## Current State
 
-v1.3 진행 중 — Phase 7 완료: fee-history.json 일일 변동 기록 (HIST-01~04). Phase 8 완료: git 히스토리 backfill, 59종목 1169포인트, changelog 912/912 일치 (BACK-01~03). Phase 9 완료: 수수료 셀 클릭 → 부드러운 곡선 SVG 차트 + 변동 내역 모달, 8개 언어 (CHART-01~06). 알려진 부채: etl_process.p_float 파싱 실패 시 0.0 반환(WR-04) → 가짜 0 기록 가능.
-
-v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누락 0건, changelog 가짜 변동 제거. 테스트 56개, 일일 ETL/배포 success.
-
-## Current Milestone: v1.3 수수료 변동 그래프
-
-**Goal:** 사용자가 ETF 수수료 셀을 클릭하면 해당 항목의 과거 변동 추이 그래프를 볼 수 있다.
-
-**Target features:**
-- 수수료 스냅샷 저장소 — ETL이 값 변동 시에만 JSON 시계열에 기록 (종목코드별)
-- git 히스토리(data.json, 2026-02~)에서 과거 시계열 backfill
-- 수수료 셀 클릭 → 모달에 클릭한 항목 1개의 계단형 라인 차트 (바닐라 SVG, 의존성 0)
+v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → 부드러운 곡선 SVG 차트 + 변동 내역 모달, fee-history.json 일일 누적(59종목, 2026-02~ backfill). 테스트 145개 + 차트 node 검사 CI. 알려진 부채: etl_process.p_float 파싱 실패 시 0.0 반환.
 
 ## Core Value
 
@@ -27,6 +16,9 @@ v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누�
 
 ### Validated
 
+- ✓ 수수료 변동 시점만 기록하는 fee-history.json 일일 누적 (HIST-01~04) — v1.3
+- ✓ data.json git 히스토리 backfill (BACK-01~03) — v1.3
+- ✓ 수수료 셀 클릭 시 변동 추이 차트·내역 모달, 8개 언어 (CHART-01~06) — v1.3
 - ✓ 영숫자 KRX 코드 ETF AUM·거래량 매칭 (DATA-04) — v1.2
 - ✓ 변경 이력 가짜 변동 제거 + 대량 보정 재발 방지 (DATA-05, DATA-06) — v1.2
 - ✓ 데이터 유효성 검사 레이어 (수수료 범위·중복 코드·이상치 soft-warning) — v1.1
@@ -48,9 +40,7 @@ v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누�
 
 ### Active
 
-- [x] 수수료 변동 시점만 기록하는 JSON 스냅샷 시계열 (v1.3) — Validated in Phase 7: 수수료 이력 저장소 및 일일 추가
-- [x] git 히스토리 기반 과거 수수료 backfill (v1.3) — Validated in Phase 8: Git 히스토리 과거 복원
-- [x] 수수료 셀 클릭 시 변동 추이 SVG 그래프 모달 (v1.3) — Validated in Phase 9: 수수료 변동 그래프 모달
+(다음 마일스톤에서 정의 — /gsd:new-milestone)
 
 ### Out of Scope
 
@@ -90,6 +80,9 @@ v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누�
 | i18n innerHTML 유지 + SECURITY 주석 (v1.1) | 번역 JSON에 의도적 HTML | ✓ Good |
 | CI에서 ETL 전 pytest 게이트 (v1.1) | KOFIA 형식 변경 즉시 감지 | ✓ Good |
 | changelog 대량 보정 50% 기준 미기록 (v1.2) | 매핑 보정이 가짜 변동으로 남는 것 방지 | — Pending (업계 일괄 인하 시 재검토) |
+| fee-history는 CI 단독 writer, pre-commit 동기화 없음 (v1.3) | 로컬 hook이 운영본으로 덮어쓰는 문제 회피 | ✓ Good |
+| backfill 재기준화는 감지 기반만, 하드코딩 삭제 없음 (v1.3) | 05-27 오류는 그날 마지막 커밋 규칙으로 제거, 정상 이력 보존 | ✓ Good |
+| 차트는 계단형 대신 monotone 곡선 (v1.3) | 사용자 디자인 선호; 오버슈트 없음, 정확한 날짜는 내역 리스트 | ✓ Good |
 | changelog 정리는 CI에서 멱등 실행 (v1.2) | pre-commit hook이 운영본으로 덮어써 로컬 편집 무효 | ✓ Good |
 
 ## Evolution
@@ -110,4 +103,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-30 — v1.3 milestone started*
+*Last updated: 2026-09-30 after v1.3 milestone*

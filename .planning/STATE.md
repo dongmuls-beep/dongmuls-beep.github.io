@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: 수수료 변동 그래프
-status: milestone_complete
-stopped_at: Milestone complete (Phase 9 was final phase)
-last_updated: 2026-09-30T05:17:19.499Z
-last_activity: 2026-09-30
+status: completed
+stopped_at: Phase 6 planned
+last_updated: "2026-09-30T05:21:23.282Z"
+last_activity: 2026-09-30 — Milestone v1.3 completed and archived
 progress:
   total_phases: 3
   completed_phases: 3
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-09-30)
 ## Current Status
 
 **Milestone:** v1.3 — 수수료 변동 그래프 — 진행 중
-**Status:** Milestone complete
+**Status:** v1.3 milestone complete
 **Last action:** v1.3 roadmap created
 **Next action:** /gsd:plan-phase 7
 
@@ -83,11 +83,11 @@ Items acknowledged and deferred at milestone close on 2026-09-30:
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-09-30
+Phase: Milestone v1.3 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-09-30 — Milestone v1.3 completed and archived
 
 ## Operator Next Steps
 
-- Plan Phase 7 with /gsd:plan-phase 7
+- Start the next milestone with /gsd-new-milestone

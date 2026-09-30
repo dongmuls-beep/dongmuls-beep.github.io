@@ -1,5 +1,25 @@
 # Milestones
 
+## v1.3 수수료 변동 그래프 (Shipped: 2026-09-30)
+
+**Delivered:** 수수료 셀을 클릭하면 해당 항목의 과거 변동 추이를 차트와 내역으로 보여주고, 이를 위한 일일 스냅샷 이력 저장소를 구축.
+
+**Phases completed:** 3 phases (7–9), 5 plans, 11 tasks
+**Requirements:** 13/13 (HIST-01~04, BACK-01~03, CHART-01~06)
+**Audit:** tech_debt (integration 9/9, flows 2/2, no blockers)
+
+**Key accomplishments:**
+
+- `fee-history.json` + `build_fee_history.py` — 변동분만 종목코드·KST 날짜로 누적, 손상 시 fail-closed, 원자적 쓰기, 일일 CI 자동 커밋 (Phase 7)
+- `backfill_fee_history.py` — data.json git 히스토리 146일 재생, 59종목 1169포인트, 05-27 잘못된 값 제거, changelog 912/912 일치 (Phase 8)
+- 수수료 셀 클릭 → 모달: 부드러운 monotone 곡선 SVG 차트 + 변동 내역, 로딩/에러/변동없음 상태, 포커스·ESC·모바일 대응 (Phase 9)
+- 8개 언어 i18n 키 추가 + 패리티 테스트, 차트 수학 node 검사 CI 추가 (Phase 9)
+- 테스트 56 → 145개
+
+**Known deferred items at close:** 1 (knowledge-base debug audit false positive, see STATE.md) + tech debt in milestones/v1.3-MILESTONE-AUDIT.md (etl_process.p_float 0.0 반환 등)
+
+---
+
 ## v1.2 데이터 정확성 보강 (Shipped: 2026-09-30)
 
 **Delivered:** 운영 점검(2026-09-30)에서 발견된 AUM 누락과 변경 이력 가짜 변동을 해소하고 재발 방지 장치를 CI에 추가.
