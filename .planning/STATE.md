@@ -7,9 +7,9 @@ last_updated: "2026-09-30T06:00:00.000Z"
 last_activity: 2026-09-30
 progress:
   total_phases: 7
-  completed_phases: 6
-  total_plans: 19
-  completed_plans: 19
+  completed_phases: 7
+  total_plans: 21
+  completed_plans: 21
   percent: 0
 ---
 
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-09-30)
 
 ## Current Position
 
-Phase: 16 (통합·검증) — planning; Phases 10-15 complete
+Phase: 16 complete — all v1.4 phases done (28/28)
 Plan: —
-Status: Phase 16 executing (16-01 wiring, 16-02 audit) — resume: check 16-*-SUMMARY.md
+Status: Awaiting human UAT (.planning/phases/16-integration/16-HUMAN-UAT.md)
 Last activity: 2026-09-30 — Phases 14-15 executed in parallel (human UAT deferred to Phase 16)
 
 Progress: [░░░░░░░░░░] 0% (0/7 phases)
@@ -79,10 +79,10 @@ Progress: [░░░░░░░░░░] 0% (0/7 phases)
 
 ## Resume Handoff (2026-09-30 ~16:45)
 
-- Phases 10-15 complete + review fixes (27/28 reqs). Phase 16 (FEED-04 + integration) was executing in background at session end.
-- On resume: `git log --oneline -15`; check `.planning/phases/16-integration/` for 16-01/16-02 SUMMARY, 16-VERIFICATION.md, 16-HUMAN-UAT.md.
-  - If SUMMARYs missing → rerun `/gsd-execute-phase 16` (plans already committed; skip done plans).
-  - If done → mark FEED-04 + Phase 16 complete in REQUIREMENTS/ROADMAP/STATE.
+- ALL Phases 10-16 complete (28/28 reqs), pytest 387 + node 9/9 pass. Phase 16 done 16:38 (commits 2163b6c..a2d0972).
+- On resume: user runs 16-HUMAN-UAT.md (15 items; `python -m http.server 8080`). Record results via `/gsd-verify-work 16`.
+- CI node step in daily_update.yml untested locally (no PyYAML) — check first CI run after push.
+- sitemap unchanged (/compare/ is noindex).
 - Then: user does human UAT (16-HUMAN-UAT.md: browser 320/375/desktop, screen reader, th/tl/km/vi/ja/zh disclaimer review) → `/gsd-audit-milestone` → `/gsd-complete-milestone`.
 - Nothing pushed yet. Before push: `git pull --rebase origin main` (CI auto-commits daily).
 - Deferred: 14 IN-01 (double column label SR), 15 info items, 12 IN-01/02, backlog items in REQUIREMENTS Future.

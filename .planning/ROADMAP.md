@@ -70,7 +70,7 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
 - [x] **Phase 13: 계산기 엔진** - 누적 비용 순수 함수와 node 테스트 — completed 2026-09-30
 - [x] **Phase 14: 모바일 접근성** - Critical/Major 모바일 a11y·UI 수정과 8개 언어 ARIA — completed 2026-09-30 (human UAT deferred to Phase 16)
 - [x] **Phase 15: 직접 비교 + 계산기 UI** - 2~4개 ETF 선택, /compare/ 페이지, 겹침 차트, 계산기 UI — completed 2026-09-30 (human UAT deferred to Phase 16)
-- [ ] **Phase 16: 통합·검증** - 피드 구독 링크, 사이트맵/태그 연결, CI 단계, 8개 언어·기기 스모크
+- [x] **Phase 16: 통합·검증** - 피드 구독 링크, 사이트맵/태그 연결, CI 단계, 8개 언어·기기 스모크 — completed 2026-09-30 (human UAT pending)
 
 ## Phase Details
 
@@ -187,7 +187,9 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   2. 메인·ISA·연금 페이지에서 비교 페이지로 진입할 수 있고 `/compare/`가 sitemap 정책(noindex,follow, canonical)에 맞게 설정되어 있다
   3. CI가 node 테스트(`fee_chart_check.js`, `compare_calc_check.js`)와 pytest를 모두 실행하고 i18n 8개 언어 키 패리티가 통과한다
   4. 비교 페이지가 Phase 14의 최종 a11y 토큰(44px, 대비, 키보드)을 따르고, 8개 언어·모바일 실기기 스모크와 BOM/CRLF 감사(`script.js`, `style.css`, `build_changelog.py`)를 통과한다
-**Plans**: TBD
+**Plans**: 2 plans
+- [x] 16-01-PLAN.md — RSS 링크·compare 연결·CI node 단계
+- [x] 16-02-PLAN.md — 최종 감사 + human UAT 체크리스트
 **UI hint**: yes
 
 ## Progress

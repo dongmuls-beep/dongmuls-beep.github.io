@@ -47,7 +47,7 @@
 - [x] **FEED-01**: 매일 CI가 changelog에서 총보수·기타비용 변동(인상·인하)만 항목으로 담은 RSS 2.0 `feed.xml`을 생성·커밋한다 (실부담비용 등은 본문 참고 정보, 결측·대량 보정 항목 제외)
 - [x] **FEED-02**: 항목 GUID와 날짜가 재실행해도 바뀌지 않고, 변동이 없으면 `feed.xml`이 바이트 단위로 동일하다
 - [x] **FEED-03**: 종목명의 특수문자(`&` 등)가 올바르게 이스케이프되어 피드가 유효한 XML이다
-- [ ] **FEED-04**: 사용자가 메인·변경 이력 페이지에서 피드를 발견·구독할 수 있다 (autodiscovery `<link>` + 보이는 링크)
+- [x] **FEED-04**: 사용자가 메인·변경 이력 페이지에서 피드를 발견·구독할 수 있다 (autodiscovery `<link>` + 보이는 링크)
 
 ## Future Requirements
 
@@ -99,6 +99,6 @@
 | CALC-03 | Phase 15 | Complete |
 | CALC-04 | Phase 15 | Complete |
 | CALC-05 | Phase 15 | Complete |
-| FEED-04 | Phase 16 | Pending |
+| FEED-04 | Phase 16 | Complete |
 
 **Coverage:** 28/28 v1.4 requirements mapped
