@@ -87,17 +87,29 @@ assert.ok(Number.isFinite(sc.min) && Number.isFinite(sc.max) && sc.max > sc.min 
 sc = context.computeFeeChartScale([0, 0.01]);
 assert.ok(sc.min >= 0);
 
-// step path
+// line path (monotone cubic)
 sc = context.computeFeeChartScale([0.0055]);
-assert.strictEqual(context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }], sc, "2026-09-30"), "M56 82H308");
+assert.strictEqual(context.buildFeeLinePath([{ date: "2026-02-12", value: 0.0055 }], sc, "2026-09-30"), "M12 104H308");
 sc = context.computeFeeChartScale([0.0055, 0.0045]);
-const d2 = context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }, { date: "2026-06-01", value: 0.0045 }], sc, "2026-09-30");
-const m2 = /^M56 ([\d.]+)H([\d.]+)V([\d.]+)H308$/.exec(d2);
-assert.ok(m2, d2);
-assert.ok(+m2[2] > 56 && +m2[2] < 308);
-assert.ok(+m2[1] < +m2[3]);
-assert.ok(!/\d\.\d{3,}/.test(d2));
-const d3 = context.buildFeeStepPath([{ date: "2026-09-30", value: 0.0055 }], context.computeFeeChartScale([0.0055]), "2026-09-30");
+const d2 = context.buildFeeLinePath([{ date: "2026-02-12", value: 0.0055 }, { date: "2026-06-01", value: 0.0045 }], sc, "2026-09-30");
+assert.ok(/^M12 [\d.]+C/.test(d2) && / 308 [\d.]+$/.test(d2), d2);
+assert.ok(!/NaN|Infinity/.test(d2) && !/\d\.\d{3,}/.test(d2), d2);
+// no overshoot: every y (incl. control points) stays within the plotted value range
+const vals = [0.05, 0.045, 0.0453, 0.047];
+sc = context.computeFeeChartScale(vals);
+const dz = context.buildFeeLinePath(vals.map((v, i) => ({ date: `2026-0${i + 2}-10`, value: v })), sc, "2026-09-30");
+const ys = [...dz.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => +m[2]);
+const yMin = context.feeChartY(0.05, sc) - 0.01;
+const yMax = context.feeChartY(0.045, sc) + 0.01;
+assert.ok(ys.every((y) => y >= yMin && y <= yMax), dz);
+const d3 = context.buildFeeLinePath([{ date: "2026-09-30", value: 0.0055 }], context.computeFeeChartScale([0.0055]), "2026-09-30");
 assert.ok(/H308$/.test(d3) && !/NaN|Infinity/.test(d3));
+
+// axis formatting
+assert.strictEqual(context.formatFeeAxisValue(0.047), "0.047%");
+assert.strictEqual(context.formatFeeAxisValue(0.05), "0.05%");
+assert.strictEqual(context.formatFeeAxisValue(0.0047), "0.0047%");
+assert.strictEqual(context.formatFeeAxisValue(1), "1.00%");
+assert.strictEqual(context.formatFeeAxisDate("2026-02-12"), "2026.02");
 
 console.log("fee_chart_check OK");

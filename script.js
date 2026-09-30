@@ -1465,7 +1465,7 @@ function renderFeeHistoryContent(history, target, title, body, row, rowName, fie
 
     const lastDate = points[points.length - 1].date;
     const chartEnd = lastDate > today ? lastDate : today;
-    const nodes = [renderFeeHistoryChart(points, fieldLabel, chartEnd)];
+    const nodes = [renderFeeHistoryChart(points, fieldLabel, chartEnd, body.clientWidth)];
     if (points.length === 1) {
         const caption = document.createElement("p");
         caption.className = "fee-history-caption";
@@ -1476,15 +1476,21 @@ function renderFeeHistoryContent(history, target, title, body, row, rowName, fie
     body.replaceChildren(...nodes);
 }
 
-function renderFeeHistoryChart(points, fieldLabel, today) {
+function renderFeeHistoryChart(points, fieldLabel, today, containerWidth) {
     const SVG_NS = "http://www.w3.org/2000/svg";
     const make = (name, attrs) => {
         const el = document.createElementNS(SVG_NS, name);
         Object.keys(attrs).forEach((key) => el.setAttribute(key, String(attrs[key])));
         return el;
     };
+    // ponytail: drawn at the modal's width on open (1 SVG unit = 1px, text stays 11px); no resize redraw, reopen redraws.
+    const width = Math.max(260, Math.round(containerWidth || FEE_CHART_DEFAULT_WIDTH));
+    FEE_CHART.width = width;
+    FEE_CHART.right = width - FEE_CHART_PAD;
     const last = points[points.length - 1];
     const scale = computeFeeChartScale(points.map((p) => p.value));
+    const toX = (date) => feeChartRound(feeChartX(date, points[0].date, today));
+    const toY = (value) => feeChartRound(feeChartY(value, scale));
 
     const figure = document.createElement("figure");
     figure.className = "fee-history-chart";
@@ -1503,31 +1509,48 @@ function renderFeeHistoryChart(points, fieldLabel, today) {
         }),
     });
 
+    const defs = make("defs", {});
+    const gradient = make("linearGradient", { id: "feeChartFill", x1: 0, y1: 0, x2: 0, y2: 1 });
+    gradient.appendChild(make("stop", { offset: "0%", class: "fee-chart-fill-top" }));
+    gradient.appendChild(make("stop", { offset: "100%", class: "fee-chart-fill-bottom" }));
+    defs.appendChild(gradient);
+    svg.appendChild(defs);
+
     scale.ticks.forEach((tick) => {
-        const y = feeChartRound(feeChartY(tick, scale));
+        const y = toY(tick);
         svg.appendChild(make("line", { class: "fee-chart-grid", x1: FEE_CHART.left, x2: FEE_CHART.right, y1: y, y2: y }));
-        const label = make("text", { class: "fee-chart-label is-y", x: FEE_CHART.left - 4, y, "text-anchor": "end", "dominant-baseline": "middle" });
-        label.textContent = formatPercent(tick);
+        const label = make("text", { class: "fee-chart-label", x: FEE_CHART.left, y: y - 5, "text-anchor": "start" });
+        label.textContent = formatFeeAxisValue(tick);
         svg.appendChild(label);
     });
 
-    const startLabel = make("text", { class: "fee-chart-label is-x", x: FEE_CHART.left, y: 172, "text-anchor": "start" });
-    startLabel.textContent = points[0].date;
+    const xLabelY = FEE_CHART.height - 6;
+    const startLabel = make("text", { class: "fee-chart-label", x: FEE_CHART.left, y: xLabelY, "text-anchor": "start" });
+    startLabel.textContent = formatFeeAxisDate(points[0].date);
     svg.appendChild(startLabel);
-    const endLabel = make("text", { class: "fee-chart-label is-x", x: FEE_CHART.right, y: 172, "text-anchor": "end" });
-    endLabel.textContent = today;
+    const endLabel = make("text", { class: "fee-chart-label", x: FEE_CHART.right, y: xLabelY, "text-anchor": "end" });
+    endLabel.textContent = formatFeeAxisDate(today);
     svg.appendChild(endLabel);
 
-    svg.appendChild(make("path", { class: "fee-chart-line", d: buildFeeStepPath(points, scale, today), fill: "none" }));
+    const linePath = buildFeeLinePath(points, scale, today);
+    svg.appendChild(make("path", { class: "fee-chart-area", d: `${linePath}V${FEE_CHART.bottom}H${FEE_CHART.left}Z` }));
+    svg.appendChild(make("path", { class: "fee-chart-line", d: linePath, fill: "none" }));
 
-    points.forEach((point) => {
-        svg.appendChild(make("circle", {
-            class: "fee-chart-dot",
-            cx: feeChartRound(feeChartX(point.date, points[0].date, today)),
-            cy: feeChartRound(feeChartY(point.value, scale)),
-            r: 4,
-        }));
+    points.slice(1).forEach((point) => {
+        svg.appendChild(make("circle", { class: "fee-chart-dot", cx: toX(point.date), cy: toY(point.value), r: 3 }));
     });
+
+    const endY = toY(last.value);
+    svg.appendChild(make("circle", { class: "fee-chart-halo", cx: FEE_CHART.right, cy: endY, r: 8 }));
+    svg.appendChild(make("circle", { class: "fee-chart-end", cx: FEE_CHART.right, cy: endY, r: 4 }));
+    const valueLabel = make("text", {
+        class: "fee-chart-value",
+        x: FEE_CHART.right,
+        y: endY - 12 < 14 ? endY + 22 : endY - 12,
+        "text-anchor": "end",
+    });
+    valueLabel.textContent = formatPercent(last.value);
+    svg.appendChild(valueLabel);
 
     figure.appendChild(svg);
     return figure;
@@ -1716,7 +1739,20 @@ function buildFeeHistoryPoints(raw, currentValue, today) {
     return points.filter((p, i) => i === 0 || p.value.toFixed(4) !== points[i - 1].value.toFixed(4));
 }
 
-const FEE_CHART = { width: 320, height: 180, left: 56, right: 308, top: 12, bottom: 152 };
+const FEE_CHART_DEFAULT_WIDTH = 320;
+const FEE_CHART_PAD = 12;
+const FEE_CHART = { width: 320, height: 200, left: 12, right: 308, top: 36, bottom: 172 };
+
+function formatFeeAxisValue(value) {
+    const number = toNumber(value);
+    if (!Number.isFinite(number)) return "-";
+    const [whole, frac = ""] = number.toFixed(4).replace(/0+$/, "").split(".");
+    return `${whole}.${frac.padEnd(2, "0")}%`;
+}
+
+function formatFeeAxisDate(date) {
+    return String(date).slice(0, 7).replace("-", ".");
+}
 
 function computeFeeChartScale(values) {
     const finite = values.filter((v) => Number.isFinite(v));
@@ -1759,14 +1795,37 @@ function feeChartRound(n) {
     return Math.round(n * 100) / 100;
 }
 
-function buildFeeStepPath(points, scale, today) {
+// Monotone cubic (Fritsch-Carlson): smooth, but never overshoots between points, so no fake fee levels appear.
+function buildFeeLinePath(points, scale, today) {
     const start = points[0].date;
-    let d = `M${feeChartRound(feeChartX(start, start, today))} ${feeChartRound(feeChartY(points[0].value, scale))}`;
-    for (let i = 1; i < points.length; i += 1) {
-        d += `H${feeChartRound(feeChartX(points[i].date, start, today))}`;
-        d += `V${feeChartRound(feeChartY(points[i].value, scale))}`;
+    const pts = points.map((p) => [feeChartX(p.date, start, today), feeChartY(p.value, scale)]);
+    const r = feeChartRound;
+    let d = `M${r(pts[0][0])} ${r(pts[0][1])}`;
+    if (pts.length === 1) return `${d}H${FEE_CHART.right}`;
+
+    const lastPt = pts[pts.length - 1];
+    if (lastPt[0] < FEE_CHART.right) pts.push([FEE_CHART.right, lastPt[1]]);
+
+    const n = pts.length;
+    const slopes = [];
+    for (let i = 0; i < n - 1; i += 1) {
+        const h = pts[i + 1][0] - pts[i][0];
+        slopes.push(h > 0 ? (pts[i + 1][1] - pts[i][1]) / h : 0);
     }
-    d += `H${FEE_CHART.right}`;
+    const tangents = [slopes[0]];
+    for (let i = 1; i < n - 1; i += 1) {
+        const a = slopes[i - 1];
+        const b = slopes[i];
+        tangents.push(a * b <= 0 ? 0 : (2 * a * b) / (a + b));
+    }
+    tangents.push(slopes[n - 2]);
+
+    for (let i = 0; i < n - 1; i += 1) {
+        const [x0, y0] = pts[i];
+        const [x1, y1] = pts[i + 1];
+        const third = (x1 - x0) / 3;
+        d += `C${r(x0 + third)} ${r(y0 + tangents[i] * third)} ${r(x1 - third)} ${r(y1 - tangents[i + 1] * third)} ${r(x1)} ${r(y1)}`;
+    }
     return d;
 }
 

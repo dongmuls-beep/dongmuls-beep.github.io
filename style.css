@@ -795,6 +795,10 @@ h1 {
 
 .fee-history-chart {
     margin: 0 0 var(--space-4);
+    padding: var(--space-2) 0;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
 }
 
 .fee-history-chart svg {
@@ -802,17 +806,34 @@ h1 {
     width: 100%;
     height: auto;
     font-family: inherit;
+    overflow: visible;
 }
 
 .fee-chart-grid {
     stroke: var(--border);
     stroke-width: 1;
+    stroke-dasharray: 2 4;
 }
 
 .fee-chart-label {
     fill: var(--text-soft);
-    font-size: 12px;
+    font-size: 11px;
     font-variant-numeric: tabular-nums;
+}
+
+.fee-chart-fill-top {
+    stop-color: var(--primary);
+    stop-opacity: 0.18;
+}
+
+.fee-chart-fill-bottom {
+    stop-color: var(--primary);
+    stop-opacity: 0;
+}
+
+.fee-chart-area {
+    fill: url(#feeChartFill);
+    stroke: none;
 }
 
 .fee-chart-line {
@@ -820,13 +841,31 @@ h1 {
     stroke: var(--primary);
     stroke-width: 2;
     stroke-linejoin: round;
-    stroke-linecap: butt;
+    stroke-linecap: round;
 }
 
 .fee-chart-dot {
+    fill: var(--surface);
+    stroke: var(--primary);
+    stroke-width: 1.5;
+}
+
+.fee-chart-halo {
+    fill: var(--primary);
+    opacity: 0.15;
+}
+
+.fee-chart-end {
     fill: var(--primary);
     stroke: var(--surface);
     stroke-width: 2;
+}
+
+.fee-chart-value {
+    fill: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
 .fee-history-caption {
