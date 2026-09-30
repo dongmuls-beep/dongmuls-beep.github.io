@@ -173,6 +173,7 @@ function initNavigation() {
 
         if (nav.classList.contains("active")) {
             closeNav();
+            hamburger.focus();
         }
     });
 }
@@ -195,6 +196,18 @@ function initSmartHeader() {
                 return;
             }
             const currentScroll = window.scrollY || document.documentElement.scrollTop;
+            // A11Y-02: never hide the header while keyboard focus is inside it
+            if (header.contains(document.activeElement)) {
+                header.classList.remove("header-hidden");
+                lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+                rafPending = false;
+                return;
+            }
+            // Hysteresis: ignore tiny scroll deltas
+            if (Math.abs(currentScroll - lastScroll) < 4 && currentScroll > 60) {
+                rafPending = false;
+                return;
+            }
             if (currentScroll > lastScroll && currentScroll > 60) {
                 header.classList.add("header-hidden");
             } else {
@@ -204,6 +217,8 @@ function initSmartHeader() {
             rafPending = false;
         });
     }, { passive: true });
+
+    header.addEventListener("focusin", () => header.classList.remove("header-hidden"));
 }
 
 function highlightCurrentNav() {
@@ -347,6 +362,24 @@ function applyTranslations() {
             el.setAttribute("aria-label", translated);
         }
     });
+
+    document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+        const key = el.getAttribute("data-i18n-title");
+        const translated = getTranslation(key);
+        if (translated && translated !== key) {
+            el.setAttribute("title", translated);
+        }
+    });
+
+    const menuBtn = document.querySelector(".hamburger-menu");
+    const menuNav = document.getElementById("primaryNav");
+    if (menuBtn && menuNav) {
+        const menuKey = menuNav.classList.contains("active") ? "aria_menu_close" : "aria_menu_open";
+        const menuLabel = getTranslation(menuKey);
+        if (menuLabel && menuLabel !== menuKey) {
+            menuBtn.setAttribute("aria-label", menuLabel);
+        }
+    }
 }
 function applySeoTranslations() {
     const pageKey = normalizeSeoKey(getPageType());
@@ -864,6 +897,13 @@ function formatVolume(value) {
     return vol.toLocaleString("ko-KR");
 }
 
+function withMissingAlt(html) {
+    if (html === escapeHtml(missingValueText()) || html === "-") {
+        return `<span aria-hidden="true">${html}</span><span class="sr-only">${escapeHtml(getTranslation("aria_value_missing"))}</span>`;
+    }
+    return html;
+}
+
 function renderTable(rows) {
     const tbody = document.getElementById("tableBody");
     if (!tbody) return;
@@ -884,8 +924,12 @@ function renderTable(rows) {
         result_count: sorted.length,
     });
 
+    const cl = ["table_code", "table_name", "table_fee", "table_other", "table_trade", "table_real", "table_aum", "table_volume"]
+        .map((k) => escapeHtml(getTranslation(k)));
+
     sorted.forEach((item) => {
         const row = document.createElement("tr");
+        row.setAttribute("role", "row");
 
         const code = valueOrDash(item[dataKeys.code]);
         if (code !== "-") row.dataset.code = String(code);
@@ -899,16 +943,17 @@ function renderTable(rows) {
         const changeHtml = buildChangeBadgeHtml(changeData, item[dataKeys.real]);
 
         row.innerHTML = `
-            <td class="clickable code-cell" data-label="${escapeHtml(getTranslation("table_code"))}" title="${escapeHtml(getTranslation("aria_copy_code"))}">${escapeHtml(code)}</td>
-            <td data-label="${escapeHtml(getTranslation("table_name"))}" class="name-cell">
+            <td class="clickable code-cell" role="cell" data-label="${cl[0]}" title="${escapeHtml(getTranslation("aria_copy_code"))}"><span class="cell-label" aria-hidden="true">${cl[0]}</span>${escapeHtml(code)}</td>
+            <td role="cell" data-label="${cl[1]}" class="name-cell">
+                <span class="cell-label">${cl[1]}</span>
                 <a href="${naverUrl}" target="_blank" rel="noopener noreferrer" class="stock-link">${escapeHtml(name)}</a>
             </td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_fee"))}">${feeCellHtml(item[dataKeys.fee], code, name, "fee")}</td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_other"))}">${feeCellHtml(item[dataKeys.other], code, name, "other")}</td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_trade"))}">${feeCellHtml(item[dataKeys.trade], code, name, "trade")}</td>
-            <td class="text-right highlight" data-label="${escapeHtml(getTranslation("table_real"))}">${feeCellHtml(item[dataKeys.real], code, name, "real")}${changeHtml}</td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_aum"))}">${formatAUM(item[dataKeys.aum])}</td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_volume"))}">${formatVolume(item[dataKeys.volume])}</td>
+            <td class="text-right" role="cell" data-label="${cl[2]}"><span class="cell-label">${cl[2]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.fee], code, name, "fee"))}</td>
+            <td class="text-right" role="cell" data-label="${cl[3]}"><span class="cell-label">${cl[3]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.other], code, name, "other"))}</td>
+            <td class="text-right" role="cell" data-label="${cl[4]}"><span class="cell-label">${cl[4]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.trade], code, name, "trade"))}</td>
+            <td class="text-right highlight" role="cell" data-label="${cl[5]}"><span class="cell-label">${cl[5]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.real], code, name, "real"))}${changeHtml}</td>
+            <td class="text-right" role="cell" data-label="${cl[6]}"><span class="cell-label">${cl[6]}</span>${withMissingAlt(formatAUM(item[dataKeys.aum]))}</td>
+            <td class="text-right" role="cell" data-label="${cl[7]}"><span class="cell-label">${cl[7]}</span>${withMissingAlt(formatVolume(item[dataKeys.volume]))}</td>
         `;
 
         const codeCell = row.querySelector(".code-cell");
@@ -1133,15 +1178,15 @@ async function renderChangelog() {
                         <h3>${month}</h3>
                         <p>${getTranslation("changelog_updated_at")} ${updatedAt}</p>
                     </header>
-                    <div class="table-container">
+                    <div class="table-container" tabindex="0" role="region" aria-label="${escapeHtml(`${entry.month || ""} ${getTranslation("aria_table_scroll")}`.trim())}">
                         <table class="data-table changelog-table">
                             <thead>
                                 <tr>
-                                    <th>${getTranslation("table_code")}</th>
-                                    <th>${getTranslation("table_name")}</th>
-                                    <th>${getTranslation("changelog_field")}</th>
-                                    <th>${getTranslation("changelog_before")}</th>
-                                    <th>${getTranslation("changelog_after")}</th>
+                                    <th scope="col">${getTranslation("table_code")}</th>
+                                    <th scope="col">${getTranslation("table_name")}</th>
+                                    <th scope="col">${getTranslation("changelog_field")}</th>
+                                    <th scope="col">${getTranslation("changelog_before")}</th>
+                                    <th scope="col">${getTranslation("changelog_after")}</th>
                                 </tr>
                             </thead>
                             <tbody>${rowsHtml}</tbody>
@@ -1738,7 +1783,7 @@ function buildChangeBadgeHtml(changeData, realValue) {
     const sign = diff > 0 ? "+" : "";
     const cls = diff > 0 ? "fee-change up" : "fee-change down";
     const arrow = diff > 0 ? "▲" : "▼";
-    return `<span class="${cls}">${arrow}${sign}${Math.abs(diff).toFixed(4)}%p</span>`;
+    return `<span class="${cls}"><span aria-hidden="true">${arrow}</span><span class="sr-only">${escapeHtml(getTranslation(diff > 0 ? "aria_fee_up" : "aria_fee_down"))} </span>${sign}${Math.abs(diff).toFixed(4)}%p</span>`;
 }
 
 function getKstToday() {
