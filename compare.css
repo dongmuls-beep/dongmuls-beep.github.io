@@ -196,6 +196,11 @@ body.has-compare-bar {
   padding-bottom: calc(var(--cmp-bar-h, 64px) + env(safe-area-inset-bottom, 0px) + 16px);
 }
 
+/* Phase 16: lift the fixed .toast (style.css, bottom 24px) above the bar */
+body.has-compare-bar .toast {
+  bottom: calc(var(--cmp-bar-h, 64px) + env(safe-area-inset-bottom, 0px) + 24px);
+}
+
 /* ---------- compare page ---------- */
 .compare-page {
   padding-top: 48px;
