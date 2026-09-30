@@ -158,4 +158,91 @@ const dStart = context.buildFeeLinePath(startPts, sc, "2026-09-30", "2026-01-01"
 const startX = Number.parseFloat(/^M(-?[\d.]+)/.exec(dStart)[1]);
 assert.ok(startX > 12 && !/NaN|Infinity/.test(dStart), dStart);
 
-console.log("fee_chart_check OK");
+// Phase 11 review fixes
+// WR-04: strict parse (no parseFloat prefix) + IN-03: negative fee is missing
+for (const v of ["12-34", "0.05 garbage", "0.05abc", -0.01, "-0.01", "1e", " "]) assert.strictEqual(context.isValidFee(v), false, String(v));
+for (const v of [" 0.05 ", "1,000", "0", "0.05%"]) assert.strictEqual(context.isValidFee(v), true, String(v));
+assert.strictEqual(context.feeCellHtml("12-34", "360200", "A", "real"), "-");
+assert.strictEqual(context.feeCellHtml(-0.01, "360200", "A", "real"), "-");
+const negSorted = [0.3, -0.01, "0.05 garbage", 0.1].sort((a, b) => context.compareFeeNullLast(a, b, "asc"));
+assert.deepStrictEqual(negSorted.slice(0, 2), [0.1, 0.3]);
+assert.ok(negSorted.slice(2).every((v) => !context.isValidFee(v)), String(negSorted));
+
+// WR-02: invalid / too-late startDate falls back to the first point
+const defaultPath = context.buildFeeLinePath(startPts, sc, "2026-09-30");
+for (const bad of ["2026/01/01", "2026-12-01", "2026-04-01", "2026-02-30", "abc", 20260101, null, ""]) {
+    const d = context.buildFeeLinePath(startPts, sc, "2026-09-30", bad);
+    assert.strictEqual(d, defaultPath, String(bad));
+    assert.ok(!/NaN|Infinity/.test(d), d);
+}
+assert.strictEqual(context.resolveFeeChartStart("2026-01-01", "2026-03-01"), "2026-01-01");
+assert.strictEqual(context.resolveFeeChartStart("2026-03-01", "2026-03-01"), "2026-03-01");
+assert.strictEqual(context.resolveFeeChartStart("2026-02-29", "2026-03-01"), "2026-03-01");
+
+// DOM seam context: fake elements, recorded events
+function fakeEl(tag) {
+    return {
+        tag, attrs: {}, children: [], className: "", textContent: "", innerHTML: "", dataset: {},
+        setAttribute(k, v) { this.attrs[k] = v; },
+        appendChild(c) { this.children.push(c); return c; },
+    };
+}
+const events = [];
+const tbody = fakeEl("tbody");
+const domSandbox = {
+    document: {
+        addEventListener: noop,
+        getElementById: (id) => (id === "tableBody" ? tbody : null),
+        querySelector: () => null,
+        querySelectorAll: () => [],
+        createElement: fakeEl,
+        createElementNS: (_ns, tag) => fakeEl(tag),
+        dispatchEvent: (e) => { events.push(e.type); return true; },
+    },
+    CustomEvent: class { constructor(type) { this.type = type; } },
+    window: sandbox.window,
+    navigator: sandbox.navigator,
+    localStorage: sandbox.localStorage,
+    fetch: () => Promise.reject(new Error("offline")),
+    console: { ...console, error: noop, warn: noop },
+    Intl,
+    URL,
+    setTimeout,
+    clearTimeout,
+};
+const domContext = vm.createContext(domSandbox);
+vm.runInContext(src, domContext, { filename: "script.js" });
+
+// WR-03: startDate moves line, dots, start label and aria start together
+const flat = (el) => [el, ...el.children.flatMap(flat)];
+const fig = domContext.renderFeeHistoryChart(startPts, "A", "2026-09-30", 320, "2026-01-01");
+const nodes = flat(fig);
+const line = nodes.find((n) => n.attrs.class === "fee-chart-line");
+const dots = nodes.filter((n) => n.attrs.class === "fee-chart-dot");
+const lineStartX = Number.parseFloat(/^M(-?[\d.]+)/.exec(line.attrs.d)[1]);
+assert.ok(lineStartX > 12 && !/NaN|Infinity/.test(line.attrs.d), line.attrs.d);
+assert.strictEqual(dots.length, startPts.length);
+assert.strictEqual(Number(dots[0].attrs.cx), lineStartX);
+const svgEl = nodes.find((n) => n.tag === "svg");
+assert.ok(!svgEl.attrs["aria-label"].includes("2026-03-01"), svgEl.attrs["aria-label"]);
+assert.ok(nodes.some((n) => n.tag === "text" && n.textContent === "2026.01"));
+// invalid startDate: identical to the 4-arg-less render
+const figDefault = flat(domContext.renderFeeHistoryChart(startPts, "A", "2026-09-30", 320));
+const figBad = flat(domContext.renderFeeHistoryChart(startPts, "A", "2026-09-30", 320, "2026/01/01"));
+assert.strictEqual(figBad.find((n) => n.attrs.class === "fee-chart-line").attrs.d, figDefault.find((n) => n.attrs.class === "fee-chart-line").attrs.d);
+assert.strictEqual(figDefault.filter((n) => n.attrs.class === "fee-chart-dot").length, startPts.length - 1);
+
+(async () => {
+    // WR-01: loading and error rows fire table-rendered, failure fires data-error
+    await domContext.fetchData();
+    assert.deepStrictEqual(events, ["etf:table-rendered", "etf:table-rendered", "etf:data-error"]);
+    assert.ok(tbody.innerHTML.includes("error-text"), tbody.innerHTML);
+    events.length = 0;
+    domContext.renderTable([]);
+    assert.deepStrictEqual(events, ["etf:table-rendered"]);
+
+    console.log("fee_chart_check OK");
+})().catch((e) => {
+    console.error(e);
+    process.exit(1);
+});

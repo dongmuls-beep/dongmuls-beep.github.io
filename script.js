@@ -642,11 +642,18 @@ function getTranslation(key) {
     return key;
 }
 
+// Seam events. "etf:table-rendered" fires whenever tbody is replaced (loading, error, empty or data rows);
+// on success it fires before "etf:data-ready", on failure "etf:data-error" follows it.
+function emitEtfEvent(name) {
+    if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent(name));
+}
+
 async function fetchData() {
     const tbody = document.getElementById("tableBody");
     if (!tbody) return;
 
     tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_loading")}</td></tr>`;
+    emitEtfEvent("etf:table-rendered");
     updateLastUpdated(true);
 
     try {
@@ -695,10 +702,12 @@ async function fetchData() {
         renderTabs(allData);
         filterAndRenderTable();
         updateLastUpdated(false);
-        if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent("etf:data-ready"));
+        emitEtfEvent("etf:data-ready");
     } catch (error) {
         console.error("Error fetching data:", error);
         tbody.innerHTML = `<tr><td colspan="8" class="loading-text error-text">${getTranslation("table_error")}</td></tr>`;
+        emitEtfEvent("etf:table-rendered");
+        emitEtfEvent("etf:data-error");
         updateLastUpdated(true);
     }
 }
@@ -863,7 +872,7 @@ function renderTable(rows) {
 
     if (!rows || rows.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_empty")}</td></tr>`;
-        if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent("etf:table-rendered"));
+        emitEtfEvent("etf:table-rendered");
         return;
     }
 
@@ -923,7 +932,7 @@ function renderTable(rows) {
         tbody.appendChild(row);
     });
 
-    if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent("etf:table-rendered"));
+    emitEtfEvent("etf:table-rendered");
 }
 
 function initShareButton() {
@@ -1468,7 +1477,7 @@ function renderFeeHistoryContent(history, target, title, body, row, rowName, fie
     body.replaceChildren(...nodes);
 }
 
-function renderFeeHistoryChart(points, fieldLabel, today, containerWidth) {
+function renderFeeHistoryChart(points, fieldLabel, today, containerWidth, startDate) {
     const SVG_NS = "http://www.w3.org/2000/svg";
     const make = (name, attrs) => {
         const el = document.createElementNS(SVG_NS, name);
@@ -1481,7 +1490,8 @@ function renderFeeHistoryChart(points, fieldLabel, today, containerWidth) {
     FEE_CHART.right = width - FEE_CHART_PAD;
     const last = points[points.length - 1];
     const scale = computeFeeChartScale(points.map((p) => p.value));
-    const toX = (date) => feeChartRound(feeChartX(date, points[0].date, today));
+    const start = resolveFeeChartStart(startDate, points[0].date);
+    const toX = (date) => feeChartRound(feeChartX(date, start, today));
     const toY = (value) => feeChartRound(feeChartY(value, scale));
 
     const figure = document.createElement("figure");
@@ -1494,7 +1504,7 @@ function renderFeeHistoryChart(points, fieldLabel, today, containerWidth) {
         dir: "ltr",
         "aria-label": formatFeeTemplate(getTranslation("fee_history_chart_aria"), {
             field: fieldLabel,
-            start: points[0].date,
+            start,
             end: today,
             count: points.length - 1,
             value: formatPercent(last.value),
@@ -1518,17 +1528,17 @@ function renderFeeHistoryChart(points, fieldLabel, today, containerWidth) {
 
     const xLabelY = FEE_CHART.height - 6;
     const startLabel = make("text", { class: "fee-chart-label", x: FEE_CHART.left, y: xLabelY, "text-anchor": "start" });
-    startLabel.textContent = formatFeeAxisDate(points[0].date);
+    startLabel.textContent = formatFeeAxisDate(start);
     svg.appendChild(startLabel);
     const endLabel = make("text", { class: "fee-chart-label", x: FEE_CHART.right, y: xLabelY, "text-anchor": "end" });
     endLabel.textContent = formatFeeAxisDate(today);
     svg.appendChild(endLabel);
 
-    const linePath = buildFeeLinePath(points, scale, today);
+    const linePath = buildFeeLinePath(points, scale, today, start);
     svg.appendChild(make("path", { class: "fee-chart-area", d: `${linePath}V${FEE_CHART.bottom}H${FEE_CHART.left}Z` }));
     svg.appendChild(make("path", { class: "fee-chart-line", d: linePath, fill: "none" }));
 
-    points.slice(1).forEach((point) => {
+    (start === points[0].date ? points.slice(1) : points).forEach((point) => {
         svg.appendChild(make("circle", { class: "fee-chart-dot", cx: toX(point.date), cy: toY(point.value), r: 3 }));
     });
 
@@ -1683,15 +1693,23 @@ function formatPercent(value) {
     return `${number.toFixed(4)}%`;
 }
 
-// DATA-10: a fee is "missing" when it is not a finite number (0 is valid).
+// DATA-10: strict fee parse. Whole string must be numeric (no parseFloat prefix), negatives are missing; 0 is valid.
+function toFeeNumber(value) {
+    if (value === null || value === undefined) return NaN;
+    const text = String(value).replaceAll(",", "").replace("%", "").trim();
+    if (text === "") return NaN;
+    const n = Number(text);
+    return Number.isFinite(n) && n >= 0 ? n : NaN;
+}
+
 function isValidFee(value) {
-    return Number.isFinite(toNumber(value));
+    return Number.isFinite(toFeeNumber(value));
 }
 
 // Missing values always sort last, in both directions.
 function compareFeeNullLast(aRaw, bRaw, direction = "asc") {
-    const a = toNumber(aRaw);
-    const b = toNumber(bRaw);
+    const a = toFeeNumber(aRaw);
+    const b = toFeeNumber(bRaw);
     const aOk = Number.isFinite(a);
     const bOk = Number.isFinite(b);
     if (!aOk && !bOk) return 0;
@@ -1811,6 +1829,14 @@ function feeChartDayNumber(date) {
     return Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])) / 86400000;
 }
 
+// Optional chart start: only a real YYYY-MM-DD date not later than the first point; anything else falls back to it.
+function resolveFeeChartStart(startDate, firstDate) {
+    if (typeof startDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(startDate) || startDate > firstDate) return firstDate;
+    const day = feeChartDayNumber(startDate);
+    if (!Number.isFinite(day) || new Date(day * 86400000).toISOString().slice(0, 10) !== startDate) return firstDate;
+    return startDate;
+}
+
 function feeChartX(date, startDate, today) {
     const span = Math.max(1, feeChartDayNumber(today) - feeChartDayNumber(startDate));
     const elapsed = Math.min(span, Math.max(0, feeChartDayNumber(date) - feeChartDayNumber(startDate)));
@@ -1829,7 +1855,7 @@ function feeChartRound(n) {
 
 // Monotone cubic (Fritsch-Carlson): smooth, but never overshoots between points, so no fake fee levels appear.
 function buildFeeLinePath(points, scale, today, startDate) {
-    const start = startDate || points[0].date;
+    const start = resolveFeeChartStart(startDate, points[0].date);
     const pts = points.map((p) => [feeChartX(p.date, start, today), feeChartY(p.value, scale)]);
     const r = feeChartRound;
     let d = `M${r(pts[0][0])} ${r(pts[0][1])}`;
