@@ -664,6 +664,7 @@ def fetch_market_data_batch(codes):
     NAVER Finance API는 단일 요청으로 전체 ETF의 marketSum(억원)과
     quant(거래량)를 반환하며, GitHub Actions 환경에서도 정상 동작.
     조회 실패 시 None 반환 (데이터 없이도 ETL 계속 진행).
+    순수 숫자 코드는 zfill(6), 영숫자 KRX 코드(예: 0026S0)는 strip().upper()로 매칭.
     """
     NAVER_ETF_URL = "https://finance.naver.com/api/sise/etfItemList.nhn"
     headers = {
@@ -675,16 +676,12 @@ def fetch_market_data_batch(codes):
         "Referer": "https://finance.naver.com/",
     }
 
-    # 초기화: 비표준 코드는 미리 None으로 세팅
-    result = {}
-    for code in codes:
-        if not str(code).isdigit():
-            print(f"  {code}: 비표준 코드 → 건너뜀")
-            result[code] = {"AUM": None, "거래량": None}
+    def _normalize_code(code):
+        s = str(code).strip()
+        return s.zfill(6) if s.isdigit() else s.upper()
 
-    # 표준 코드 집합
-    standard_codes = {str(c).zfill(6) for c in codes if str(c).isdigit()}
-    if not standard_codes:
+    result = {}
+    if not codes:
         return result
 
     try:
@@ -693,18 +690,15 @@ def fetch_market_data_batch(codes):
         data = resp.json()
         etf_list = data.get("result", {}).get("etfItemList", [])
 
-        # itemcode → {marketSum, quant} 맵 구성
+        # itemcode → {marketSum, quant} 맵 구성 (대문자/공백 정규화)
         naver_map = {
-            item["itemcode"]: item
+            str(item["itemcode"]).strip().upper(): item
             for item in etf_list
             if item.get("itemcode")
         }
 
         for code in codes:
-            code_str = str(code).zfill(6) if str(code).isdigit() else None
-            if code_str is None:
-                continue  # 이미 위에서 처리됨
-            item = naver_map.get(code_str)
+            item = naver_map.get(_normalize_code(code))
             if item:
                 aum_eok = item.get("marketSum")  # 이미 억원 단위
                 volume = item.get("quant")
