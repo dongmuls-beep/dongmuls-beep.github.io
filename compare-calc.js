@@ -9,7 +9,8 @@
         MIN_YEARS: 1,
         MAX_YEARS: 50,
         MIN_RETURN_PCT: -99,
-        MAX_RETURN_PCT: 100
+        MAX_RETURN_PCT: 100,
+        MAX_AMOUNT: 1e13 // 10조 원; bounds lumpSum/monthly so results stay finite
     });
 
     function isFiniteNumber(v) {
@@ -21,7 +22,7 @@
     }
 
     function nonNegative(v) {
-        return isFiniteNumber(v) && v >= 0 ? v : 0;
+        return isFiniteNumber(v) && v >= 0 ? Math.min(v, LIMITS.MAX_AMOUNT) : 0;
     }
 
     function normalizeInputs(inputs) {
@@ -61,6 +62,9 @@
             totalFees += grown * (1 - h);
             balance = grown * h + n.monthly;
             balanceNoFee = balanceNoFee * g + n.monthly;
+        }
+        if (!isFinite(balance) || !isFinite(balanceNoFee) || !isFinite(totalFees)) {
+            return { excluded: true, reason: "overflow", years: n.years, months: months };
         }
         return {
             excluded: false,

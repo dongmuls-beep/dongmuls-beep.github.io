@@ -16,7 +16,7 @@ function approx(actual, expected, tol = 0.01, label = "") {
     assert.strictEqual(typeof C[fn], "function", `missing function ${fn}`);
 });
 assert.ok(Object.isFrozen(C.LIMITS), "LIMITS must be frozen");
-assert.deepStrictEqual({ ...C.LIMITS }, { MIN_YEARS: 1, MAX_YEARS: 50, MIN_RETURN_PCT: -99, MAX_RETURN_PCT: 100 });
+assert.deepStrictEqual({ ...C.LIMITS }, { MIN_YEARS: 1, MAX_YEARS: 50, MIN_RETURN_PCT: -99, MAX_RETURN_PCT: 100, MAX_AMOUNT: 1e13 });
 
 // zero case
 {
@@ -201,6 +201,19 @@ approx(h6.costDrag, 488898.6953, 0.01, "H6 costDrag literal");
     const rawSnap = { ...raw };
     C.normalizeInputs(raw);
     assert.deepStrictEqual(raw, rawSnap);
+}
+
+// CR-01: huge amounts are clamped; result is finite or excluded, never Infinity/NaN
+{
+    const r = C.simulate({ lumpSum: 1e308, monthly: 1e308, years: 50, annualReturnPct: 100, feePct: 0.5 });
+    if (!r.excluded) {
+        ["totalContributed", "fvWithFee", "fvNoFee", "totalFees", "costDrag"].forEach((k) => {
+            assert.ok(Number.isFinite(r[k]), `CR-01 ${k} must be finite, got ${r[k]}`);
+        });
+    }
+    const n = C.normalizeInputs({ lumpSum: 1e308, monthly: 1e308 });
+    assert.strictEqual(n.lumpSum, C.LIMITS.MAX_AMOUNT);
+    assert.strictEqual(n.monthly, C.LIMITS.MAX_AMOUNT);
 }
 
 console.log("compare_calc_check: all assertions passed");
