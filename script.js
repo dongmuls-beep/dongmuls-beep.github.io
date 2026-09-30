@@ -52,6 +52,8 @@ let currentCategory = "";
 let currentLanguage = DEFAULT_LANG;
 let currentTranslations = {};
 let lastFocusedBeforeModal = null;
+let feeHistoryPromise = null;
+let feeHistoryTarget = null;
 let latestDataUpdatedAt = "";
 let changelogLatestByCode = {};
 
@@ -76,6 +78,7 @@ async function initApp() {
     initNavigation();
     initSmartHeader();
     initModal();
+    initFeeHistoryModal();
     initTrackedCtas();
     initShareButton();
 
@@ -156,10 +159,15 @@ function initNavigation() {
     document.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
 
-        const modal = document.getElementById("privacyModal");
-        const isModalOpen = modal && !modal.hasAttribute("hidden");
-        if (isModalOpen) {
-            closePrivacyModal();
+        const openModalEl = document.querySelector(".modal-overlay:not([hidden])");
+        if (openModalEl) {
+            if (!event.defaultPrevented) {
+                if (openModalEl.id === "feeHistoryModal") {
+                    closeFeeHistoryModal();
+                } else {
+                    closeModal(openModalEl);
+                }
+            }
             return;
         }
 
@@ -306,6 +314,13 @@ async function updateLanguage(lang, options = {}) {
         renderTabs(allData);
         filterAndRenderTable();
         updateLastUpdated(false);
+    }
+
+    if (rerender && feeHistoryTarget) {
+        const feeModal = document.getElementById("feeHistoryModal");
+        if (feeModal && !feeModal.hasAttribute("hidden")) {
+            void renderFeeHistoryModal();
+        }
     }
 
     if (rerender && isChangelogPage()) {
@@ -890,10 +905,10 @@ function renderTable(rows) {
             <td data-label="${escapeHtml(getTranslation("table_name"))}" class="name-cell">
                 <a href="${naverUrl}" target="_blank" rel="noopener noreferrer" class="stock-link">${escapeHtml(name)}</a>
             </td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_fee"))}">${formatPercent(item[dataKeys.fee])}</td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_other"))}">${formatPercent(item[dataKeys.other])}</td>
-            <td class="text-right" data-label="${escapeHtml(getTranslation("table_trade"))}">${formatPercent(item[dataKeys.trade])}</td>
-            <td class="text-right highlight" data-label="${escapeHtml(getTranslation("table_real"))}">${formatPercent(item[dataKeys.real])}${changeHtml}</td>
+            <td class="text-right" data-label="${escapeHtml(getTranslation("table_fee"))}">${feeCellHtml(item[dataKeys.fee], code, name, "fee")}</td>
+            <td class="text-right" data-label="${escapeHtml(getTranslation("table_other"))}">${feeCellHtml(item[dataKeys.other], code, name, "other")}</td>
+            <td class="text-right" data-label="${escapeHtml(getTranslation("table_trade"))}">${feeCellHtml(item[dataKeys.trade], code, name, "trade")}</td>
+            <td class="text-right highlight" data-label="${escapeHtml(getTranslation("table_real"))}">${feeCellHtml(item[dataKeys.real], code, name, "real")}${changeHtml}</td>
             <td class="text-right" data-label="${escapeHtml(getTranslation("table_aum"))}">${formatAUM(item[dataKeys.aum])}</td>
             <td class="text-right" data-label="${escapeHtml(getTranslation("table_volume"))}">${formatVolume(item[dataKeys.volume])}</td>
         `;
@@ -1193,24 +1208,23 @@ function initModal() {
 
     openLink.addEventListener("click", (event) => {
         event.preventDefault();
-        openPrivacyModal();
+        openModal(modal);
     });
 
     closeBtn.addEventListener("click", () => {
-        closePrivacyModal();
+        closeModal(modal);
     });
 
     modal.addEventListener("click", (event) => {
         if (event.target === modal) {
-            closePrivacyModal();
+            closeModal(modal);
         }
     });
 
     modal.addEventListener("keydown", handleModalFocusTrap);
 }
 
-function openPrivacyModal() {
-    const modal = document.getElementById("privacyModal");
+function openModal(modal) {
     const content = modal ? modal.querySelector(".modal-content") : null;
     if (!modal || !content) return;
 
@@ -1224,29 +1238,38 @@ function openPrivacyModal() {
     }, 0);
 }
 
-function closePrivacyModal() {
-    const modal = document.getElementById("privacyModal");
+function closeModal(modal, fallbackFocus) {
     if (!modal) return;
 
     modal.setAttribute("hidden", "hidden");
-    document.body.classList.remove("modal-open");
+    if (!document.querySelector(".modal-overlay:not([hidden])")) {
+        document.body.classList.remove("modal-open");
+    }
 
-    if (lastFocusedBeforeModal) {
+    if (lastFocusedBeforeModal && lastFocusedBeforeModal.isConnected) {
         lastFocusedBeforeModal.focus();
+    } else if (fallbackFocus && fallbackFocus.isConnected) {
+        fallbackFocus.focus();
     }
 }
 
 function handleModalFocusTrap(event) {
+    const modal = event.currentTarget;
+    if (!modal) return;
+
     if (event.key === "Escape") {
         event.preventDefault();
-        closePrivacyModal();
+        if (modal.id === "feeHistoryModal") {
+            closeFeeHistoryModal();
+        } else {
+            closeModal(modal);
+        }
         return;
     }
 
     if (event.key !== "Tab") return;
 
-    const modal = document.getElementById("privacyModal");
-    if (!modal || modal.hasAttribute("hidden")) return;
+    if (modal.hasAttribute("hidden")) return;
 
     const focusable = modal.querySelectorAll(
         'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
@@ -1269,6 +1292,200 @@ function handleModalFocusTrap(event) {
         first.focus();
     }
 }
+
+function getFeeFieldLabel(field) {
+    const def = FEE_HISTORY_FIELDS[field];
+    if (!def) return "";
+    return stripHtmlTags(getTranslation(def.labelKey)).replace(/\s*\(%\)\s*$/, "");
+}
+
+function feeCellHtml(value, code, name, field) {
+    const text = formatPercent(value);
+    if (code === "-") return text;
+
+    const label = formatFeeTemplate(getTranslation("fee_history_open_label"), {
+        name,
+        field: getFeeFieldLabel(field),
+    });
+    return `<button type="button" class="fee-history-btn" data-code="${escapeHtml(code)}" data-field="${field}" aria-label="${escapeHtml(label)}">${text}</button>`;
+}
+
+function loadFeeHistory() {
+    if (feeHistoryPromise) return feeHistoryPromise;
+
+    feeHistoryPromise = (async () => {
+        const response = await fetch(FEE_HISTORY_URL, { cache: "no-store" });
+        if (!response.ok) {
+            throw new Error(`fee-history fetch failed: ${response.status}`);
+        }
+        const data = await response.json();
+        if (!data || typeof data.series !== "object" || data.series === null || Array.isArray(data.series)) {
+            throw new Error("fee-history invalid schema");
+        }
+        return data;
+    })().catch((error) => {
+        feeHistoryPromise = null;
+        throw error;
+    });
+
+    return feeHistoryPromise;
+}
+
+function initFeeHistoryModal() {
+    const modal = document.getElementById("feeHistoryModal");
+    const tbody = document.getElementById("tableBody");
+    if (!modal || !tbody) return;
+
+    const closeBtn = document.getElementById("feeHistoryClose");
+
+    tbody.addEventListener("click", (event) => {
+        const target = event.target;
+        const btn = target instanceof Element ? target.closest(".fee-history-btn") : null;
+        if (!btn) return;
+        openFeeHistoryModal(btn.dataset.code, btn.dataset.field);
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            closeFeeHistoryModal();
+        });
+    }
+
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            closeFeeHistoryModal();
+        }
+    });
+
+    modal.addEventListener("keydown", handleModalFocusTrap);
+}
+
+function openFeeHistoryModal(code, field) {
+    const modal = document.getElementById("feeHistoryModal");
+    if (!modal || !code || !FEE_HISTORY_FIELDS[field]) return;
+
+    feeHistoryTarget = { code: String(code), field };
+    openModal(modal);
+    void renderFeeHistoryModal();
+}
+
+function closeFeeHistoryModal() {
+    const modal = document.getElementById("feeHistoryModal");
+    if (!modal) return;
+
+    let fallback = null;
+    if (feeHistoryTarget) {
+        const selector = `#tableBody .fee-history-btn[data-code="${CSS.escape(feeHistoryTarget.code)}"][data-field="${feeHistoryTarget.field}"]`;
+        fallback = document.querySelector(selector);
+    }
+    if (!fallback) {
+        fallback = document.getElementById("feeHistoryHint");
+    }
+
+    closeModal(modal, fallback);
+    feeHistoryTarget = null;
+}
+
+function setFeeHistoryState(body, text, isError) {
+    const p = document.createElement("p");
+    p.className = isError ? "fee-history-state is-error" : "fee-history-state";
+    p.setAttribute("role", isError ? "alert" : "status");
+    if (!isError) p.setAttribute("aria-live", "polite");
+    p.textContent = text;
+    body.replaceChildren(p);
+}
+
+async function renderFeeHistoryModal() {
+    const modal = document.getElementById("feeHistoryModal");
+    const title = document.getElementById("feeHistoryTitle");
+    const body = document.getElementById("feeHistoryBody");
+    const target = feeHistoryTarget;
+    if (!modal || !title || !body || !target) return;
+
+    const { code, field } = target;
+    const fieldLabel = getFeeFieldLabel(field);
+    const row = allData.find((item) => String(item[dataKeys.code]) === code);
+    const rowName = row ? valueOrDash(row[dataKeys.name]) : "-";
+
+    title.textContent = `${rowName !== "-" ? rowName : code} (${code}) · ${fieldLabel}`;
+    setFeeHistoryState(body, getTranslation("fee_history_loading"), false);
+
+    let history;
+    try {
+        history = await loadFeeHistory();
+    } catch (error) {
+        if (feeHistoryTarget !== target || modal.hasAttribute("hidden")) return;
+        setFeeHistoryState(body, getTranslation("fee_history_error"), true);
+        return;
+    }
+
+    if (feeHistoryTarget !== target || modal.hasAttribute("hidden")) return;
+
+    if (rowName === "-") {
+        const historyName = history.names && typeof history.names[code] === "string" ? history.names[code] : "";
+        if (historyName) {
+            title.textContent = `${historyName} (${code}) · ${fieldLabel}`;
+        }
+    }
+
+    const series = history.series && history.series[code];
+    const raw = series ? series[FEE_HISTORY_FIELDS[field].historyKey] : null;
+    const currentValue = row ? toNumber(row[dataKeys[field]]) : NaN;
+    const points = buildFeeHistoryPoints(raw, currentValue, getKstToday());
+
+    if (points.length === 0) {
+        setFeeHistoryState(body, getTranslation("fee_history_empty"), false);
+        return;
+    }
+
+    body.replaceChildren(renderFeeHistoryList(points));
+}
+
+function renderFeeHistoryList(points) {
+    const section = document.createElement("section");
+
+    const heading = document.createElement("h4");
+    heading.className = "fee-history-list-title";
+    heading.textContent = getTranslation("fee_history_list_title");
+    section.appendChild(heading);
+
+    const list = document.createElement("ol");
+    list.className = "fee-history-list";
+
+    for (let i = points.length - 1; i >= 0; i -= 1) {
+        const point = points[i];
+        const li = document.createElement("li");
+
+        const date = document.createElement("span");
+        date.className = "fee-history-date";
+        date.textContent = point.date;
+        li.appendChild(date);
+
+        const value = document.createElement("span");
+        value.className = "fee-history-value";
+        value.textContent = formatPercent(point.value);
+        li.appendChild(value);
+
+        if (i > 0) {
+            const diff = Math.round((point.value - points[i - 1].value) * 10000) / 10000;
+            const delta = document.createElement("span");
+            delta.className = diff > 0 ? "fee-history-delta up" : "fee-history-delta down";
+            delta.textContent = `${diff > 0 ? "▲ " : "▼ "}${formatPercent(Math.abs(diff))}p`;
+            li.appendChild(delta);
+        } else {
+            const start = document.createElement("span");
+            start.className = "fee-history-start";
+            start.textContent = getTranslation("fee_history_start");
+            li.appendChild(start);
+        }
+
+        list.appendChild(li);
+    }
+
+    section.appendChild(list);
+    return section;
+}
+
 function getDistinctCategories(data) {
     return [...new Set(
         data
