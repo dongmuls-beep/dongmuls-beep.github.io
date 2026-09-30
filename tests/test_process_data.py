@@ -199,7 +199,8 @@ class TestJsonWriter:
     def test_none_written_as_null(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(etl_process, "write_update_meta", lambda: False)
-        payload = [{'종목코드': '1', '총보수': None, '실부담비용': None}]
+        # 실부담비용 non-null: the WR-02 null-ratio gate would block an all-null payload
+        payload = [{'종목코드': '1', '총보수': None, '실부담비용': 0.1}]
         etl_process.update_google_sheets(payload)
         text = (tmp_path / "data.json").read_text(encoding="utf-8")
         assert "null" in text

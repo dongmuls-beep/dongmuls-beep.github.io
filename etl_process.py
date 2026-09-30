@@ -21,6 +21,19 @@ GAS_WEB_APP_URL = os.environ.get("GAS_WEB_APP_URL", "")
 DOWNLOAD_DIR = os.environ.get("DOWNLOAD_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "downloads"))
 UPDATE_META_FILE = "update-meta.json"
 
+
+def _env_ratio(name: str, default: float) -> float:
+    """환경 변수에서 0~1 비율을 읽는다. 없거나 잘못된 값이면 default."""
+    try:
+        value = float(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+    return value if 0.0 <= value <= 1.0 else default
+
+
+# WR-02: 실부담비용 null 비율이 이 값을 초과하면 data.json을 쓰지 않고 실패 (fail-closed)
+NULL_COST_MAX_RATIO = _env_ratio("NULL_COST_MAX_RATIO", 0.5)
+
 def _wait_for_download(download_dir: str, timeout: int = 90, max_retries: int = 3) -> str | None:
     """
     다운로드 완료 파일을 감지한다. 실패 시 지수 백오프로 재시도.
@@ -800,6 +813,16 @@ def write_update_meta():
 def update_google_sheets(data):
     if not data:
         print("No data provided for update.")
+        return False
+
+    # 0. WR-02 fail-closed: 파싱 회귀로 대부분 null이면 기존 data.json을 보존하고 실패
+    null_cost = sum(1 for r in data if r.get('실부담비용') is None)
+    if null_cost / len(data) > NULL_COST_MAX_RATIO:
+        print(
+            f"[ERROR] DATA-08: 실부담비용 null {null_cost}/{len(data)} "
+            f"({null_cost / len(data):.0%}) > 임계값 {NULL_COST_MAX_RATIO:.0%} "
+            f"— data.json 미기록 (기존 파일 유지)"
+        )
         return False
 
     # 1. Save as local JSON (Static Hosting Support)

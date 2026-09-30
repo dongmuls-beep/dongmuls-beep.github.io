@@ -176,6 +176,16 @@ def test_blank_or_zero_bulk_field_skipped_not_rebaselined(glitch):
         assert h["series"][f"C00{i}"]["총보수"] == [["2026-03-01", 0.1]]
 
 
+def test_minority_real_zero_accepted():
+    # A real 0.0 on a minority of rows is data, not a blank-field glitch.
+    rows = four()
+    rows[0]["기타비용"] = 0.0
+    snaps = [snap("a" * 40, day(1), four()), snap("b" * 40, day(2), rows)]
+    h, rep = bf.replay(snaps)
+    assert rep["skipped"] == []
+    assert h["series"]["C000"]["기타비용"] == [["2026-03-01", 0.05], ["2026-03-02", 0.0]]
+
+
 def test_partial_change_no_rebaseline():
     r3 = four()
     r3[0]["총보수"] = 0.3

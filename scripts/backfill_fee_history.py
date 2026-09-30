@@ -83,10 +83,16 @@ def check_rows(data: Any, prev_len: int | None) -> str | None:
                 return "out-of-range"
     # A bulk field that is blank/zero for most rows is a scrape/parse glitch
     # (e.g. p_float -> 0.0), not a correction; accepting it would trigger a
-    # spurious re-baseline that wipes earlier history.
+    # spurious re-baseline that wipes earlier history. Pre-phase-10 snapshots
+    # encoded missing values as 0.0, so 0.0 is counted explicitly here; a real
+    # 0.0 on a minority of rows stays below the ratio and is accepted.
     if data:
         for field in BULK_CORRECTION_FIELDS:
-            blank = sum(1 for r in data if not to_float(r.get(field)))
+            blank = 0
+            for r in data:
+                value = to_float(r.get(field))
+                if value is None or value == 0.0:
+                    blank += 1
             if blank / len(data) >= ROW_COLLAPSE_RATIO:
                 return f"field-blank-or-zero: {field}"
     return None
