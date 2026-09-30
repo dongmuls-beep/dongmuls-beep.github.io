@@ -186,7 +186,10 @@ def main() -> int:
     if not isinstance(changelog_entries, list):
         changelog_entries = []
 
-    changelog_entries, removed = filter_bulk_entries(changelog_entries, len(current_data))
+    # Without current data the ratio falls back to per-entry counts and would drop legit entries.
+    removed = []
+    if current_data:
+        changelog_entries, removed = filter_bulk_entries(changelog_entries, len(current_data))
     if removed:
         for entry, flagged, total in removed:
             counts = ", ".join(f"{f} {n}/{total}" for f, n in flagged)

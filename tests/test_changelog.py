@@ -126,3 +126,12 @@ def test_main_no_change_removes_existing_bulk_entry(monkeypatch, tmp_path, capsy
     assert bc.main() == 0
     assert "[WARNING] DATA-06: removed bulk-correction entry" in capsys.readouterr().out
     assert json.loads(log.read_text(encoding="utf-8")) == [_legit_entry()]
+
+
+def test_main_empty_data_keeps_history(monkeypatch, tmp_path):
+    # CR-01: empty/corrupt data.json must not trigger retroactive deletion
+    small = {"month": "2026-06", "updatedAt": "2026-06-11",
+             "changes": [change("C001", "기타비용"), change("C002", "기타비용")]}
+    log = _setup_main(monkeypatch, tmp_path, [], [], [small])
+    assert bc.main() == 0
+    assert json.loads(log.read_text(encoding="utf-8")) == [small]
