@@ -1215,13 +1215,24 @@ function initModal() {
         closeModal(modal);
     });
 
-    modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            closeModal(modal);
-        }
-    });
+    bindModalOverlayClose(modal, () => closeModal(modal));
 
     modal.addEventListener("keydown", handleModalFocusTrap);
+}
+
+// Close on overlay click only when the press also started on the overlay and
+// it is a single click, so a double-click on the opener does not close it.
+function bindModalOverlayClose(modal, onClose) {
+    let downOnOverlay = false;
+    modal.addEventListener("pointerdown", (event) => {
+        downOnOverlay = event.target === modal;
+    });
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal && downOnOverlay && event.detail <= 1) {
+            onClose();
+        }
+        downOnOverlay = false;
+    });
 }
 
 function openModal(modal) {
@@ -1352,11 +1363,7 @@ function initFeeHistoryModal() {
         });
     }
 
-    modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            closeFeeHistoryModal();
-        }
-    });
+    bindModalOverlayClose(modal, closeFeeHistoryModal);
 
     modal.addEventListener("keydown", handleModalFocusTrap);
 }
