@@ -1,58 +1,41 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: 안정성·보안·품질 개선
-status: completed
-stopped_at: Completed 04-C-PLAN.md
-last_updated: "2026-09-30T00:21:19.680Z"
-last_activity: 2026-09-30 — Milestone v1.1 completed and archived
+milestone: v1.2
+milestone_name: 데이터 정확성 보강
+status: planning
+last_updated: "2026-09-30T00:30:00Z"
+last_activity: 2026-09-30 — v1.1 archived, v1.2 started
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 11
-  completed_plans: 11
-  percent: 100
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
-
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-30)
+See: .planning/PROJECT.md (updated 2026-09-30)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
-**Current milestone:** v1.1 — 안정성·보안·품질 개선
-**Current focus:** Phase 4 — ETL 단위 테스트
+**Current milestone:** v1.2 — 데이터 정확성 보강
+**Current focus:** Phase 5 — 신규 코드 시장데이터 매칭
 
 ## Current Status
 
-**Phase:** 4 — ETL 단위 테스트
-**Status:** v1.1 milestone complete
-**Last action:** Phase 4 Plan C 완료 (2026-05-20) — test_process_data.py 9개 테스트 (TEST-02/03 충족), test_validate.py 13개 테스트 (DATA-01/02/03 검증), 전체 33 passed
-**Next action:** Phase 4 완료 — v1.1 마일스톤 완료
+**Phase:** 5 — 신규 코드 시장데이터 매칭
+**Status:** Not started (planning)
+**Last action:** v1.1 마일스톤 종료·태그 (2026-09-30), 운영 점검 결과로 v1.2 요구사항 DATA-04~06 정의
+**Next action:** /gsd:discuss-phase 5
 
 ## Active Work
 
-없음 — Phase 4 Plan C 완료로 v1.1 마일스톤 전체 완료
+없음
 
-## Completed Phases
+## Completed Milestones
 
-- **Phase 1: ETL 안정성 강화** — 4개 Plan (A/B/C + D gap closure), 12/12 검증 통과 (2026-04-30)
-  - ETL-01~04 모두 충족
-  - GAS URL 환경변수화, Selenium 지수 백오프, 구체적 예외 처리, KOFIA 컬럼 검증 완료
-- **Phase 2: 데이터 무결성 검증** — 1개 Plan (A), DATA-01/02/03 모두 충족 (2026-05-20)
-  - validate_etl_results(results, prev_data) 함수 추가
-  - 실부담비용 범위(0~5%), 종목코드 중복, 이상치(±1.0%p) soft-warning 검증
-- **Phase 3: 보안 및 버그 수정** — 3개 Plan (A/B/C), SEC-01/SEC-02/BUG-01/BUG-02 모두 충족 (2026-05-20)
-  - applyTranslations() innerHTML 유지 + SECURITY 주석 추가 (SEC-01/SEC-02)
-  - initSmartHeader() RAF 콜백 nav-open early return + rafPending 리셋 (BUG-01)
-  - renderChangelog() changes 없을 때 테이블 생략, <p class="changelog-no-changes"> 단독 렌더링 (BUG-02)
-- **Phase 4: ETL 단위 테스트** — 3개 Plan (A/B/C), TEST-01/02/03 모두 충족 (2026-05-20)
-  - pytest 환경 구성, conftest.py fixture (Plan A)
-  - p_float() 모듈 수준 추출, test_fees.py 11개 테스트 (Plan B, TEST-01)
-  - test_process_data.py 9개 테스트 (Plan C, TEST-02/03), test_validate.py 13개 테스트 (DATA-01/02/03)
-  - etl_process.py 헤더 감지 TypeError 버그 수정 (Rule 1)
-  - pytest tests/ → 33 passed
+- **v1.1 안정성·보안·품질 개선** — Phases 1-4, 14/14 요구사항 (shipped 2026-09-30) — see .planning/MILESTONES.md
 
 ## Decisions Log
 
@@ -83,22 +66,11 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 ## Session
 
-**Last session:** 2026-05-20T07:56:08Z → 07:58:33Z
-**Stopped at:** Completed 04-C-PLAN.md
+**Last session:** 2026-09-30
+**Stopped at:** v1.2 milestone started
 **Resume file:** None
 
-## Current Position
-
-Phase: Milestone v1.1 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-09-30 — Milestone v1.1 completed and archived
-
-## Operator Next Steps
-
-- Start the next milestone with /gsd-new-milestone
-
-## Deferred Items
+
 
 Items acknowledged and deferred at milestone close on 2026-09-30:
 
