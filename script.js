@@ -81,6 +81,7 @@ async function initApp() {
     initFeeHistoryModal();
     initTrackedCtas();
     initShareButton();
+    initStateActions();
 
     await initLanguage();
     highlightCurrentNav();
@@ -681,12 +682,84 @@ function emitEtfEvent(name) {
     if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent(name));
 }
 
+function setStatus(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setTableStatus(text) {
+    setStatus("tableStatus", text);
+}
+
+function setBusy(id, busy) {
+    const el = document.getElementById(id);
+    if (el && typeof el.setAttribute === "function") el.setAttribute("aria-busy", busy ? "true" : "false");
+}
+
+function tableSkeletonHtml() {
+    const row = '<tr class="skeleton-row" aria-hidden="true"><td colspan="8" class="state-cell"><span class="skeleton-bar"></span><span class="skeleton-bar"></span><span class="skeleton-bar"></span></td></tr>';
+    return row.repeat(5);
+}
+
+function tableStateHtml(kind) {
+    let inner;
+    if (kind === "error") {
+        inner = `<div class="state-box state-box--error" role="alert"><p class="error-text">${getTranslation("table_error")}</p><button type="button" class="btn-link" data-action="retry-fetch">${escapeHtml(getTranslation("table_retry"))}</button></div>`;
+    } else if (kind === "empty-filter") {
+        inner = `<div class="state-box state-box--empty"><p>${escapeHtml(stripHtmlTags(getTranslation("table_empty")))}</p><button type="button" class="btn-link" data-action="reset-filter">${escapeHtml(getTranslation("table_reset_filter"))}</button></div>`;
+    } else {
+        inner = `<div class="state-box state-box--empty"><p>${escapeHtml(stripHtmlTags(getTranslation("table_empty")))}</p><p class="state-hint">${escapeHtml(getTranslation("table_empty_hint"))}</p></div>`;
+    }
+    return `<tr><td colspan="8" class="state-cell">${inner}</td></tr>`;
+}
+
+function focusEl(el) {
+    if (el && typeof el.focus === "function") el.focus();
+}
+
+function initStateActions() {
+    const tbody = document.getElementById("tableBody");
+    if (tbody && typeof tbody.addEventListener === "function") {
+        tbody.addEventListener("click", async (event) => {
+            const target = event && event.target;
+            const btn = target && typeof target.closest === "function" ? target.closest("[data-action]") : null;
+            if (!btn) return;
+            const action = btn.getAttribute("data-action");
+            if (action === "retry-fetch") {
+                await fetchData();
+                const again = typeof tbody.querySelector === "function" ? tbody.querySelector('button[data-action="retry-fetch"]') : null;
+                focusEl(again || document.getElementById("etfTableContainer"));
+            } else if (action === "reset-filter") {
+                currentCategory = "";
+                syncCategoryParam("");
+                document.querySelectorAll("#categoryTabs .tab-button").forEach((tab) => tab.classList.remove("active"));
+                filterAndRenderTable();
+                focusEl(document.querySelector("#categoryTabs .tab-button") || document.getElementById("etfTableContainer"));
+            }
+        });
+    }
+
+    const list = document.getElementById("changelogList");
+    if (list && typeof list.addEventListener === "function") {
+        list.addEventListener("click", async (event) => {
+            const target = event && event.target;
+            const btn = target && typeof target.closest === "function" ? target.closest("[data-action]") : null;
+            if (!btn || btn.getAttribute("data-action") !== "retry-changelog") return;
+            await renderChangelog();
+            const again = typeof list.querySelector === "function" ? list.querySelector('button[data-action="retry-changelog"]') : null;
+            focusEl(again || document.querySelector("#changelogList .table-container") || list);
+        });
+    }
+}
+
 async function fetchData() {
     const tbody = document.getElementById("tableBody");
     if (!tbody) return;
 
-    tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_loading")}</td></tr>`;
+    tbody.innerHTML = tableSkeletonHtml();
     emitEtfEvent("etf:table-rendered");
+    setBusy("etfTableContainer", true);
+    setTableStatus(stripHtmlTags(getTranslation("table_loading")));
     updateLastUpdated(true);
 
     try {
@@ -738,9 +811,10 @@ async function fetchData() {
         emitEtfEvent("etf:data-ready");
     } catch (error) {
         console.error("Error fetching data:", error);
-        tbody.innerHTML = `<tr><td colspan="8" class="loading-text error-text">${getTranslation("table_error")}</td></tr>`;
+        tbody.innerHTML = tableStateHtml("error");
         emitEtfEvent("etf:table-rendered");
         emitEtfEvent("etf:data-error");
+        setBusy("etfTableContainer", false);
         updateLastUpdated(true);
     }
 }
@@ -911,8 +985,10 @@ function renderTable(rows) {
     tbody.innerHTML = "";
 
     if (!rows || rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="loading-text">${getTranslation("table_empty")}</td></tr>`;
+        tbody.innerHTML = tableStateHtml(allData.length > 0 ? "empty-filter" : "empty-nodata");
         emitEtfEvent("etf:table-rendered");
+        setBusy("etfTableContainer", false);
+        setTableStatus(stripHtmlTags(getTranslation("table_empty")));
         return;
     }
 
@@ -978,6 +1054,8 @@ function renderTable(rows) {
     });
 
     emitEtfEvent("etf:table-rendered");
+    setBusy("etfTableContainer", false);
+    setTableStatus(formatFeeTemplate(getTranslation("aria_table_rows"), { count: sorted.length }));
 }
 
 function initShareButton() {
@@ -1117,7 +1195,9 @@ async function renderChangelog() {
     const container = document.getElementById("changelogList");
     if (!container) return;
 
-    container.innerHTML = `<p class="loading-text">${getTranslation("changelog_loading")}</p>`;
+    container.innerHTML = '<article class="changelog-card skeleton-card" aria-hidden="true"><span class="skeleton-bar"></span><span class="skeleton-bar"></span><span class="skeleton-bar"></span></article>'.repeat(3);
+    setBusy("changelogList", true);
+    setStatus("changelogStatus", stripHtmlTags(getTranslation("changelog_loading")));
 
     try {
         const response = await fetch(CHANGELOG_URL, { cache: "no-store" });
@@ -1127,7 +1207,9 @@ async function renderChangelog() {
 
         const data = await response.json();
         if (!Array.isArray(data) || data.length === 0) {
-            container.innerHTML = `<p class="loading-text">${getTranslation("changelog_empty")}</p>`;
+            container.innerHTML = `<div class="state-box state-box--empty"><p>${escapeHtml(stripHtmlTags(getTranslation("changelog_empty")))}</p></div>`;
+            setBusy("changelogList", false);
+            setStatus("changelogStatus", stripHtmlTags(getTranslation("changelog_empty")));
             return;
         }
 
@@ -1197,9 +1279,12 @@ async function renderChangelog() {
 
             container.appendChild(card);
         });
+        setBusy("changelogList", false);
+        setStatus("changelogStatus", "");
     } catch (error) {
         console.error("Failed to render changelog:", error);
-        container.innerHTML = `<p class="loading-text error-text">${getTranslation("changelog_error")}</p>`;
+        container.innerHTML = `<div class="state-box state-box--error" role="alert"><p class="error-text">${getTranslation("changelog_error")}</p><button type="button" class="btn-link" data-action="retry-changelog">${escapeHtml(getTranslation("table_retry"))}</button></div>`;
+        setBusy("changelogList", false);
     }
 }
 
