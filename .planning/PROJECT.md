@@ -8,6 +8,15 @@
 
 v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누락 0건, changelog 가짜 변동 제거. 테스트 56개, 일일 ETL/배포 success.
 
+## Current Milestone: v1.3 수수료 변동 그래프
+
+**Goal:** 사용자가 ETF 수수료 셀을 클릭하면 해당 항목의 과거 변동 추이 그래프를 볼 수 있다.
+
+**Target features:**
+- 수수료 스냅샷 저장소 — ETL이 값 변동 시에만 JSON 시계열에 기록 (종목코드별)
+- git 히스토리(data.json, 2026-02~)에서 과거 시계열 backfill
+- 수수료 셀 클릭 → 모달에 클릭한 항목 1개의 계단형 라인 차트 (바닐라 SVG, 의존성 0)
+
 ## Core Value
 
 투자자가 ETF 선택 시 숨겨진 비용까지 포함한 실질 부담 비용을 한눈에 비교할 수 있어야 한다.
@@ -37,7 +46,9 @@ v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누�
 
 ### Active
 
-(다음 마일스톤에서 정의 — /gsd:new-milestone)
+- [ ] 수수료 변동 시점만 기록하는 JSON 스냅샷 시계열 (v1.3)
+- [ ] git 히스토리 기반 과거 수수료 backfill (v1.3)
+- [ ] 수수료 셀 클릭 시 변동 추이 SVG 그래프 모달 (v1.3)
 
 ### Out of Scope
 
@@ -79,5 +90,22 @@ v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누�
 | changelog 대량 보정 50% 기준 미기록 (v1.2) | 매핑 보정이 가짜 변동으로 남는 것 방지 | — Pending (업계 일괄 인하 시 재검토) |
 | changelog 정리는 CI에서 멱등 실행 (v1.2) | pre-commit hook이 운영본으로 덮어써 로컬 편집 무효 | ✓ Good |
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-09-30 after v1.2 milestone*
+*Last updated: 2026-09-30 — v1.3 milestone started*
