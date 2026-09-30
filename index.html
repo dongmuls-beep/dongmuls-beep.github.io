@@ -7,7 +7,7 @@
     <meta name="description" content="총보수만 보는 시대는 끝났습니다. 매매수수료·기타비용·세금까지 반영한 실제 ETF 실부담비용을 자동 계산해 비교합니다. ISA·연금저축 절세 효과도 확인하세요.">
     <meta name="keywords" content="ETF 실부담비용, 국내상장 ETF 비교, ISA, 연금저축, IRP, 절세 계좌">
     <meta name="author" content="etfsave.life">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#e8edf5">
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="content-language" content="ko-KR">
@@ -164,7 +164,7 @@
     <header class="site-header">
         <div class="header-container">
             <div class="logo"><a href="/">ETFSAVE</a></div>
-            <nav id="primaryNav" class="main-nav" aria-label="Primary navigation">
+            <nav id="primaryNav" class="main-nav" data-i18n-aria="aria_primary_nav" aria-label="Primary navigation">
                 <ul>
                     <li><a href="/" class="nav-link" data-i18n="nav_home">메인</a></li>
                     <li><a href="/pension/" class="nav-link" data-i18n="nav_pension">연금저축펀드&IRP</a></li>
@@ -194,13 +194,13 @@
         </div>
     </header>
 
-    <main id="main-content" class="container">
+    <main id="main-content" class="container" tabindex="-1">
         <section class="view-section active">
             <header class="header">
                 <h1 data-i18n="home_hero_title">ETF 실부담비용 비교</h1>
                 <p class="subtitle" data-i18n="home_subtitle">ISA·연금저축·IRP 절세 계좌에서 활용 가능한 국내상장 인덱스 ETF의 실부담비용을 비교해보세요.</p>
                 <p class="seo-lead" data-i18n="home_seo_lead">ETF 실부담비용 비교는 총보수뿐 아니라 기타비용, 매매수수료, 절세 계좌 효과까지 함께 봐야 정확합니다.</p>
-                <ul class="seo-metrics" aria-label="핵심 데이터">
+                <ul class="seo-metrics" data-i18n-aria="aria_key_metrics" aria-label="핵심 데이터">
                     <li id="homeCoverageMetric" data-i18n="home_kpi_coverage_static">2026년 기준 59개 ETF 실부담비용 데이터를 분석합니다.</li>
                     <li data-i18n="home_kpi_update">데이터는 매월 갱신되며 변경이력으로 추적할 수 있습니다.</li>
                     <li data-i18n="home_kpi_account">ISA·연금저축·IRP 계좌별 절세 전략까지 한 번에 확인할 수 있습니다.</li>
@@ -244,21 +244,22 @@
 
                 <p class="table-note fee-history-hint" id="feeHistoryHint" data-i18n="fee_history_hint" tabindex="-1">수수료를 누르면 변동 그래프를 볼 수 있습니다</p>
 
-                <div class="table-container">
-                    <table id="etfTable" class="data-table">
-                        <thead>
-                            <tr>
-                                <th data-i18n="table_code">종목코드</th>
-                                <th data-i18n="table_name">종목명</th>
-                                <th data-i18n="table_fee">총보수</th>
-                                <th data-i18n="table_other">기타비용</th>
-                                <th data-i18n="table_trade">매매중개</th>
-                                <th data-i18n="table_real">실부담비용(%)</th>
-                                <th data-i18n="table_aum">순자산(억)</th>
-                                <th data-i18n="table_volume">거래량</th>
+                <p id="tableStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+                <div class="table-container" id="etfTableContainer" tabindex="-1" aria-busy="false">
+                    <table id="etfTable" class="data-table" role="table">
+                        <thead role="rowgroup">
+                            <tr role="row">
+                                <th role="columnheader" scope="col" data-i18n="table_code">종목코드</th>
+                                <th role="columnheader" scope="col" data-i18n="table_name">종목명</th>
+                                <th role="columnheader" scope="col" data-i18n="table_fee">총보수</th>
+                                <th role="columnheader" scope="col" data-i18n="table_other">기타비용</th>
+                                <th role="columnheader" scope="col" data-i18n="table_trade">매매중개</th>
+                                <th role="columnheader" scope="col" data-i18n="table_real">실부담비용(%)</th>
+                                <th role="columnheader" scope="col" data-i18n="table_aum">순자산(억)</th>
+                                <th role="columnheader" scope="col" data-i18n="table_volume">거래량</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody"></tbody>
+                        <tbody id="tableBody" role="rowgroup"></tbody>
                     </table>
                 </div>
 

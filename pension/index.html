@@ -10,7 +10,7 @@
     <meta name="content-language" content="ko-KR">
 
     
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#e8edf5">
     <link rel="icon" href="/icon/etfsave_favicon_trimmed.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="16x16" href="/icon/etfsave_favicon_trimmed_16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/icon/etfsave_favicon_trimmed_32x32.png">
@@ -54,6 +54,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
 </head>
 <body data-page="pension">
+    <a href="#main-content" class="skip-link" data-i18n="aria_skip_to_content">본문 바로가기</a>
     <div class="background-gradient">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -63,7 +64,7 @@
     <header class="site-header">
         <div class="header-container">
             <div class="logo"><a href="/">ETFSAVE</a></div>
-            <nav id="primaryNav" class="main-nav" aria-label="Primary navigation">
+            <nav id="primaryNav" class="main-nav" data-i18n-aria="aria_primary_nav" aria-label="Primary navigation">
                 <ul>
                     <li><a href="/" class="nav-link" data-i18n="nav_home">메인</a></li>
                     <li><a href="/pension/" class="nav-link" data-i18n="nav_pension">연금저축펀드&IRP</a></li>
@@ -73,12 +74,12 @@
                     <li><a href="/guide/" class="nav-link" data-i18n="nav_guide">사이트 이용안내</a></li>
                 </ul>
             </nav>
-            <div class="header-actions"><div class="language-selector"><select id="languageSelect" aria-label="Language"><option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="zh">🇨🇳 中文</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="th">🇹🇭 ไทย</option><option value="tl">🇵🇭 Tagalog</option><option value="km">🇰🇭 ខ្មែរ</option></select></div><button class="hamburger-menu" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primaryNav" aria-haspopup="true"><span></span><span></span><span></span></button></div>
+            <div class="header-actions"><div class="language-selector"><select id="languageSelect" data-i18n-aria="aria_lang_select" aria-label="언어 선택"><option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="zh">🇨🇳 中文</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="th">🇹🇭 ไทย</option><option value="tl">🇵🇭 Tagalog</option><option value="km">🇰🇭 ខ្មែរ</option></select></div><button class="hamburger-menu" data-i18n-aria="aria_menu_open" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primaryNav" aria-haspopup="true"><span></span><span></span><span></span></button></div>
         </div>
     </header>
 
-    <main class="container">
-        <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/" data-i18n="breadcrumbs_home">메인</a><span aria-current="page" data-i18n="nav_pension">연금저축펀드&IRP</span></nav>
+    <main id="main-content" class="container" tabindex="-1">
+        <nav class="breadcrumbs" data-i18n-aria="aria_breadcrumb" aria-label="Breadcrumb"><a href="/" data-i18n="breadcrumbs_home">메인</a><span aria-current="page" data-i18n="nav_pension">연금저축펀드&IRP</span></nav>
 
         <section class="content-panel">
             <h1 data-i18n="pension_hero_title">연금저축·IRP 절세 가이드</h1>
