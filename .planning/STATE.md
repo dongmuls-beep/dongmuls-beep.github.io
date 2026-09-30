@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: 데이터 정확성 보강
-status: planning
-stopped_at: Phase 5 planned
-last_updated: "2026-09-30T00:41:43.159Z"
+status: ready_to_plan
+stopped_at: Phase 5 complete (1/1) — ready to discuss Phase 6
+last_updated: 2026-09-30T00:44:13.959Z
 progress:
   total_phases: 2
   completed_phases: 1
@@ -21,12 +21,12 @@ See: .planning/PROJECT.md (updated 2026-09-30)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
 **Current milestone:** v1.2 — 데이터 정확성 보강
-**Current focus:** Phase 5 — 신규 코드 시장데이터 매칭
+**Current focus:** Phase 6 — 변경 이력 정합성
 
 ## Current Status
 
-**Phase:** 5 — 신규 코드 시장데이터 매칭
-**Status:** Not started (planning)
+**Phase:** 6
+**Status:** Ready to plan
 **Last action:** v1.1 마일스톤 종료·태그 (2026-09-30), 운영 점검 결과로 v1.2 요구사항 DATA-04~06 정의
 **Next action:** /gsd:discuss-phase 5
 
