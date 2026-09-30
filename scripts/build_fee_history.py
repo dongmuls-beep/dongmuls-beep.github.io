@@ -7,6 +7,7 @@ import copy
 import json
 import math
 import sys
+from datetime import date as date_cls
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -33,6 +34,15 @@ def normalize(value: Any) -> float | None:
     if number is None or not math.isfinite(number):
         return None
     return round(number, ROUND_DIGITS)
+
+
+def is_iso_date(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    try:
+        return date_cls.fromisoformat(value).isoformat() == value
+    except ValueError:
+        return False
 
 
 def apply_snapshot(
@@ -68,6 +78,11 @@ def apply_snapshot(
             if value is None:
                 continue
             points = series.get(code, {}).get(field)
+            if points and date < points[-1][0]:
+                raise ValueError(
+                    f"snapshot date {date} is before last point {points[-1][0]} "
+                    f"in series[{code}][{field}]"
+                )
             if points and points[-1][0] == date:
                 if points[-1][1] == value:
                     continue
@@ -104,16 +119,19 @@ def validate_history(obj: Any) -> None:
         for field, points in fields.items():
             if not isinstance(points, list):
                 raise ValueError(f"series[{code}][{field}] must be a list")
+            prev_date = ""
             for point in points:
                 if (
                     not isinstance(point, list)
                     or len(point) != 2
-                    or not isinstance(point[0], str)
+                    or not is_iso_date(point[0])
+                    or point[0] <= prev_date
                     or isinstance(point[1], bool)
                     or not isinstance(point[1], (int, float))
                     or not math.isfinite(point[1])
                 ):
                     raise ValueError(f"invalid point in series[{code}][{field}]: {point!r}")
+                prev_date = point[0]
 
 
 def load_history(path: Path) -> dict[str, Any]:
@@ -157,12 +175,12 @@ def main(argv: list[str] | None = None) -> int:
         else:
             history = load_history(HISTORY_FILE)
         rows = load_rows(DATA_FILE)
+        date = kst_today()
+        new, count = apply_snapshot(history, rows, date)
     except (OSError, ValueError) as exc:  # JSONDecodeError is a ValueError
         print(f"[ERROR] fee-history: {exc}", file=sys.stderr)
         return 1
 
-    date = kst_today()
-    new, count = apply_snapshot(history, rows, date)
     text = dump_history(new)
     existing = HISTORY_FILE.read_text(encoding="utf-8") if HISTORY_FILE.exists() else None
     if init or text != existing:

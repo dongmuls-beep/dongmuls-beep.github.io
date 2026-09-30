@@ -149,6 +149,12 @@ def test_duplicate_codes_last_row_wins_and_stable(capsys):
     assert h2 == h
 
 
+def test_backwards_date_rejected():
+    h = seeded(date=D2)
+    with pytest.raises(ValueError):
+        fh.apply_snapshot(h, [row(total=0.2)], D1)
+
+
 def test_input_not_mutated():
     h = seeded()
     snap = copy.deepcopy(h)
@@ -189,6 +195,10 @@ def test_dump_rejects_non_finite():
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", True]]}}},
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", float("nan")]]}}},
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", float("inf")]]}}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["2026/10/01", 0.1]]}}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["20261001", 0.1]]}}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [[D2, 0.1], [D1, 0.2]]}}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [[D1, 0.1], [D1, 0.2]]}}},
     ],
 )
 def test_validate_rejects(bad):
