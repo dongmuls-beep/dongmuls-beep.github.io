@@ -8,6 +8,17 @@
 
 v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → 부드러운 곡선 SVG 차트 + 변동 내역 모달, fee-history.json 일일 누적(59종목, 2026-02~ backfill). 테스트 145개 + 차트 node 검사 CI. 알려진 부채: etl_process.p_float 파싱 실패 시 0.0 반환.
 
+## Current Milestone: v1.4 신뢰성·접근성·비교 도구
+
+**Goal:** 데이터 신뢰성·모바일 접근성을 보강하고, 투자자용 비교 도구(직접 비교·누적 비용 계산기·RSS)를 추가한다.
+
+**Target features:**
+- p_float 파싱 실패 시 0.0 대신 결측 처리 → 가짜 0 수수료 변동 차단
+- 모바일 접근성/UI Critical+Major 수정 (h1 대비, 헤더 숨김, 모바일 changelog 표, 터치 영역 44px, 로딩/에러 상태, ARIA 번역)
+- ETF 2~4개 선택 직접 비교 화면
+- 누적 비용 계산기 (투자금 × 보유기간)
+- 수수료 인하 RSS 피드 정적 생성
+
 ## Core Value
 
 투자자가 ETF 선택 시 숨겨진 비용까지 포함한 실질 부담 비용을 한눈에 비교할 수 있어야 한다.
@@ -40,7 +51,11 @@ v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → �
 
 ### Active
 
-(다음 마일스톤에서 정의 — /gsd:new-milestone)
+- [ ] p_float 파싱 실패 결측 처리 (WR-04 부채)
+- [ ] 모바일 접근성/UI Critical+Major (ui-review.md)
+- [ ] ETF 직접 비교
+- [ ] 누적 비용 계산기
+- [ ] 수수료 인하 RSS 피드
 
 ### Out of Scope
 
@@ -103,4 +118,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-30 after v1.3 milestone*
+*Last updated: 2026-09-30 — v1.4 milestone started*

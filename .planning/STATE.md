@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: 수수료 변동 그래프
-status: completed
-stopped_at: Phase 6 planned
-last_updated: "2026-09-30T05:21:23.282Z"
-last_activity: 2026-09-30 — Milestone v1.3 completed and archived
+milestone: v1.4
+milestone_name: 신뢰성·접근성·비교 도구
+status: planning
+last_updated: "2026-09-30T05:40:04.145Z"
+last_activity: 2026-09-30
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -83,10 +82,10 @@ Items acknowledged and deferred at milestone close on 2026-09-30:
 
 ## Current Position
 
-Phase: Milestone v1.3 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-09-30 — Milestone v1.3 completed and archived
+Status: Defining requirements
+Last activity: 2026-09-30 — Milestone v1.4 started
 
 ## Operator Next Steps
 
