@@ -15,6 +15,7 @@ decisions:
   - "Separate pure validate_market_data() instead of extending validate_etl_results (which runs before market data fetch)"
 metrics:
   completed: 2026-09-30
+requirements-completed: [DATA-04]
 ---
 
 # Phase 5 Plan 01: Alphanumeric code market data matching Summary
