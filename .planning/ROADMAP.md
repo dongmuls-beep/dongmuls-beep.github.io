@@ -23,7 +23,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 **Goal:** 운영 점검(2026-09-30)에서 발견된 AUM 누락과 변경 이력 가짜 변동을 해소한다.
 
-## Phase 5 — 신규 코드 시장데이터 매칭
+### Phase 5: 신규 코드 시장데이터 매칭
 
 **Goal:** 영숫자 KRX 종목코드 ETF도 AUM·거래량이 표시된다.
 
@@ -33,11 +33,14 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 - data.json에서 `0026S0`, `0069M0`의 AUM·거래량이 null이 아니다
 - 영숫자 코드 매칭 단위 테스트 추가, `pytest tests/` 통과
 
-**Plans:** 0 plans
+**Plans:** 1 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — 영숫자 코드 NAVER 매칭 + DATA-04 누락 경고 + 테스트 + 배포 검증
 
 ---
 
-## Phase 6 — 변경 이력 정합성
+### Phase 6: 변경 이력 정합성
 
 **Goal:** 변경 이력에 실제 수수료 변동만 표시되고, 데이터 보정 실행이 가짜 변동을 남기지 않는다.
 
