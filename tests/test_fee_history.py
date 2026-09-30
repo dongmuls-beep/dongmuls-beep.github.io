@@ -137,6 +137,18 @@ def test_alphanumeric_code_and_blank_skipped():
     assert list(h["names"]) == ["0026S0"]
 
 
+def test_duplicate_codes_last_row_wins_and_stable(capsys):
+    rows = [row(total=0.1, name="A"), row(total=0.2, name="B")]
+    h, n = fh.apply_snapshot(fh.empty_history(), rows, D1)
+    assert h["series"]["C001"]["총보수"] == [[D1, 0.2]]
+    assert h["names"]["C001"] == "B"
+    assert n == 4
+    assert "[WARNING]" in capsys.readouterr().out
+    h2, n2 = fh.apply_snapshot(h, rows, D2)
+    assert n2 == 0
+    assert h2 == h
+
+
 def test_input_not_mutated():
     h = seeded()
     snap = copy.deepcopy(h)

@@ -43,10 +43,22 @@ def apply_snapshot(
     series = new["series"]
     count = 0
 
+    by_code: dict[str, dict[str, Any]] = {}
+    duplicates: set[str] = set()
     for row in rows:
         code = str(row.get("종목코드", "") or "").strip()
         if not code:
             continue
+        if code in by_code:
+            duplicates.add(code)
+        by_code[code] = row  # last row wins
+    if duplicates:
+        print(
+            f"[WARNING] fee-history: duplicate 종목코드 (last row wins): "
+            f"{', '.join(sorted(duplicates))}"
+        )
+
+    for code, row in by_code.items():
         name = str(row.get("종목명", "") or "").strip()
         if name:
             names[code] = name
