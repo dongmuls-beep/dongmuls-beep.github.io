@@ -71,6 +71,21 @@ def test_same_day_last_commit_wins():
     assert h["series"]["C001"]["총보수"] == [["2026-03-01", 0.1]]
 
 
+def test_rejected_last_commit_skips_whole_day():
+    snaps = [
+        snap("a" * 40, day(1), [row(total=0.1)]),
+        snap("b" * 40, "2026-03-02T09:00:00+09:00", [row(total=0.3)]),
+        snap("c" * 40, "2026-03-02T09:20:00+09:00", [row(total=6.0)]),
+        snap("d" * 40, day(3), [row(total=0.1)]),
+    ]
+    h, rep = bf.replay(snaps)
+    assert rep["superseded"] == [{"sha": "b" * 40, "date": "2026-03-02"}]
+    assert rep["skipped"] == [{"sha": "c" * 40, "date": "2026-03-02", "reason": "out-of-range"}]
+    assert rep["days"]["count"] == 2
+    # b (earlier same-day commit) must not be used as a fallback
+    assert h["series"]["C001"]["총보수"] == [["2026-03-01", 0.1]]
+
+
 def test_date_backwards_skipped():
     snaps = [
         snap("a" * 40, day(5), [row()]),

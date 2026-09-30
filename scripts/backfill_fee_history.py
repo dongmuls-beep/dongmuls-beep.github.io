@@ -123,35 +123,40 @@ def replay(snapshots: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[str, A
         "dropped_codes": [],
     }
 
-    # Pass 1: accept / skip in order
-    accepted: list[dict[str, Any]] = []
+    # Pass 1: drop commits whose KST date runs backwards, then keep only the
+    # last commit of each KST day (earlier same-day commits are superseded).
+    candidates: list[dict[str, Any]] = []
     last_date = ""
-    prev_len: int | None = None
     for s in snapshots:
         date = to_kst_date(s["committed"])
-        reason: str | None = None
         if last_date and date < last_date:
-            reason = "date-backwards"
-        elif s.get("error"):
-            reason = f"parse-error: {s['error']}"
+            report["skipped"].append(
+                {"sha": s["sha"], "date": date, "reason": "date-backwards"}
+            )
+            continue
+        last_date = date
+        if candidates and candidates[-1]["date"] == date:
+            old = candidates[-1]
+            report["superseded"].append({"sha": old["snap"]["sha"], "date": date})
+            candidates[-1] = {"date": date, "snap": s}
+        else:
+            candidates.append({"date": date, "snap": s})
+
+    # Pass 2: validate each day's last commit. A rejected last commit skips
+    # the whole day; never fall back to an earlier same-day commit.
+    days: list[dict[str, Any]] = []
+    prev_len: int | None = None
+    for cand in candidates:
+        s, date = cand["snap"], cand["date"]
+        if s.get("error"):
+            reason: str | None = f"parse-error: {s['error']}"
         else:
             reason = check_rows(s.get("data"), prev_len)
         if reason:
             report["skipped"].append({"sha": s["sha"], "date": date, "reason": reason})
             continue
-        accepted.append({"sha": s["sha"], "date": date, "rows": normalize_rows(s["data"])})
-        last_date = date
+        days.append({"sha": s["sha"], "date": date, "rows": normalize_rows(s["data"])})
         prev_len = len(s["data"])
-
-    # Pass 2: last commit of each KST day wins
-    days: list[dict[str, Any]] = []
-    for item in accepted:
-        if days and days[-1]["date"] == item["date"]:
-            old = days[-1]
-            report["superseded"].append({"sha": old["sha"], "date": old["date"]})
-            days[-1] = item
-        else:
-            days.append(item)
 
     # Pass 3: replay with detection-driven re-baselining
     history = empty_history()
