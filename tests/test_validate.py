@@ -153,3 +153,37 @@ class TestAllNormalCase:
         validate_etl_results(results, prev_data)
         captured = capsys.readouterr()
         assert '[WARNING]' not in captured.out
+
+
+class TestNullCost:
+    """DATA-07/08: 실부담비용 None 허용 (경고만, 예외 없음)"""
+
+    def test_null_current_warns_data07(self, capsys):
+        validate_etl_results([make_item('360750', 'TIGER 미국S&P500', None)], None)
+        out = capsys.readouterr().out
+        assert "[WARNING] DATA-07" in out
+        assert "TIGER 미국S&P500" in out
+        assert "DATA-01" not in out
+
+    def test_null_current_numeric_previous_no_data03(self, capsys):
+        prev = [{'종목코드': '360750', '실부담비용': 0.10}]
+        validate_etl_results([make_item('360750', 'X', None)], prev)
+        assert "DATA-03" not in capsys.readouterr().out
+
+    def test_numeric_current_null_previous_no_data03(self, capsys):
+        prev = [{'종목코드': '360750', '실부담비용': None}]
+        validate_etl_results([make_item('360750', 'X', 3.0)], prev)
+        assert "DATA-03" not in capsys.readouterr().out
+
+    def test_missing_key_treated_as_null(self, capsys):
+        item = make_item('360750', 'X', 0.1)
+        del item['실부담비용']
+        validate_etl_results([item], [{'종목코드': '360750', '실부담비용': 0.1}])
+        out = capsys.readouterr().out
+        assert "[WARNING] DATA-07" in out
+        assert "DATA-03" not in out
+
+    def test_numeric_cases_unchanged(self, capsys):
+        validate_etl_results([make_item('1', 'Big', 6.0)], [{'종목코드': '1', '실부담비용': 0.1}])
+        out = capsys.readouterr().out
+        assert "DATA-01" in out and "DATA-03" in out
