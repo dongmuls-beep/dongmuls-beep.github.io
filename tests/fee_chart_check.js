@@ -48,6 +48,13 @@ assert.strictEqual(build([["2026-02-12", 0.0055]], NaN, "2026-09-30").length, 1)
 r = plain(build([["2026-05-01", 0.02], "bad", ["2026-1-1", 0.1], ["2026-03-01", Infinity], ["2026-03-01", 0.01]], 0.02, "2026-09-30"));
 assert.deepStrictEqual(r.map((p) => p.date), ["2026-03-01", "2026-05-01"]);
 
+// WR-02: today replacement equal to previous point -> merged, no zero-change point
+r = plain(build([["2026-02-12", 0.0055], ["2026-09-30", 0.006]], 0.0055, "2026-09-30"));
+assert.deepStrictEqual(r, [{ date: "2026-02-12", value: 0.0055 }]);
+// WR-02: consecutive duplicate values in history -> collapsed
+r = plain(build([["2026-01-01", 0.01], ["2026-02-01", 0.01], ["2026-03-01", 0.02], ["2026-04-01", 0.020000001]], 0.02, "2026-09-30"));
+assert.deepStrictEqual(r.map((p) => p.date), ["2026-01-01", "2026-03-01"]);
+
 // non-array / empty
 assert.strictEqual(build(null, 0.1, "2026-09-30").length, 0);
 assert.strictEqual(build([], 0.1, "2026-09-30").length, 0);

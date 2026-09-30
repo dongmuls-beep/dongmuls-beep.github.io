@@ -1543,8 +1543,8 @@ function renderFeeHistoryList(points) {
         if (i > 0) {
             const diff = Math.round((point.value - points[i - 1].value) * 10000) / 10000;
             const delta = document.createElement("span");
-            delta.className = diff > 0 ? "fee-history-delta up" : "fee-history-delta down";
-            delta.textContent = `${diff > 0 ? "▲ " : "▼ "}${formatPercent(Math.abs(diff))}p`;
+            delta.className = diff > 0 ? "fee-history-delta up" : diff < 0 ? "fee-history-delta down" : "fee-history-delta";
+            delta.textContent = `${diff > 0 ? "▲ " : diff < 0 ? "▼ " : ""}${formatPercent(Math.abs(diff))}p`;
             li.appendChild(delta);
         } else {
             const start = document.createElement("span");
@@ -1693,7 +1693,8 @@ function buildFeeHistoryPoints(raw, currentValue, today) {
         }
     }
 
-    return points;
+    // Drop adjacent points with the same 4-decimal value (no real change).
+    return points.filter((p, i) => i === 0 || p.value.toFixed(4) !== points[i - 1].value.toFixed(4));
 }
 
 const FEE_CHART = { width: 320, height: 180, left: 48, right: 308, top: 12, bottom: 152 };
