@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETF 직접 비교 | etfsave.life</title>
+    <meta name="description" content="선택한 ETF 2~4개의 총보수, 기타비용, 매매중개수수료, 실부담비용, 순자산을 한 표로 나란히 비교합니다.">
+    <meta name="author" content="etfsave.life">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="robots" content="noindex,follow">
+    <meta name="googlebot" content="noindex,follow">
+    <meta name="content-language" content="ko-KR">
+    <link rel="icon" href="/icon/etfsave_favicon_trimmed.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/etfsave_favicon_trimmed_16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/etfsave_favicon_trimmed_32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/icon/etfsave_favicon_trimmed_48x48.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/etfsave_favicon_trimmed_180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon/etfsave_favicon_trimmed_192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon/etfsave_favicon_trimmed_512x512.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <link rel="canonical" href="https://etfsave.life/compare/">
+    <link rel="alternate" hreflang="x-default" href="https://etfsave.life/compare/">
+    <link rel="alternate" hreflang="ko" href="https://etfsave.life/compare/">
+    <link rel="alternate" hreflang="en" href="https://etfsave.life/compare/?lang=en">
+    <link rel="alternate" hreflang="vi" href="https://etfsave.life/compare/?lang=vi">
+    <link rel="alternate" hreflang="zh-CN" href="https://etfsave.life/compare/?lang=zh">
+    <link rel="alternate" hreflang="ja" href="https://etfsave.life/compare/?lang=ja">
+    <link rel="alternate" hreflang="th" href="https://etfsave.life/compare/?lang=th">
+    <link rel="alternate" hreflang="fil-PH" href="https://etfsave.life/compare/?lang=tl">
+    <link rel="alternate" hreflang="km" href="https://etfsave.life/compare/?lang=km">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ETF 직접 비교 | etfsave.life">
+    <meta property="og:description" content="선택한 ETF 2~4개의 총보수, 기타비용, 매매중개수수료, 실부담비용, 순자산을 한 표로 나란히 비교합니다.">
+    <meta property="og:url" content="https://etfsave.life/compare/">
+    <meta property="og:site_name" content="ETFSAVE">
+    <meta property="og:locale" content="ko_KR">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <script id="structuredData" type="application/ld+json">[]</script>
+
+    <link rel="stylesheet" href="/style.css?v=darkfix">
+    <link rel="stylesheet" href="/compare.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+</head>
+<body data-page="compare">
+    <!-- DRAFT (Phase 15): header/footer copied from index.html; Phase 16 aligns this page to the post-a11y template. -->
+    <a href="#main-content" class="skip-link" data-i18n="aria_skip_to_content">본문 바로가기</a>
+    <div class="background-gradient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo"><a href="/">ETFSAVE</a></div>
+            <nav id="primaryNav" class="main-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="/" class="nav-link" data-i18n="nav_home">메인</a></li>
+                    <li><a href="/pension/" class="nav-link" data-i18n="nav_pension">연금저축펀드&IRP</a></li>
+                    <li><a href="/isa/" class="nav-link" data-i18n="nav_isa">ISA 중개형</a></li>
+                    <li><a href="/changelog/" class="nav-link" data-i18n="nav_changelog">ETF 비용 변경이력</a></li>
+                    <li><a href="/fomo/" class="nav-link" data-i18n="nav_fomo">포모(FOMO)</a></li>
+                    <li><a href="/guide/" class="nav-link" data-i18n="nav_guide">사이트 이용안내</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="language-selector">
+                    <select id="languageSelect" data-i18n-aria="aria_lang_select" aria-label="언어 선택">
+                        <option value="ko">🇰🇷 한국어</option>
+                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="zh">🇨🇳 中文</option>
+                        <option value="en">🇺🇸 English</option>
+                        <option value="ja">🇯🇵 日本語</option>
+                        <option value="th">🇹🇭 ไทย</option>
+                        <option value="tl">🇵🇭 Tagalog</option>
+                        <option value="km">🇰🇭 ខ្មែរ</option>
+                    </select>
+                </div>
+                <button class="hamburger-menu" data-i18n-aria="aria_menu_open" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primaryNav" aria-haspopup="true">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="container compare-page">
+        <h1 id="cmp-title" data-i18n="compare_page_title">ETF 직접 비교</h1>
+        <p class="cmp-intro" data-i18n="compare_intro">수수료가 가장 낮은 항목은 "최저"로 표시돼요. 값이 없는 항목은 "-"로 보이며 비교에서 제외돼요.</p>
+        <noscript><p class="cmp-notice">이 페이지는 JavaScript가 필요해요. 메인 목록으로 이동해 주세요. <a href="/">ETF 목록으로 돌아가기</a></p></noscript>
+
+        <div id="cmp-live" class="cmp-sr-only" role="status" aria-live="polite"></div>
+
+        <div id="cmp-app" aria-busy="true">
+            <div id="cmp-toolbar" class="cmp-toolbar" hidden>
+                <button id="cmp-copy" class="cmp-btn" type="button" data-i18n="compare_copy_link">링크 복사</button>
+                <a class="cmp-btn" href="/" data-i18n="compare_change_selection">다른 ETF 고르기</a>
+            </div>
+            <div id="cmp-notices"></div>
+            <div id="cmp-state" class="cmp-state"></div>
+
+            <section id="cmp-table-section" class="cmp-card" aria-labelledby="cmp-table-h" hidden>
+                <h2 id="cmp-table-h" class="cmp-section-title" data-i18n="compare_table_title">비교 지표</h2>
+                <div id="cmp-table-body"></div>
+            </section>
+
+            <section id="cmp-chart" class="cmp-card" aria-labelledby="cmp-chart-h" hidden>
+                <h2 id="cmp-chart-h" class="cmp-section-title" data-i18n="compare_chart_title">수수료 추이 비교</h2>
+                <div id="cmp-chart-body"></div>
+            </section>
+
+            <section id="cmp-calc" class="cmp-card" aria-labelledby="cmp-calc-h" hidden>
+                <h2 id="cmp-calc-h" class="cmp-section-title" data-i18n="calc_title">누적 비용 계산기</h2>
+                <p class="cmp-intro" data-i18n="calc_intro">보수와 비용 차이가 오래 쌓이면 얼마나 벌어지는지 계산해 볼 수 있어요. 아래 수익률은 실제 전망이 아닌 가정이에요.</p>
+                <div id="cmp-calc-body"></div>
+            </section>
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <h3 class="footer-title" data-i18n="footer_disclaimer_title">면책 고지 및 데이터 출처</h3>
+                <div class="footer-disclaimer">
+                    <p data-i18n="footer_disclaimer">본 웹사이트(etfsave.life)는 투자권유행위를 하지 않습니다.</p>
+                    <p data-i18n="footer_disclaimer_p2">모든 정보는 투자판단의 참고자료로만 활용되어야 합니다.</p>
+                    <p data-i18n="footer_disclaimer_p3">데이터 정확성/완전성을 보장하지 않으며 지연·오류·누락이 발생할 수 있습니다.</p>
+                    <p data-i18n="footer_disclaimer_p4">투자 결정 및 손익은 전적으로 이용자 책임입니다.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" id="privacyPolicyLink" data-i18n="footer_privacy">개인정보처리방침</a>
+                </div>
+                <div class="footer-copyright">
+                    <p data-i18n="footer_copy">© 2026 etfsave.life</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <div class="modal-overlay" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" hidden>
+        <div class="modal-content" tabindex="-1">
+            <h2 class="modal-title" id="privacyModalTitle" data-i18n="modal_policy_title">개인정보처리방침 및 이용약관</h2>
+            <div class="modal-body">
+                <div class="policy-section" data-i18n="modal_policy_privacy"></div>
+                <div class="policy-section" data-i18n="modal_policy_terms"></div>
+                <div class="policy-section" data-i18n="modal_policy_disclaimer"></div>
+                <div class="policy-section" data-i18n="modal_policy_cookie"></div>
+            </div>
+            <button class="modal-close-btn" id="privacyModalClose" type="button" data-i18n="common_close">닫기</button>
+        </div>
+    </div>
+
+    <script src="/script.js" defer></script>
+    <script src="/compare-calc.js" defer></script>
+    <script src="/compare-view.js" defer></script>
+    <script src="/compare-chart.js" defer></script>
+    <script src="/compare-calculator.js" defer></script>
+</body>
+</html>
