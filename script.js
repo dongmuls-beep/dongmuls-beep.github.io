@@ -1431,14 +1431,80 @@ async function renderFeeHistoryModal() {
     const series = history.series && history.series[code];
     const raw = series ? series[FEE_HISTORY_FIELDS[field].historyKey] : null;
     const currentValue = row ? toNumber(row[dataKeys[field]]) : NaN;
-    const points = buildFeeHistoryPoints(raw, currentValue, getKstToday());
+    const today = getKstToday();
+    const points = buildFeeHistoryPoints(raw, currentValue, today);
 
     if (points.length === 0) {
         setFeeHistoryState(body, getTranslation("fee_history_empty"), false);
         return;
     }
 
-    body.replaceChildren(renderFeeHistoryList(points));
+    const nodes = [renderFeeHistoryChart(points, fieldLabel, today)];
+    if (points.length === 1) {
+        const caption = document.createElement("p");
+        caption.className = "fee-history-caption";
+        caption.textContent = formatFeeTemplate(getTranslation("fee_history_no_change"), { date: points[0].date });
+        nodes.push(caption);
+    }
+    nodes.push(renderFeeHistoryList(points));
+    body.replaceChildren(...nodes);
+}
+
+function renderFeeHistoryChart(points, fieldLabel, today) {
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const make = (name, attrs) => {
+        const el = document.createElementNS(SVG_NS, name);
+        Object.keys(attrs).forEach((key) => el.setAttribute(key, String(attrs[key])));
+        return el;
+    };
+    const last = points[points.length - 1];
+    const scale = computeFeeChartScale(points.map((p) => p.value));
+
+    const figure = document.createElement("figure");
+    figure.className = "fee-history-chart";
+
+    const svg = make("svg", {
+        viewBox: `0 0 ${FEE_CHART.width} ${FEE_CHART.height}`,
+        preserveAspectRatio: "xMidYMid meet",
+        role: "img",
+        dir: "ltr",
+        "aria-label": formatFeeTemplate(getTranslation("fee_history_chart_aria"), {
+            field: fieldLabel,
+            start: points[0].date,
+            end: today,
+            count: points.length - 1,
+            value: formatPercent(last.value),
+        }),
+    });
+
+    scale.ticks.forEach((tick) => {
+        const y = feeChartRound(feeChartY(tick, scale));
+        svg.appendChild(make("line", { class: "fee-chart-grid", x1: FEE_CHART.left, x2: FEE_CHART.right, y1: y, y2: y }));
+        const label = make("text", { class: "fee-chart-label is-y", x: 44, y, "text-anchor": "end", "dominant-baseline": "middle" });
+        label.textContent = formatPercent(tick);
+        svg.appendChild(label);
+    });
+
+    const startLabel = make("text", { class: "fee-chart-label is-x", x: FEE_CHART.left, y: 172, "text-anchor": "start" });
+    startLabel.textContent = points[0].date;
+    svg.appendChild(startLabel);
+    const endLabel = make("text", { class: "fee-chart-label is-x", x: FEE_CHART.right, y: 172, "text-anchor": "end" });
+    endLabel.textContent = today;
+    svg.appendChild(endLabel);
+
+    svg.appendChild(make("path", { class: "fee-chart-line", d: buildFeeStepPath(points, scale, today), fill: "none" }));
+
+    points.forEach((point) => {
+        svg.appendChild(make("circle", {
+            class: "fee-chart-dot",
+            cx: feeChartRound(feeChartX(point.date, points[0].date, today)),
+            cy: feeChartRound(feeChartY(point.value, scale)),
+            r: 4,
+        }));
+    });
+
+    figure.appendChild(svg);
+    return figure;
 }
 
 function renderFeeHistoryList(points) {

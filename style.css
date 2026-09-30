@@ -793,6 +793,50 @@ h1 {
     color: var(--text-soft);
 }
 
+.fee-history-chart {
+    margin: 0 0 var(--space-4);
+}
+
+.fee-history-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: inherit;
+}
+
+.fee-chart-grid {
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.fee-chart-label {
+    fill: var(--text-soft);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.fee-chart-line {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: butt;
+}
+
+.fee-chart-dot {
+    fill: var(--primary);
+    stroke: var(--surface);
+    stroke-width: 2;
+}
+
+.fee-history-caption {
+    margin: 0 0 var(--space-2);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
 .toast {
     position: fixed;
     left: 50%;
