@@ -6,11 +6,7 @@
 
 ## Current State
 
-v1.1 안정성·보안·품질 개선 shipped (2026-09-30). 운영 사이트 정상 동작, 일일 ETL/배포 success.
-
-## Current Milestone: v1.2 데이터 정확성 보강
-
-**Goal:** 운영 점검에서 발견된 AUM 누락(영숫자 코드)과 변경 이력 가짜 변동을 해소한다.
+v1.2 데이터 정확성 보강 shipped (2026-09-30). 운영 data.json AUM 누락 0건, changelog 가짜 변동 제거. 테스트 56개, 일일 ETL/배포 success.
 
 ## Core Value
 
@@ -20,6 +16,8 @@ v1.1 안정성·보안·품질 개선 shipped (2026-09-30). 운영 사이트 정
 
 ### Validated
 
+- ✓ 영숫자 KRX 코드 ETF AUM·거래량 매칭 (DATA-04) — v1.2
+- ✓ 변경 이력 가짜 변동 제거 + 대량 보정 재발 방지 (DATA-05, DATA-06) — v1.2
 - ✓ 데이터 유효성 검사 레이어 (수수료 범위·중복 코드·이상치 soft-warning) — v1.1
 - ✓ XSS 개선 (escapeHtml 일관 적용, innerHTML 감사) — v1.1
 - ✓ ETL 단위 테스트 (헤더 감지, 수수료 계산, 데이터 매칭) + CI 게이트 — v1.1
@@ -39,8 +37,7 @@ v1.1 안정성·보안·품질 개선 shipped (2026-09-30). 운영 사이트 정
 
 ### Active
 
-- [ ] 영숫자 KRX 코드 ETF AUM·거래량 매칭 (DATA-04)
-- [ ] 변경 이력 가짜 변동 제거 및 재발 방지 (DATA-05, DATA-06)
+(다음 마일스톤에서 정의 — /gsd:new-milestone)
 
 ### Out of Scope
 
@@ -79,6 +76,8 @@ v1.1 안정성·보안·품질 개선 shipped (2026-09-30). 운영 사이트 정
 | ETL 검증은 soft-warning (v1.1) | 데이터 손실 없이 파싱 버그 조기 감지 | ✓ Good |
 | i18n innerHTML 유지 + SECURITY 주석 (v1.1) | 번역 JSON에 의도적 HTML | ✓ Good |
 | CI에서 ETL 전 pytest 게이트 (v1.1) | KOFIA 형식 변경 즉시 감지 | ✓ Good |
+| changelog 대량 보정 50% 기준 미기록 (v1.2) | 매핑 보정이 가짜 변동으로 남는 것 방지 | — Pending (업계 일괄 인하 시 재검토) |
+| changelog 정리는 CI에서 멱등 실행 (v1.2) | pre-commit hook이 운영본으로 덮어써 로컬 편집 무효 | ✓ Good |
 
 ---
-*Last updated: 2026-09-30 after v1.1 milestone*
+*Last updated: 2026-09-30 after v1.2 milestone*

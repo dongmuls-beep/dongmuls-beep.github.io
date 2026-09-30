@@ -2,9 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: 데이터 정확성 보강
-status: milestone_complete
-stopped_at: Milestone complete (Phase 6 was final phase)
-last_updated: 2026-09-30T01:03:22.017Z
+status: completed
+stopped_at: Phase 6 planned
+last_updated: "2026-09-30T01:05:05.276Z"
+last_activity: 2026-09-30 — Milestone v1.2 completed and archived
 progress:
   total_phases: 2
   completed_phases: 2
@@ -21,14 +22,14 @@ See: .planning/PROJECT.md (updated 2026-09-30)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
 **Current milestone:** v1.2 — 데이터 정확성 보강
-**Current focus:** Milestone complete
+**Current focus:** Planning next milestone
 
 ## Current Status
 
-**Phase:** 6
-**Status:** Milestone complete
-**Last action:** v1.1 마일스톤 종료·태그 (2026-09-30), 운영 점검 결과로 v1.2 요구사항 DATA-04~06 정의
-**Next action:** /gsd:discuss-phase 5
+**Milestone:** v1.2 — 데이터 정확성 보강 — SHIPPED 2026-09-30
+**Status:** 마일스톤 완료, 다음 마일스톤 대기
+**Last action:** v1.2 audit passed → archived → tagged
+**Next action:** /gsd:new-milestone
 
 ## Active Work
 
@@ -36,7 +37,8 @@ See: .planning/PROJECT.md (updated 2026-09-30)
 
 ## Completed Milestones
 
-- **v1.1 안정성·보안·품질 개선** — Phases 1-4, 14/14 요구사항 (shipped 2026-09-30) — see .planning/MILESTONES.md
+- **v1.1 안정성·보안·품질 개선** — Phases 1-4, 14/14 요구사항 (shipped 2026-09-30)
+- **v1.2 데이터 정확성 보강** — Phases 5-6, 3/3 요구사항 (shipped 2026-09-30) — see .planning/MILESTONES.md
 
 ## Decisions Log
 
@@ -78,3 +80,14 @@ Items acknowledged and deferred at milestone close on 2026-09-30:
 | Category | Item | Status |
 |----------|------|--------|
 | debug | knowledge-base | not a session — resolved-session knowledge base (audit false positive) |
+
+## Current Position
+
+Phase: Milestone v1.2 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-09-30 — Milestone v1.2 completed and archived
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
