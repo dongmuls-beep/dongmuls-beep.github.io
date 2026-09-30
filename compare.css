@@ -1,6 +1,6 @@
 /*
  * compare.css - Phase 15 styles (selection, bar, compare page, table, chart, calculator).
- * Reads style.css :root tokens read-only. Custom properties are page-scoped only.
+ * Reads style.css root tokens read-only. Custom properties are page-scoped only.
  * Weights: 400/600 only. Sizes: 14/16/20/28px only. No animations or transitions.
  */
 
