@@ -228,6 +228,10 @@ body.has-compare-bar {
   gap: 8px;
 }
 
+.cmp-toolbar[hidden] {
+  display: none;
+}
+
 .cmp-card {
   background: var(--surface);
   border: 1px solid var(--border);

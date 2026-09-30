@@ -298,21 +298,11 @@
     function onBlur(f) {
         var n = parseNumberInput(S.inputs[f.key].value);
         if (n === null || n !== n) return;
-        var norm = CompareCalc.normalizeInputs(rawFromInputs() || DEFAULTS);
+        var raw = Object.assign({}, DEFAULTS);
+        raw[f.key] = n;
+        var norm = CompareCalc.normalizeInputs(raw);
         var val = norm[f.key];
         S.inputs[f.key].value = f.amount ? fmt(val) : String(val);
-    }
-
-    function rawFromInputs() {
-        var raw = {};
-        for (var i = 0; i < FIELDS.length; i++) {
-            var f = FIELDS[i];
-            var n = parseNumberInput(S.inputs[f.key].value);
-            if (n === null) n = DEFAULTS[f.key];
-            if (n !== n) return null;
-            raw[f.key] = n;
-        }
-        return raw;
     }
 
     function clampLimit(f, raw) {
@@ -358,7 +348,8 @@
         var n = CompareCalc.normalizeInputs(raw);
         FIELDS.forEach(function (f) {
             var note = S.notes[f.key];
-            if (raw[f.key] !== n[f.key]) {
+            var v = f.key === "years" ? Math.round(raw[f.key]) : raw[f.key];
+            if (v !== n[f.key]) {
                 note.textContent = tr("calc_clamped", { limit: clampLimit(f, raw[f.key]) });
                 note.removeAttribute("hidden");
             } else {

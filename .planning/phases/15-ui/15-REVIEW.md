@@ -95,3 +95,10 @@ _Depth: standard_
 Deadline directive: fix critical issues only. There were 0 critical findings.
 - WR-01 to WR-05: **DEFERRED** to Phase 16 (or a gap-closure pass). They are recommended before public launch, and WR-01 (`.cmp-toolbar[hidden]{display:none}`) is a one-line fix.
 - IN-01 to IN-05: **DEFERRED** (informational).
+
+## Fix log (2026-09-30)
+- WR-01 FIXED: `.cmp-toolbar[hidden] { display: none; }` added to compare.css (asserted in compare_css_check).
+- WR-02 FIXED: `onBlur` normalizes only the blurred field over DEFAULTS; dead `rawFromInputs` removed (compare_calculator_check).
+- WR-03 FIXED: years are compared after `Math.round`, so fractional years round silently with no clamp note; the note appears only on a real clamp (compare_calculator_check).
+- WR-04 FIXED: per-button `button._cmpTimer` replaces the shared `state.copyTimer` (compare_view_check: A and B both reset).
+- WR-05 FIXED (fallback path): the fixed 3 s timer is replaced by a 100 ms poll of `currentTranslations` (max ~3 s) that returns early once `state.i18nReady` is set, so there is no late duplicate `renderAll`. No `etf:i18n-ready` event was added, because script.js is out of scope.

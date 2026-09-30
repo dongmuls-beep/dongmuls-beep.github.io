@@ -75,7 +75,7 @@ const contract = [
   ".cmp-name-cell", ".cmp-name-wrap", ".cmp-pick", ".cmp-pick.is-dim", ".cmp-check", ".cmp-pick-box", ".cmp-sr-only",
   "#compare-bar", ".cmp-bar", ".cmp-bar[hidden]", ".cmp-bar-inner", ".cmp-bar-status", ".cmp-bar-count", ".cmp-bar-helper",
   ".cmp-bar-notice", ".cmp-bar-actions", ".cmp-bar-clear", ".cmp-bar-go", '.cmp-bar-go[aria-disabled="true"]', "body.has-compare-bar",
-  ".compare-page", ".cmp-intro", ".cmp-toolbar", ".cmp-btn", ".cmp-notice", ".cmp-state", ".cmp-empty", ".cmp-error",
+  ".compare-page", ".cmp-intro", ".cmp-toolbar", ".cmp-toolbar[hidden]", ".cmp-btn", ".cmp-notice", ".cmp-state", ".cmp-empty", ".cmp-error",
   ".cmp-skeleton", ".cmp-card", ".cmp-section-title", ".cmp-table-wrap", ".cmp-table-wrap.is-scrollable::after", ".cmp-table",
   ".cmp-table caption", 'th[scope="row"]', 'th[scope="col"]', ".cmp-etf-code", ".cmp-value", 'td[data-best="true"] .cmp-value',
   ".cmp-best", ".cmp-scroll-hint",
@@ -93,4 +93,5 @@ for (const m of css.matchAll(/font-size\s*:\s*([^;}\s]+)/g)) {
   assert(allowed.has(m[1]), "disallowed font-size " + m[1]);
 }
 
+assert(/\.cmp-toolbar\[hidden\]\s*\{\s*display:\s*none/.test(css), "WR-01 toolbar hidden");
 console.log("compare_css_check OK");

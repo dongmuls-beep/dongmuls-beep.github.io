@@ -154,8 +154,7 @@
         resizeBound: false,
         subscribers: [],
         beforeCopy: [],
-        resizeTimer: null,
-        copyTimer: null
+        resizeTimer: null
     };
 
     function el(id) {
@@ -360,7 +359,7 @@
             }
         });
         var url = typeof buildShareUrl === "function" ? buildShareUrl() : location.href;
-        if (state.copyTimer) clearTimeout(state.copyTimer);
+        if (button && button._cmpTimer) clearTimeout(button._cmpTimer);
         var attempt;
         try {
             attempt = Promise.resolve(copyText(url));
@@ -372,7 +371,7 @@
                 var msg = t("compare_copy_done");
                 if (button) button.textContent = msg;
                 announce(msg);
-                state.copyTimer = setTimeout(function () {
+                if (button) button._cmpTimer = setTimeout(function () {
                     if (button) button.textContent = t("compare_copy_link");
                 }, 2000);
             },
@@ -380,7 +379,7 @@
                 var msg = t("compare_copy_fail");
                 if (button) button.textContent = msg;
                 announce(msg);
-                state.copyTimer = setTimeout(function () {
+                if (button) button._cmpTimer = setTimeout(function () {
                     if (button) button.textContent = t("compare_copy_link");
                 }, 4000);
             }
@@ -407,6 +406,17 @@
         }
     }
 
+    // WR-05: poll for translations (max ~3s) instead of a fixed 3s wait; never re-render once ready.
+    function waitForTranslations(tries) {
+        if (state.i18nReady) return;
+        var ready = typeof currentTranslations === "object" && currentTranslations && Object.keys(currentTranslations).length > 0;
+        if (ready || tries <= 0) {
+            markI18nReady();
+            return;
+        }
+        setTimeout(function () { waitForTranslations(tries - 1); }, 100);
+    }
+
     function markI18nReady() {
         state.i18nReady = true;
         renderAll();
@@ -422,7 +432,7 @@
         if (hasTranslations) {
             state.i18nReady = true;
         } else {
-            setTimeout(markI18nReady, 3000);
+            waitForTranslations(30);
         }
         var title = el("cmp-title");
         if (title && typeof MutationObserver === "function") {

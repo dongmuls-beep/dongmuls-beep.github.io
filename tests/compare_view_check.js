@@ -274,6 +274,15 @@ const okFetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(FI
         vm.runInContext("copyText = async function () { throw new Error('nope'); }", rt.c);
         await rt.c.CompareView.copyCurrentUrl(btn);
         assert.strictEqual(btn.textContent, "복사하지 못했어요.");
+        // WR-04: per-button timers; clicking B must not cancel A's reset
+        vm.runInContext("copyText = async function () {}", rt.c);
+        const btnA = makeEl("a"), btnB = makeEl("b");
+        await rt.c.CompareView.copyCurrentUrl(btnA);
+        await rt.c.CompareView.copyCurrentUrl(btnB);
+        assert.ok(btnA._cmpTimer && btnB._cmpTimer && btnA._cmpTimer !== btnB._cmpTimer, "separate timers");
+        await new Promise((r) => setTimeout(r, 2100));
+        assert.strictEqual(btnA.textContent, "링크 복사", "A reset");
+        assert.strictEqual(btnB.textContent, "링크 복사", "B reset");
     }
 
     // ---------- Task 3: static page assertions ----------
@@ -297,6 +306,10 @@ const okFetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(FI
     });
     assert.ok(page.indexOf("/compare.css") > page.indexOf("/style.css"), "compare.css after style.css");
 
+    // WR-05: no fixed 3s wait; poll guarded by i18nReady
+    const viewSrc = readSrc("compare-view.js");
+    assert.ok(!viewSrc.includes("setTimeout(markI18nReady, 3000)"), "no fixed 3s i18n wait");
+    assert.ok(/function waitForTranslations[\s\S]*?if \(state\.i18nReady\) return;/.test(viewSrc), "poll guarded");
     console.log("compare_view_check OK");
 })().catch((e) => {
     console.error(e);

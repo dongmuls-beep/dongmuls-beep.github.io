@@ -275,6 +275,20 @@ assert.strictEqual(R["cmp-yrs-note"].getAttribute("hidden"), null);
 assert.ok(R["cmp-yrs-note"].textContent.includes("50"));
 R["cmp-yrs"].fire("blur");
 assert.strictEqual(R["cmp-yrs"].value, "50");
+// WR-03: fractional years round silently, no clamp note
+R["cmp-yrs"].value = "5.5";
+R["cmp-yrs"].fire("change");
+assert.notStrictEqual(R["cmp-yrs-note"].getAttribute("hidden"), null, "no clamp note for 5.5 years");
+R["cmp-yrs"].value = "20";
+R["cmp-yrs"].fire("change");
+// WR-02: blur on a valid field keeps its value when another field is invalid
+R["cmp-yrs"].value = "abc";
+R["cmp-yrs"].fire("input");
+R["cmp-amt"].value = "5,000,000";
+R["cmp-amt"].fire("blur");
+assert.strictEqual(R["cmp-amt"].value, "5,000,000", "valid field not reset to default");
+R["cmp-yrs"].value = "20";
+R["cmp-yrs"].fire("input");
 // language re-render: no second form, no extra listeners
 const lis = R["cmp-amt"].listeners.input.length;
 const kids = W.dom.body.children.length;
