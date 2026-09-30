@@ -1239,7 +1239,9 @@ function openModal(modal) {
     const content = modal ? modal.querySelector(".modal-content") : null;
     if (!modal || !content) return;
 
-    lastFocusedBeforeModal = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    // Safari does not focus clicked buttons, so ignore <body> and use the caller's fallback.
+    const active = document.activeElement;
+    lastFocusedBeforeModal = active instanceof HTMLElement && active !== document.body ? active : null;
 
     modal.removeAttribute("hidden");
     document.body.classList.add("modal-open");
