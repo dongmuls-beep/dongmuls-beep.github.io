@@ -26,7 +26,7 @@
 - [ ] **CHART-03**: 변동 없음/단일 포인트면 평평한 선과 "기록 시작(2026-02) 이후 변동 없음" 안내가 표시되고, 로딩·에러 상태가 표시된다
 - [ ] **CHART-04**: 차트 아래 변동 내역 리스트(날짜·값·변동폭)가 표시된다
 - [ ] **CHART-05**: ESC/닫기 버튼으로 모달이 닫히고 원래 셀로 포커스가 돌아가며, 모바일에서 정상 동작한다
-- [ ] **CHART-06**: 모달 문구가 8개 언어(ko, en, vi, zh, ja, th, tl, km)로 표시된다
+- [x] **CHART-06**: 모달 문구가 8개 언어(ko, en, vi, zh, ja, th, tl, km)로 표시된다
 
 ## Future Requirements
 
@@ -59,6 +59,6 @@
 | CHART-03 | Phase 9 | Pending |
 | CHART-04 | Phase 9 | Pending |
 | CHART-05 | Phase 9 | Pending |
-| CHART-06 | Phase 9 | Pending |
+| CHART-06 | Phase 9 | Complete |
 
 **Coverage:** 13/13 v1.3 requirements mapped

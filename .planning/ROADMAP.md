@@ -78,7 +78,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — 9 fee_history_* i18n keys x 8 languages + pytest parity test (wave 1)
+- [x] 09-01-PLAN.md — 9 fee_history_* i18n keys x 8 languages + pytest parity test (wave 1)
 - [ ] 09-02-PLAN.md — fee cell buttons + hint, generalized modal, fee-history.json load, loading/error/empty states, change list (wave 1)
 - [ ] 09-03-PLAN.md — SVG step chart to today, no-change caption, chart CSS, human UAT (wave 2)
 **UI hint**: yes
@@ -95,4 +95,4 @@ Plans:
 | 6. 변경 이력 정합성 | v1.2 | 1/1 | Complete | 2026-09-30 |
 | 7. 수수료 이력 저장소 및 일일 추가 | v1.3 | 1/1 | Complete    | 2026-09-30 |
 | 8. Git 히스토리 과거 복원 | v1.3 | 1/1 | Complete    | 2026-09-30 |
-| 9. 수수료 변동 그래프 모달 | v1.3 | 0/0 | Not started | - |
+| 9. 수수료 변동 그래프 모달 | v1.3 | 1/3 | In Progress|  |
