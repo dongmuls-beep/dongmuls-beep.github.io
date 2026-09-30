@@ -53,10 +53,10 @@ Plans:
 - 대량 보정성 변동 시 build_changelog가 경고만 출력하고 항목을 추가하지 않음 (테스트로 확인)
 - 제거가 자동 업데이트 이후에도 유지됨 (재유입 경로 차단)
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 06-01-PLAN.md — 대량 보정 감지 + 기존 항목 멱등 정리 + 테스트, CI 배포 후 운영 changelog 검증
+- [x] 06-01-PLAN.md — 대량 보정 감지 + 기존 항목 멱등 정리 + 테스트, CI 배포 후 운영 changelog 검증
 
 ## Progress
 
@@ -67,4 +67,4 @@ Plans:
 | 3. 보안 및 버그 수정 | v1.1 | 3/3 | Complete | 2026-05-20 |
 | 4. ETL 단위 테스트 | v1.1 | 3/3 | Complete | 2026-05-20 |
 | 5. 신규 코드 시장데이터 매칭 | v1.2 | 1/1 | Complete    | 2026-09-30 |
-| 6. 변경 이력 정합성 | v1.2 | 0/0 | Not started | - |
+| 6. 변경 이력 정합성 | v1.2 | 1/1 | Complete   | 2026-09-30 |

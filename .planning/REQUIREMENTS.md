@@ -14,9 +14,9 @@
 
 ### 변경 이력 정합성
 
-- [ ] **DATA-05**: 컬럼 매핑 보정(`_KOFIA_17_COLS`, 2026-05-27)으로 생긴 가짜 변동 항목이 운영 changelog에서 제거되고, 같은 월(`2026-05`) 중복 카드가 없다
+- [x] **DATA-05**: 컬럼 매핑 보정(`_KOFIA_17_COLS`, 2026-05-27)으로 생긴 가짜 변동 항목이 운영 changelog에서 제거되고, 같은 월(`2026-05`) 중복 카드가 없다
   - 근거: `2026-05-27` 항목 177건 (총보수·기타비용·실부담비용 59종목 전부), 예: TIGER 미국S&P500 기타비용 0.4421→0.06. 과거 제거 커밋(9e46d25) 이후 운영에 재유입됨
-- [ ] **DATA-06**: changelog 생성기가 대량 보정성 변동(예: 전 종목 총보수·기타비용 동시 변경)을 이력에 기록하지 않고 경고만 남겨 재발을 막는다
+- [x] **DATA-06**: changelog 생성기가 대량 보정성 변동(예: 전 종목 총보수·기타비용 동시 변경)을 이력에 기록하지 않고 경고만 남겨 재발을 막는다
   - 대상: `scripts/build_changelog.py` — 기존 `validate_etl_results` soft-warning 패턴 재사용
 
 ## Out of Scope
@@ -29,8 +29,8 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DATA-04 | Phase 5 | Complete |
-| DATA-05 | Phase 6 | Pending |
-| DATA-06 | Phase 6 | Pending |
+| DATA-05 | Phase 6 | Complete |
+| DATA-06 | Phase 6 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 3 total
