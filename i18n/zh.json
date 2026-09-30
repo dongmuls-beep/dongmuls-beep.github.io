@@ -286,5 +286,14 @@
   "home_howto_schema_step3_name": "按税务处理计算",
   "home_howto_schema_step3_text": "包括免税、单独征税和按账户划分的税收抵免效果。",
   "home_howto_schema_step4_name": "验证成本节省",
-  "home_howto_schema_step4_text": "检查跟踪同一指数的 ETF 之间的净成本差距，并选择效率更高的 ETF。"
+  "home_howto_schema_step4_text": "检查跟踪同一指数的 ETF 之间的净成本差距，并选择效率更高的 ETF。",
+  "fee_history_hint": "点击费用即可查看变动图表",
+  "fee_history_open_label": "查看{name}的{field}变动图表",
+  "fee_history_loading": "正在加载费用变动记录…",
+  "fee_history_error": "无法加载变动记录，请稍后再点击一次。",
+  "fee_history_empty": "此项目暂无变动记录。",
+  "fee_history_no_change": "自{date}起无变动",
+  "fee_history_start": "记录起点",
+  "fee_history_list_title": "变动记录",
+  "fee_history_chart_aria": "{field}变动图表，从{start}到{end}，共变动{count}次，当前{value}"
 }

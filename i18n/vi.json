@@ -286,5 +286,14 @@
   "home_howto_schema_step3_name": "Tinh sau thue",
   "home_howto_schema_step3_text": "Ap dung uu dai thue theo tai khoan de tinh chi phi thuc te sau thue.",
   "home_howto_schema_step4_name": "Xac nhan muc tiet kiem chi phi",
-  "home_howto_schema_step4_text": "So sanh ETF cung chi so de chon san pham hieu qua hon."
+  "home_howto_schema_step4_text": "So sanh ETF cung chi so de chon san pham hieu qua hon.",
+  "fee_history_hint": "Nhấn vào phí để xem biểu đồ biến động",
+  "fee_history_open_label": "Xem biểu đồ biến động {field} của {name}",
+  "fee_history_loading": "Đang tải lịch sử phí…",
+  "fee_history_error": "Không thể tải lịch sử biến động. Vui lòng nhấn lại sau giây lát.",
+  "fee_history_empty": "Chưa có lịch sử biến động cho mục này.",
+  "fee_history_no_change": "Không thay đổi kể từ {date}",
+  "fee_history_start": "Bắt đầu ghi nhận",
+  "fee_history_list_title": "Lịch sử biến động",
+  "fee_history_chart_aria": "Biểu đồ biến động {field}, từ {start} đến {end}, {count} lần thay đổi, hiện tại {value}"
 }

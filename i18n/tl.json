@@ -286,5 +286,14 @@
   "home_howto_schema_step3_name": "Kalkulahin pagkatapos ng buwis",
   "home_howto_schema_step3_text": "Isama ang tax benefits ng account para makuha ang after-tax real cost.",
   "home_howto_schema_step4_name": "Kumpirmahin ang matitipid sa gastos",
-  "home_howto_schema_step4_text": "Ihambing ang mga ETF na may parehong index para pumili ng mas mahusay na produkto."
+  "home_howto_schema_step4_text": "Ihambing ang mga ETF na may parehong index para pumili ng mas mahusay na produkto.",
+  "fee_history_hint": "I-tap ang bayad para makita ang tsart ng pagbabago",
+  "fee_history_open_label": "Tingnan ang tsart ng pagbabago ng {field} para sa {name}",
+  "fee_history_loading": "Nilo-load ang kasaysayan ng bayad…",
+  "fee_history_error": "Hindi ma-load ang kasaysayan ng pagbabago. Pakitap muli mamaya.",
+  "fee_history_empty": "Wala pang naitalang pagbabago para sa item na ito.",
+  "fee_history_no_change": "Walang pagbabago mula {date}",
+  "fee_history_start": "Simula ng talaan",
+  "fee_history_list_title": "Kasaysayan ng pagbabago",
+  "fee_history_chart_aria": "Tsart ng pagbabago ng {field}, mula {start} hanggang {end}, {count} pagbabago, kasalukuyan {value}"
 }
