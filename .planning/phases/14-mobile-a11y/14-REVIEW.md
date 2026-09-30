@@ -73,3 +73,16 @@ Per coordinator deadline directive: fix only critical issues. 0 critical found â
 | IN-02 | Resolved â€” verifier confirmed all 7 pages use theme-color #e8edf5 |
 
 Review coverage was partial (other HTML pages, i18n commit, test files not reviewed).
+
+## Fix log
+
+_Fixed: 2026-09-30_
+
+| ID | Status | Change |
+|----|--------|--------|
+| WR-01 | Fixed | `table_error` / `changelog_error` now rendered via `escapeHtml(stripHtmlTags(...))` in `script.js` (the `<br>` in the table_error packs becomes a space) |
+| WR-02 | Fixed | Reset-filter now selects the first category tab (sets `currentCategory`, URL param, `active` class, focus), matching a tab click. The reset button is not rendered on category-preset pages (they fall back to the no-data empty state). `aria-selected` was not added: tabs are plain `<button>`s without `role="tab"`, so the attribute would be invalid |
+| WR-03 | Fixed | The fetch-error catch sets `#tableStatus` to the error text. The changelog catch sets `#changelogStatus` to the error text. `aria-busy` was already reset in both catches; no `finally` refactor was needed |
+| IN-01 | Still deferred | Not in scope |
+
+Assertions were added to `tests/a11y_states_check.js`: no raw markup in the error boxes, the error text in the status regions, the reset selecting the first tab, and no reset button on preset pages.

@@ -57,7 +57,7 @@ const sandbox = {
 const ctx = vm.createContext(sandbox);
 vm.runInContext(src, ctx, { filename: "script.js" });
 vm.runInContext(
-    'currentTranslations = { table_loading: "Loading", table_error: "Failed<br>retry", table_empty: "No ETFs", table_retry: "Try again", table_reset_filter: "Show all ETFs", table_empty_hint: "Data not ready", aria_table_rows: "{count} ETFs shown", changelog_loading: "Loading log", changelog_empty: "No log", changelog_error: "Log failed" };',
+    'currentTranslations = { table_loading: "Loading", table_error: "Failed<br>retry", table_empty: "No ETFs", table_retry: "Try again", table_reset_filter: "Show all ETFs", table_empty_hint: "Data not ready", aria_table_rows: "{count} ETFs shown", changelog_loading: "Loading log", changelog_empty: "No log", changelog_error: "Log <i>failed</i>" };',
     ctx
 );
 
@@ -79,6 +79,10 @@ const count = (s, sub) => s.split(sub).length - 1;
     assert.ok(tbody.innerHTML.includes("error-text"));
     assert.ok(tbody.innerHTML.includes('data-action="retry-fetch"'));
     assert.strictEqual(els.etfTableContainer.attrs["aria-busy"], "false");
+    // WR-01: translation markup is stripped/escaped; WR-03: status no longer says "Loading"
+    assert.ok(!tbody.innerHTML.includes("<br>"), tbody.innerHTML);
+    assert.ok(tbody.innerHTML.includes("Failed retry"));
+    assert.strictEqual(els.tableStatus.textContent, "Failed retry");
 
     // c. empty states
     events.length = 0;
@@ -111,6 +115,10 @@ const count = (s, sub) => s.split(sub).length - 1;
     assert.ok(list.innerHTML.includes('data-action="retry-changelog"'));
     assert.ok(list.innerHTML.includes('role="alert"'));
     assert.strictEqual(list.attrs["aria-busy"], "false");
+    // WR-01 / WR-03 for changelog
+    assert.ok(!list.innerHTML.includes("<i>"), list.innerHTML);
+    assert.ok(list.innerHTML.includes("Log failed"));
+    assert.strictEqual(els.changelogStatus.textContent, "Log failed");
     fetchImpl = () => Promise.resolve({ ok: true, json: async () => [] });
     await ctx.renderChangelog();
     assert.ok(list.innerHTML.includes("state-box--empty"));
@@ -120,6 +128,28 @@ const count = (s, sub) => s.split(sub).length - 1;
     ctx.initStateActions();
     assert.strictEqual(tbody.listeners.length, 1);
     assert.strictEqual(list.listeners.length, 1);
+
+    // g. WR-02: reset-filter selects the first tab and marks it active
+    const tabA = fakeEl("button"); tabA.dataset.category = "A";
+    const tabB = fakeEl("button"); tabB.dataset.category = "B";
+    const toggles = [];
+    [tabA, tabB].forEach((t) => { t.classList = { toggle: (c, on) => toggles.push([t.dataset.category, c, on]), add: noop, remove: noop, contains: () => false }; });
+    sandbox.document.querySelector = (sel) => (sel === "#categoryTabs .tab-button" ? tabA : null);
+    sandbox.document.querySelectorAll = (sel) => (sel === "#categoryTabs .tab-button" ? [tabA, tabB] : []);
+    sandbox.window.history = { replaceState: noop };
+    vm.runInContext('allData = [{}]; currentCategory = "Z";', ctx);
+    const resetBtn = { getAttribute: () => "reset-filter" };
+    await tbody.listeners[0].fn({ target: { closest: () => resetBtn } });
+    assert.strictEqual(vm.runInContext("currentCategory", ctx), "A");
+    assert.deepStrictEqual(toggles, [["A", "active", true], ["B", "active", false]]);
+    assert.strictEqual(tabA.focusCalls, 1);
+
+    // h. WR-02: no reset button on category-preset pages
+    sandbox.document.body.getAttribute = (k) => (k === "data-category-preset" ? "A" : null);
+    vm.runInContext("allData = [{}]", ctx);
+    ctx.renderTable([]);
+    assert.ok(!tbody.innerHTML.includes('data-action="reset-filter"'));
+    sandbox.document.body.getAttribute = () => null;
 
     console.log("a11y_states_check OK");
 })().catch((e) => {

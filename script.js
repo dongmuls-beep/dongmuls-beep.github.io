@@ -704,7 +704,7 @@ function tableSkeletonHtml() {
 function tableStateHtml(kind) {
     let inner;
     if (kind === "error") {
-        inner = `<div class="state-box state-box--error" role="alert"><p class="error-text">${getTranslation("table_error")}</p><button type="button" class="btn-link" data-action="retry-fetch">${escapeHtml(getTranslation("table_retry"))}</button></div>`;
+        inner = `<div class="state-box state-box--error" role="alert"><p class="error-text">${escapeHtml(stripHtmlTags(getTranslation("table_error")))}</p><button type="button" class="btn-link" data-action="retry-fetch">${escapeHtml(getTranslation("table_retry"))}</button></div>`;
     } else if (kind === "empty-filter") {
         inner = `<div class="state-box state-box--empty"><p>${escapeHtml(stripHtmlTags(getTranslation("table_empty")))}</p><button type="button" class="btn-link" data-action="reset-filter">${escapeHtml(getTranslation("table_reset_filter"))}</button></div>`;
     } else {
@@ -730,11 +730,13 @@ function initStateActions() {
                 const again = typeof tbody.querySelector === "function" ? tbody.querySelector('button[data-action="retry-fetch"]') : null;
                 focusEl(again || document.getElementById("etfTableContainer"));
             } else if (action === "reset-filter") {
-                currentCategory = "";
-                syncCategoryParam("");
-                document.querySelectorAll("#categoryTabs .tab-button").forEach((tab) => tab.classList.remove("active"));
+                // WR-02: select the first tab (same state a tab click produces).
+                const firstTab = document.querySelector("#categoryTabs .tab-button");
+                currentCategory = (firstTab && firstTab.dataset && firstTab.dataset.category) || "";
+                syncCategoryParam(currentCategory);
+                document.querySelectorAll("#categoryTabs .tab-button").forEach((tab) => tab.classList.toggle("active", tab === firstTab));
                 filterAndRenderTable();
-                focusEl(document.querySelector("#categoryTabs .tab-button") || document.getElementById("etfTableContainer"));
+                focusEl(firstTab || document.getElementById("etfTableContainer"));
             }
         });
     }
@@ -812,6 +814,7 @@ async function fetchData() {
     } catch (error) {
         console.error("Error fetching data:", error);
         tbody.innerHTML = tableStateHtml("error");
+        setTableStatus(stripHtmlTags(getTranslation("table_error")));
         emitEtfEvent("etf:table-rendered");
         emitEtfEvent("etf:data-error");
         setBusy("etfTableContainer", false);
@@ -985,7 +988,7 @@ function renderTable(rows) {
     tbody.innerHTML = "";
 
     if (!rows || rows.length === 0) {
-        tbody.innerHTML = tableStateHtml(allData.length > 0 ? "empty-filter" : "empty-nodata");
+        tbody.innerHTML = tableStateHtml(allData.length > 0 && !getCategoryPreset() ? "empty-filter" : "empty-nodata");
         emitEtfEvent("etf:table-rendered");
         setBusy("etfTableContainer", false);
         setTableStatus(stripHtmlTags(getTranslation("table_empty")));
@@ -1283,8 +1286,9 @@ async function renderChangelog() {
         setStatus("changelogStatus", "");
     } catch (error) {
         console.error("Failed to render changelog:", error);
-        container.innerHTML = `<div class="state-box state-box--error" role="alert"><p class="error-text">${getTranslation("changelog_error")}</p><button type="button" class="btn-link" data-action="retry-changelog">${escapeHtml(getTranslation("table_retry"))}</button></div>`;
+        container.innerHTML = `<div class="state-box state-box--error" role="alert"><p class="error-text">${escapeHtml(stripHtmlTags(getTranslation("changelog_error")))}</p><button type="button" class="btn-link" data-action="retry-changelog">${escapeHtml(getTranslation("table_retry"))}</button></div>`;
         setBusy("changelogList", false);
+        setStatus("changelogStatus", stripHtmlTags(getTranslation("changelog_error")));
     }
 }
 
