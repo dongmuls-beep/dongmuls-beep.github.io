@@ -1,0 +1,155 @@
+(function () {
+    "use strict";
+
+    var MAX_CODES = 4;
+    var CODE_RE = /^[0-9A-Z]{6}$/;
+    var MAX_PARAM_LEN = 200;
+    var MAX_DROPPED = 10;
+    var DROPPED_TOKEN_LEN = 12;
+    var FEE_ROWS = ["fee", "other", "trade", "real"];
+    var ROW_LABEL_KEYS = {
+        fee: "table_fee",
+        other: "table_other",
+        trade: "table_trade",
+        real: "table_real",
+        aum: "table_aum"
+    };
+
+    // Cross-script visibility proof: script.js top-level const/let/function are
+    // visible here because classic scripts share the global lexical scope.
+    function hasScriptGlobals() {
+        return (
+            typeof FEE_CHART === "object" &&
+            typeof dataKeys === "object" &&
+            typeof currentTranslations === "object" &&
+            typeof getTranslation === "function" &&
+            typeof buildFeeLinePath === "function"
+        );
+    }
+
+    function esc(raw) {
+        if (typeof escapeHtml === "function") return escapeHtml(raw);
+        return String(raw)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function strip(raw) {
+        if (typeof stripHtmlTags === "function") return stripHtmlTags(raw);
+        return String(raw == null ? "" : raw).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function feeNum(value) {
+        if (typeof toFeeNumber === "function") return toFeeNumber(value);
+        if (value === null || value === undefined) return NaN;
+        var text = String(value).replace(/,/g, "").replace("%", "").trim();
+        if (text === "") return NaN;
+        var n = Number(text);
+        return isFinite(n) && n >= 0 ? n : NaN;
+    }
+
+    function t(key, vars) {
+        var template = typeof getTranslation === "function" ? getTranslation(key) : key;
+        if (typeof formatFeeTemplate === "function") return formatFeeTemplate(template, vars || {});
+        return String(template);
+    }
+
+    function missingText() {
+        return typeof missingValueText === "function" ? missingValueText() : "-";
+    }
+
+    function parseCompareCodes(rawParam, validCodes) {
+        var result = { codes: [], dropped: [], capped: false };
+        if (rawParam === null || rawParam === undefined || rawParam === "") return result;
+
+        var tokens = String(rawParam).slice(0, MAX_PARAM_LEN).split(",");
+        var kept = [];
+        for (var i = 0; i < tokens.length; i++) {
+            var token = tokens[i].trim().toUpperCase();
+            if (!token) continue;
+            if (CODE_RE.test(token) && validCodes && validCodes.has(token)) {
+                if (kept.indexOf(token) === -1) kept.push(token);
+            } else {
+                var shown = token.slice(0, DROPPED_TOKEN_LEN);
+                if (result.dropped.length < MAX_DROPPED && result.dropped.indexOf(shown) === -1) {
+                    result.dropped.push(shown);
+                }
+            }
+        }
+        result.capped = kept.length > MAX_CODES;
+        result.codes = kept.slice(0, MAX_CODES);
+        return result;
+    }
+
+    function findLowestIndexes(values) {
+        var valid = [];
+        for (var i = 0; i < values.length; i++) {
+            var n = feeNum(values[i]);
+            if (isFinite(n)) valid.push({ index: i, key: n.toFixed(4), n: n });
+        }
+        if (valid.length < 2) return [];
+        var min = valid[0];
+        for (var j = 1; j < valid.length; j++) {
+            if (valid[j].n < min.n) min = valid[j];
+        }
+        var allEqual = valid.every(function (v) { return v.key === valid[0].key; });
+        if (allEqual) return [];
+        return valid.filter(function (v) { return v.key === min.key; }).map(function (v) { return v.index; });
+    }
+
+    function formatFee(value) {
+        var valid = typeof isValidFee === "function" ? isValidFee(value) : isFinite(feeNum(value));
+        if (!valid) return missingText();
+        return typeof formatPercent === "function" ? formatPercent(value) : Number(feeNum(value)).toFixed(4) + "%";
+    }
+
+    function formatAum(value) {
+        return typeof formatAUM === "function" ? formatAUM(value) : "-";
+    }
+
+    function buildMetricTableHtml(items) {
+        var html = "";
+        html += '<div class="cmp-table-wrap" role="region" tabindex="0" aria-label="' + esc(strip(t("compare_table_region"))) + '">';
+        html += '<table class="cmp-table">';
+        html += '<caption class="cmp-sr-only">' + esc(strip(t("compare_table_caption"))) + "</caption>";
+        html += '<thead><tr><th scope="col"></th>';
+        items.forEach(function (item) {
+            html += '<th scope="col">' + esc(item.name) + '<span class="cmp-etf-code">' + esc(item.code) + "</span></th>";
+        });
+        html += "</tr></thead><tbody>";
+
+        FEE_ROWS.forEach(function (field) {
+            var best = findLowestIndexes(items.map(function (item) { return item[field]; }));
+            html += '<tr><th scope="row">' + esc(strip(t(ROW_LABEL_KEYS[field]))) + "</th>";
+            items.forEach(function (item, idx) {
+                var isBest = best.indexOf(idx) !== -1;
+                html += "<td" + (isBest ? ' data-best="true"' : "") + '><span class="cmp-value">' + esc(formatFee(item[field])) + "</span>";
+                if (isBest) html += ' <span class="cmp-best">' + esc(strip(t("compare_best_badge"))) + "</span>";
+                html += "</td>";
+            });
+            html += "</tr>";
+        });
+
+        html += '<tr><th scope="row">' + esc(strip(t(ROW_LABEL_KEYS.aum))) + "</th>";
+        items.forEach(function (item) {
+            html += '<td><span class="cmp-value">' + esc(formatAum(item.aum)) + "</span></td>";
+        });
+        html += "</tr></tbody></table></div>";
+        return html;
+    }
+
+    var CompareView = {
+        MAX_CODES: MAX_CODES,
+        CODE_RE: CODE_RE,
+        parseCompareCodes: parseCompareCodes,
+        findLowestIndexes: findLowestIndexes,
+        buildMetricTableHtml: buildMetricTableHtml,
+        t: t,
+        hasScriptGlobals: hasScriptGlobals
+    };
+
+    (typeof globalThis !== "undefined" ? globalThis : window).CompareView = CompareView;
+})();
