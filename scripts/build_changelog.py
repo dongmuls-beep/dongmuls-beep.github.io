@@ -19,6 +19,13 @@ FIELDS = [
     "실부담비용",
 ]
 
+# DATA-06: a run/entry where >= this share of compared ETFs change one of the
+# BULK_CORRECTION_FIELDS is a data correction (e.g. column remap), not a real
+# fee change. 매매중개수수료/실부담비용 change for nearly every ETF monthly, so
+# they are deliberately excluded.
+BULK_CORRECTION_RATIO = 0.5
+BULK_CORRECTION_FIELDS = ["총보수", "기타비용"]
+
 
 def read_json_file(path: Path, default: Any) -> Any:
     if not path.exists():
@@ -112,6 +119,57 @@ def build_changes(
     return changes
 
 
+def count_compared(
+    prev_rows: list[dict[str, Any]],
+    curr_rows: list[dict[str, Any]],
+) -> int:
+    """Number of ETFs present in both prev and curr (same matching as build_changes)."""
+    return len(set(make_index(prev_rows)) & set(make_index(curr_rows)))
+
+
+def detect_bulk_correction(
+    changes: list[dict[str, Any]],
+    total_count: int,
+) -> list[tuple[str, int]]:
+    """Return (field, distinct changed codes) for fields at/above the bulk ratio."""
+    if total_count <= 0:
+        return []
+
+    flagged: list[tuple[str, int]] = []
+    for field in BULK_CORRECTION_FIELDS:
+        codes = {c.get("code") for c in changes if c.get("field") == field}
+        if len(codes) / total_count >= BULK_CORRECTION_RATIO:
+            flagged.append((field, len(codes)))
+    return flagged
+
+
+def filter_bulk_entries(
+    entries: list[Any],
+    total_hint: int,
+) -> tuple[list[Any], list[tuple[Any, list[tuple[str, int]], int]]]:
+    """Split entries into (kept, removed). removed items are (entry, flagged, total)."""
+    kept: list[Any] = []
+    removed: list[tuple[Any, list[tuple[str, int]], int]] = []
+
+    for entry in entries:
+        changes = entry.get("changes") if isinstance(entry, dict) else None
+        if not isinstance(changes, list):
+            kept.append(entry)
+            continue
+
+        distinct = len({c.get("code") for c in changes if isinstance(c, dict)})
+        total = max(total_hint, distinct)
+        flagged = detect_bulk_correction(
+            [c for c in changes if isinstance(c, dict)], total
+        )
+        if flagged:
+            removed.append((entry, flagged, total))
+        else:
+            kept.append(entry)
+
+    return kept, removed
+
+
 def write_changelog(entries: list[dict[str, Any]]) -> None:
     CHANGELOG_FILE.write_text(
         json.dumps(entries, ensure_ascii=False, indent=2) + "\n",
@@ -128,8 +186,28 @@ def main() -> int:
     if not isinstance(changelog_entries, list):
         changelog_entries = []
 
+    changelog_entries, removed = filter_bulk_entries(changelog_entries, len(current_data))
+    if removed:
+        for entry, flagged, total in removed:
+            counts = ", ".join(f"{f} {n}/{total}" for f, n in flagged)
+            print(
+                "[WARNING] DATA-06: removed bulk-correction entry "
+                f"{entry.get('updatedAt')} ({counts})"
+            )
+        write_changelog(changelog_entries)
+
     previous_data = read_previous_data_from_git()
     changes = build_changes(previous_data, current_data)
+
+    total_compared = count_compared(previous_data, current_data)
+    flagged = detect_bulk_correction(changes, total_compared)
+    if flagged:
+        counts = ", ".join(f"{f} {n}/{total_compared}" for f, n in flagged)
+        print(
+            f"[WARNING] DATA-06: bulk correction detected ({counts}); "
+            "changelog entry not recorded"
+        )
+        return 0
 
     if not changes:
         if not CHANGELOG_FILE.exists():
