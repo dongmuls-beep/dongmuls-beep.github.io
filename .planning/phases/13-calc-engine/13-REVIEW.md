@@ -11,7 +11,8 @@ findings:
   warning: 3
   info: 4
   total: 8
-status: issues_found
+status: fixed
+fixed_in: [881e10f, 645a1ca]
 ---
 
 # Phase 13: Code Review Report
@@ -127,3 +128,12 @@ assert.strictEqual(typeof ctx.CompareCalc.simulate, "function");
 _Reviewed: 2026-09-30T07:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
+
+## Fix Status
+
+- CR-01: fixed (881e10f, 645a1ca). MAX_AMOUNT = 1e12, post-loop finiteness guard (incl. costDrag) -> excluded reason overflow.
+- WR-01: fixed (645a1ca). Numeric strings accepted for all inputs including fee.
+- WR-02: fixed (645a1ca). Normalized inputs echoed in both result shapes.
+- WR-03: fixed (645a1ca). Chose conservative option: fee > 5 still computed, with warning fee_high (no exclusion).
+- IN-01, IN-04: fixed (645a1ca). Tests added.
+- IN-02, IN-03: skipped (deferred).

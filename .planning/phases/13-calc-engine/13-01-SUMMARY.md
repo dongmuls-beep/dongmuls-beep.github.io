@@ -20,7 +20,8 @@ key-files:
   modified: []
 decisions:
   - "Assumptions A1-A7 from the plan adopted as-is (fee percent /100, A2 monthly loop, years round+clamp 1..50, return default 0 clamp -99..100, missing fee -> fee_missing, no rounding)"
-  - "Numeric string fees (e.g. \"0.5\") are fee_missing; Phase 15 must parse inputs to numbers"
+  - "(Review fix WR-01) Numeric strings are accepted for all inputs incl. fee via Number(); non-numeric/empty strings -> default (inputs) or fee_missing (fee). Comma/full-width parsing stays in Phase 15"
+  - "(Review fix CR-01/WR-02/WR-03) lumpSum/monthly clamped to MAX_AMOUNT 1e12; non-finite result -> excluded reason overflow; results echo normalized inputs; fee > 5% computed with warning fee_high"
   - "simulate() with no feePct key is excluded fee_missing (not computed as 0)"
   - "compare() excluded results omit difference/feesDifference"
 metrics:
@@ -61,8 +62,8 @@ REFACTOR: not needed (engine is 121 lines, no cleanup warranted); no refactor co
 ## Threat Mitigations
 
 - T-13-01: years clamped 1..50 -> loop max 600 iterations.
-- T-13-02: validateFee returns fee_missing for null/undefined/NaN/Infinity/strings; never coerced to 0.
-- T-13-03: return clamped -99..100; fee must be 0 <= f < 100 else fee_invalid.
+- T-13-02: validateFee returns fee_missing for null/undefined/NaN/Infinity/non-numeric strings; never coerced to 0. Fee > 5% flagged warning fee_high.
+- T-13-03: return clamped -99..100; fee must be 0 <= f < 100 else fee_invalid; amounts clamped to 1e12; non-finite result -> excluded overflow.
 
 ## Deviations from Plan
 
