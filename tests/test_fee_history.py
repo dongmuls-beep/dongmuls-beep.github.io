@@ -144,6 +144,24 @@ def test_input_not_mutated():
     assert h == snap
 
 
+@pytest.mark.parametrize("bad_value", ["nan", float("nan"), "inf", "Infinity", float("-inf")])
+def test_non_finite_values_skipped(bad_value):
+    h, n = fh.apply_snapshot(fh.empty_history(), [row(total=bad_value)], D1)
+    assert "총보수" not in h["series"]["C001"]
+    assert n == 3
+    h2, n2 = fh.apply_snapshot(h, [row(total=bad_value)], D2)
+    assert n2 == 0
+    assert h2["series"] == h["series"]
+    assert "NaN" not in fh.dump_history(h2)
+
+
+def test_dump_rejects_non_finite():
+    h = seeded()
+    h["series"]["C001"]["총보수"].append([D2, float("nan")])
+    with pytest.raises(ValueError):
+        fh.dump_history(h)
+
+
 @pytest.mark.parametrize(
     "bad",
     [
@@ -157,6 +175,8 @@ def test_input_not_mutated():
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [[1, 0.1]]}}},
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", "x"]]}}},
         {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", True]]}}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", float("nan")]]}}},
+        {"version": 1, "updatedAt": "", "names": {}, "series": {"C": {"총보수": [["d", float("inf")]]}}},
     ],
 )
 def test_validate_rejects(bad):

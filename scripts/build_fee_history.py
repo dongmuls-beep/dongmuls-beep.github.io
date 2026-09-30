@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import copy
 import json
+import math
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -29,7 +30,7 @@ def empty_history() -> dict[str, Any]:
 
 def normalize(value: Any) -> float | None:
     number = to_float(value)
-    if number is None:
+    if number is None or not math.isfinite(number):
         return None
     return round(number, ROUND_DIGITS)
 
@@ -98,6 +99,7 @@ def validate_history(obj: Any) -> None:
                     or not isinstance(point[0], str)
                     or isinstance(point[1], bool)
                     or not isinstance(point[1], (int, float))
+                    or not math.isfinite(point[1])
                 ):
                     raise ValueError(f"invalid point in series[{code}][{field}]: {point!r}")
 
@@ -112,7 +114,13 @@ def load_history(path: Path) -> dict[str, Any]:
 
 def dump_history(history: dict[str, Any]) -> str:
     return (
-        json.dumps(history, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        json.dumps(
+            history,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
         + "\n"
     )
 
