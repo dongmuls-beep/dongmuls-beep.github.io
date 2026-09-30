@@ -655,6 +655,21 @@ def validate_etl_results(results, prev_data):
                     )
 
 
+def validate_market_data(results):
+    """
+    DATA-04: 시장데이터(AUM/거래량) 누락 종목 soft-warning.
+    시장데이터 대입 이후 호출. print만 수행하며 종료 코드에 영향 없음.
+    """
+    for item in results:
+        aum = item.get('AUM')
+        volume = item.get('거래량')
+        if aum is None or volume is None:
+            print(
+                f"[WARNING] DATA-04: {item.get('종목코드', '')} {item.get('종목명', '')} "
+                f"시장데이터 누락 — AUM={aum}, 거래량={volume}"
+            )
+
+
 def fetch_market_data_batch(codes):
     """
     NAVER Finance ETF 리스트 API를 이용해 AUM(억원)과 거래량을 일괄 조회.
@@ -812,13 +827,16 @@ if __name__ == "__main__":
 
         # 4. Fetch AUM and volume from KRX
         if final_data:
-            print("Fetching market data (AUM, volume) via pykrx...")
+            print("Fetching market data (AUM, volume) via NAVER...")
             codes = [item["종목코드"] for item in final_data]
             market_data = fetch_market_data_batch(codes)
             for item in final_data:
                 md = market_data.get(item["종목코드"], {})
                 item["AUM"] = md.get("AUM")
                 item["거래량"] = md.get("거래량")
+
+            # 4.1. Validate market data coverage (DATA-04)
+            validate_market_data(final_data)
 
         # 5. Upload
         if final_data:

@@ -6,7 +6,7 @@ import pytest
 import requests
 
 import etl_process
-from etl_process import fetch_market_data_batch
+from etl_process import fetch_market_data_batch, validate_market_data
 
 
 NAVER_ITEMS = [
