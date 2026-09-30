@@ -55,6 +55,9 @@ jobs:
       - name: Build Changelog
         run: python scripts/build_changelog.py
 
+      - name: Build RSS Feed
+        run: python scripts/build_rss.py
+
       - name: Build Fee History
         run: python scripts/build_fee_history.py
 
@@ -62,4 +65,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto-update ETF data (Daily)"
-          file_pattern: "data.json changelog.json update-meta.json fee-history.json"
+          file_pattern: "data.json changelog.json update-meta.json fee-history.json feed.xml"
