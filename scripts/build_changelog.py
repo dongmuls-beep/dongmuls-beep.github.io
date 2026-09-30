@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import math
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -60,7 +61,8 @@ def to_float(value: Any) -> float | None:
         cleaned = str(value).replace(",", "").replace("%", "").strip()
         if cleaned == "":
             return None
-        return float(cleaned)
+        number = float(cleaned)
+        return number if math.isfinite(number) else None
     except Exception:
         return None
 
@@ -101,7 +103,8 @@ def build_changes(
             before = to_float(prev_row.get(field))
             after = to_float(curr_row.get(field))
 
-            if before is None and after is None:
+            # DATA-09: a null on either side is missing data, not a fee change
+            if before is None or after is None:
                 continue
 
             if before != after:

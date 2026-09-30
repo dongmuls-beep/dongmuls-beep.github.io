@@ -4,6 +4,8 @@ import json
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts"))
 
 import build_changelog as bc  # noqa: E402
@@ -135,3 +137,53 @@ def test_main_empty_data_keeps_history(monkeypatch, tmp_path):
     log = _setup_main(monkeypatch, tmp_path, [], [], [small])
     assert bc.main() == 0
     assert json.loads(log.read_text(encoding="utf-8")) == [small]
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["nan", "inf", "-inf", "1e400", float("nan"), float("inf")],
+)
+def test_to_float_non_finite_is_none(value):
+    assert bc.to_float(value) is None
+
+
+def test_to_float_legit_values():
+    assert bc.to_float("0.05%") == 0.05
+    assert bc.to_float(0) == 0.0
+    assert bc.to_float("0.00") == 0.0
+    assert bc.to_float(None) is None
+    assert bc.to_float("") is None
+    assert bc.to_float("-") is None
+
+
+def test_build_changes_value_to_null_skipped():
+    assert bc.build_changes([row(1, total=0.09)], [row(1, total=None)]) == []
+
+
+def test_build_changes_null_to_value_skipped():
+    assert bc.build_changes([row(1, total=None)], [row(1, total=0.09)]) == []
+
+
+def test_build_changes_nan_after_skipped():
+    assert bc.build_changes([row(1, real=0.17)], [row(1, real=float("nan"))]) == []
+    assert bc.build_changes([row(1, real=0.17)], [row(1, real="nan")]) == []
+
+
+def test_build_changes_null_both_skipped():
+    assert bc.build_changes([row(1, total=None)], [row(1, total=None)]) == []
+
+
+def test_build_changes_mixed_null_and_real_change():
+    changes = bc.build_changes(
+        [row(1, total=0.09, other=0.05)], [row(1, total=None, other=0.04)]
+    )
+    assert len(changes) == 1
+    assert changes[0]["field"] == "기타비용"
+    assert changes[0]["before"] == 0.05
+    assert changes[0]["after"] == 0.04
+
+
+def test_build_changes_legit_zero_recorded():
+    changes = bc.build_changes([row(1, other=0.01)], [row(1, other=0.0)])
+    assert len(changes) == 1
+    assert changes[0]["after"] == 0.0
