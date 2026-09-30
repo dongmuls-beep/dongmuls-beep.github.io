@@ -68,8 +68,8 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
 - [x] **Phase 11: script.js seam + null-safe 프런트엔드** - 결측 표시·정렬·배지 처리와 신규 스크립트용 이음새 (직렬 게이트) — completed 2026-09-30
 - [x] **Phase 12: RSS 피드** - 총보수/기타비용 변동만 담은 결정적 RSS 2.0 feed.xml 생성 — completed 2026-09-30
 - [x] **Phase 13: 계산기 엔진** - 누적 비용 순수 함수와 node 테스트 — completed 2026-09-30
-- [ ] **Phase 14: 모바일 접근성** - Critical/Major 모바일 a11y·UI 수정과 8개 언어 ARIA
-- [ ] **Phase 15: 직접 비교 + 계산기 UI** - 2~4개 ETF 선택, /compare/ 페이지, 겹침 차트, 계산기 UI
+- [x] **Phase 14: 모바일 접근성** - Critical/Major 모바일 a11y·UI 수정과 8개 언어 ARIA — completed 2026-09-30 (human UAT deferred to Phase 16)
+- [x] **Phase 15: 직접 비교 + 계산기 UI** - 2~4개 ETF 선택, /compare/ 페이지, 겹침 차트, 계산기 UI — completed 2026-09-30 (human UAT deferred to Phase 16)
 - [ ] **Phase 16: 통합·검증** - 피드 구독 링크, 사이트맵/태그 연결, CI 단계, 8개 언어·기기 스모크
 
 ## Phase Details
@@ -147,11 +147,11 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   4. 스크린리더가 카드형 표의 각 값을 열 이름과 함께 읽고, 코드 버튼에 설명 라벨이 있으며, 언어 전환 시 aria-label·title이 8개 언어로 바뀐다
   5. skip-link로 본문에 이동할 수 있고, 표는 로딩 스켈레톤·재시도 버튼 있는 에러 상태·빈 상태를 보여주며 스크린리더에 안내된다
 **Plans**: 5 plans
-- [ ] 14-01-PLAN.md — style.css 정리·대비·터치·상태 CSS (wave 1)
-- [ ] 14-02-PLAN.md — i18n 19키 + parity 테스트 (wave 1)
-- [ ] 14-03-PLAN.md — 7개 HTML skip-link/main/theme-color/ARIA (wave 1)
-- [ ] 14-04-PLAN.md — script.js 헤더 포커스·셀 레이블·배지 sr-only (wave 2)
-- [ ] 14-05-PLAN.md — script.js 스켈레톤·재시도·빈 상태 (wave 3)
+- [x] 14-01-PLAN.md — style.css 정리·대비·터치·상태 CSS (wave 1)
+- [x] 14-02-PLAN.md — i18n 19키 + parity 테스트 (wave 1)
+- [x] 14-03-PLAN.md — 7개 HTML skip-link/main/theme-color/ARIA (wave 1)
+- [x] 14-04-PLAN.md — script.js 헤더 포커스·셀 레이블·배지 sr-only (wave 2)
+- [x] 14-05-PLAN.md — script.js 스켈레톤·재시도·빈 상태 (wave 3)
 **UI hint**: yes
 
 ### Phase 15: 직접 비교 + 계산기 UI
@@ -167,13 +167,13 @@ Full details: [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
   4. 일시금·보유기간(1~50년)·월 적립금·기대수익률(기본 0%, "가정")을 쉼표·전각 숫자로 입력할 수 있고, "N년간 A보다 B가 약 X원 더 부담" 결과와 면책 문구가 표시되며 결측 종목은 제외·안내된다
   5. 비교 URL과 계산기 입력이 URL에 담겨 공유하면 같은 결과가 재현되고, 페이지 문구는 8개 언어로 표시된다
 **Plans**: 7 plans
-- [ ] 15-01-PLAN.md — i18n compare/calc 68키 (wave 1)
-- [ ] 15-02-PLAN.md — compare-select.js 선택·비교 바 (wave 1)
-- [ ] 15-03-PLAN.md — compare.css (wave 1)
-- [ ] 15-04-PLAN.md — compare-view.js + compare/index.html 표 (wave 1)
-- [ ] 15-05-PLAN.md — 겹침 차트 compare-chart.js (wave 2)
-- [ ] 15-06-PLAN.md — 계산기 UI compare-calculator.js (wave 2)
-- [ ] 15-07-PLAN.md — 전체 검증 + 사람 확인 (wave 3)
+- [x] 15-01-PLAN.md — i18n compare/calc 68키 (wave 1)
+- [x] 15-02-PLAN.md — compare-select.js 선택·비교 바 (wave 1)
+- [x] 15-03-PLAN.md — compare.css (wave 1)
+- [x] 15-04-PLAN.md — compare-view.js + compare/index.html 표 (wave 1)
+- [x] 15-05-PLAN.md — 겹침 차트 compare-chart.js (wave 2)
+- [x] 15-06-PLAN.md — 계산기 UI compare-calculator.js (wave 2)
+- [x] 15-07-PLAN.md — 전체 검증 + 사람 확인 (wave 3)
 **UI hint**: yes
 
 ### Phase 16: 통합·검증
