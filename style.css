@@ -694,6 +694,105 @@ h1 {
     color: var(--primary);
 }
 
+/* Fee history modal (Phase 9) */
+.fee-history-btn {
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: var(--space-2) 0;
+    margin: 0;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 44px;
+    min-width: 44px;
+    text-decoration: underline dotted var(--text-soft);
+    text-underline-offset: 3px;
+}
+
+.fee-history-btn:hover {
+    color: var(--primary);
+    text-decoration-color: var(--primary);
+}
+
+.fee-history-btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.fee-history-hint {
+    margin-bottom: var(--space-2);
+}
+
+.fee-history-state {
+    min-height: 180px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.fee-history-state.is-error {
+    color: var(--danger);
+}
+
+.fee-history-list-title {
+    margin: var(--space-4) 0 var(--space-2);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.fee-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.fee-history-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+}
+
+.fee-history-date {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+}
+
+.fee-history-value {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.fee-history-delta {
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.fee-history-delta.up {
+    color: var(--danger);
+}
+
+.fee-history-delta.down {
+    color: var(--text);
+}
+
+.fee-history-start {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+}
+
 .toast {
     position: fixed;
     left: 50%;
