@@ -52,8 +52,11 @@ jobs:
       - name: Build Changelog
         run: python scripts/build_changelog.py
 
+      - name: Build Fee History
+        run: python scripts/build_fee_history.py
+
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto-update ETF data (Daily)"
-          file_pattern: "data.json changelog.json update-meta.json"
+          file_pattern: "data.json changelog.json update-meta.json fee-history.json"
