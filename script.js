@@ -1622,6 +1622,60 @@ function buildFeeHistoryPoints(raw, currentValue, today) {
     return points;
 }
 
+const FEE_CHART = { width: 320, height: 180, left: 48, right: 308, top: 12, bottom: 152 };
+
+function computeFeeChartScale(values) {
+    const finite = values.filter((v) => Number.isFinite(v));
+    const min = finite.length ? Math.min(...finite) : 0;
+    const max = finite.length ? Math.max(...finite) : 0;
+    let lo;
+    let hi;
+    if (max > min) {
+        const pad = (max - min) * 0.1;
+        lo = Math.max(0, min - pad);
+        hi = max + pad;
+    } else if (max > 0) {
+        lo = max * 0.5;
+        hi = max * 1.5;
+    } else {
+        lo = 0;
+        hi = 0.01;
+    }
+    return { min: lo, max: hi, ticks: [lo, (lo + hi) / 2, hi] };
+}
+
+function feeChartDayNumber(date) {
+    const parts = String(date).split("-");
+    return Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])) / 86400000;
+}
+
+function feeChartX(date, startDate, today) {
+    const span = Math.max(1, feeChartDayNumber(today) - feeChartDayNumber(startDate));
+    const elapsed = Math.min(span, Math.max(0, feeChartDayNumber(date) - feeChartDayNumber(startDate)));
+    return FEE_CHART.left + (elapsed / span) * (FEE_CHART.right - FEE_CHART.left);
+}
+
+function feeChartY(value, scale) {
+    const range = scale.max - scale.min;
+    const ratio = range > 0 ? (value - scale.min) / range : 0.5;
+    return FEE_CHART.bottom - ratio * (FEE_CHART.bottom - FEE_CHART.top);
+}
+
+function feeChartRound(n) {
+    return Math.round(n * 100) / 100;
+}
+
+function buildFeeStepPath(points, scale, today) {
+    const start = points[0].date;
+    let d = `M${feeChartRound(feeChartX(start, start, today))} ${feeChartRound(feeChartY(points[0].value, scale))}`;
+    for (let i = 1; i < points.length; i += 1) {
+        d += `H${feeChartRound(feeChartX(points[i].date, start, today))}`;
+        d += `V${feeChartRound(feeChartY(points[i].value, scale))}`;
+    }
+    d += `H${FEE_CHART.right}`;
+    return d;
+}
+
 function valueOrDash(value) {
     if (value === null || value === undefined || String(value).trim() === "") {
         return "-";

@@ -60,4 +60,32 @@ assert.strictEqual(context.formatFeeTemplate("{name} {unknown}", { name: "A" }),
 // KST today
 assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(context.getKstToday()));
 
+// chart scale
+const near = (a, b) => Math.abs(a - b) < 1e-9;
+let sc = context.computeFeeChartScale([0.0047]);
+assert.ok(near(sc.min, 0.00235) && near(sc.max, 0.00705));
+assert.strictEqual(sc.ticks.length, 3);
+assert.ok(near(sc.ticks[1], 0.0047));
+sc = context.computeFeeChartScale([0.0047, 0.005]);
+assert.ok(near(sc.min, 0.0047 - 0.00003) && near(sc.max, 0.005 + 0.00003));
+sc = context.computeFeeChartScale([0.05, 0.045, 0.0453]);
+assert.ok(near(sc.min, 0.045 - 0.0005) && near(sc.max, 0.05 + 0.0005));
+sc = context.computeFeeChartScale([0]);
+assert.ok(Number.isFinite(sc.min) && Number.isFinite(sc.max) && sc.max > sc.min && sc.min >= 0);
+sc = context.computeFeeChartScale([0, 0.01]);
+assert.ok(sc.min >= 0);
+
+// step path
+sc = context.computeFeeChartScale([0.0055]);
+assert.strictEqual(context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }], sc, "2026-09-30"), "M48 82H308");
+sc = context.computeFeeChartScale([0.0055, 0.0045]);
+const d2 = context.buildFeeStepPath([{ date: "2026-02-12", value: 0.0055 }, { date: "2026-06-01", value: 0.0045 }], sc, "2026-09-30");
+const m2 = /^M48 ([\d.]+)H([\d.]+)V([\d.]+)H308$/.exec(d2);
+assert.ok(m2, d2);
+assert.ok(+m2[2] > 48 && +m2[2] < 308);
+assert.ok(+m2[1] < +m2[3]);
+assert.ok(!/\d\.\d{3,}/.test(d2));
+const d3 = context.buildFeeStepPath([{ date: "2026-09-30", value: 0.0055 }], context.computeFeeChartScale([0.0055]), "2026-09-30");
+assert.ok(/H308$/.test(d3) && !/NaN|Infinity/.test(d3));
+
 console.log("fee_chart_check OK");
