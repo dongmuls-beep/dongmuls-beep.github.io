@@ -9,7 +9,7 @@
 
 ### 시장 데이터 매칭
 
-- [ ] **DATA-04**: 영숫자 KRX 종목코드(예: `0026S0` 1Q 미국S&P500, `0069M0` 1Q 미국나스닥100) ETF도 AUM·거래량이 채워진다
+- [x] **DATA-04**: 영숫자 KRX 종목코드(예: `0026S0` 1Q 미국S&P500, `0069M0` 1Q 미국나스닥100) ETF도 AUM·거래량이 채워진다
   - 근거: `etl_process.py` `fetch_market_data_batch()`의 `str(code).isdigit()` 필터가 "비표준 코드 → 건너뜀" 처리. NAVER etfItemList에는 두 코드 존재 (marketSum 3391 / 1976)
 
 ### 변경 이력 정합성
@@ -28,7 +28,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-04 | Phase 5 | Pending |
+| DATA-04 | Phase 5 | Complete |
 | DATA-05 | Phase 6 | Pending |
 | DATA-06 | Phase 6 | Pending |
 

@@ -33,10 +33,10 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 - data.json에서 `0026S0`, `0069M0`의 AUM·거래량이 null이 아니다
 - 영숫자 코드 매칭 단위 테스트 추가, `pytest tests/` 통과
 
-**Plans:** 1 plans
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 05-01-PLAN.md — 영숫자 코드 NAVER 매칭 + DATA-04 누락 경고 + 테스트 + 배포 검증
+- [x] 05-01-PLAN.md — 영숫자 코드 NAVER 매칭 + DATA-04 누락 경고 + 테스트 + 배포 검증
 
 ---
 
@@ -63,5 +63,5 @@ Plans:
 | 2. 데이터 무결성 검증 | v1.1 | 1/1 | Complete | 2026-05-20 |
 | 3. 보안 및 버그 수정 | v1.1 | 3/3 | Complete | 2026-05-20 |
 | 4. ETL 단위 테스트 | v1.1 | 3/3 | Complete | 2026-05-20 |
-| 5. 신규 코드 시장데이터 매칭 | v1.2 | 0/0 | Not started | - |
+| 5. 신규 코드 시장데이터 매칭 | v1.2 | 1/1 | Complete   | 2026-09-30 |
 | 6. 변경 이력 정합성 | v1.2 | 0/0 | Not started | - |
