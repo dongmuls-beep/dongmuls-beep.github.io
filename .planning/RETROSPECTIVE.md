@@ -49,9 +49,35 @@
 - 소급 정리 로직은 "입력이 비었을 때" 가드를 기본으로
 - 운영 데이터가 정본인 파일은 CI에서만 고친다
 
+## Milestone: v1.3 — 수수료 변동 그래프
+
+**Shipped:** 2026-09-30
+**Phases:** 3 | **Plans:** 5
+
+### What Was Built
+- fee-history.json 변동분 일일 누적 (fail-closed, 원자적 쓰기, CI 자동 커밋)
+- data.json git 히스토리 backfill (146일, 59종목 1169포인트, changelog 912/912 일치)
+- 수수료 셀 클릭 → 곡선 SVG 차트 + 변동 내역 모달, 8개 언어
+
+### What Worked
+- Phase 8 전 실제 git 히스토리 조사 → 하드코딩 재기준화가 정상 이력 36종목을 지울 뻔한 것을 사전 발견
+- 코드 리뷰가 매 Phase 실제 버그 발견 (NaN 직렬화, 대량 0값 오탐, 스크린리더 값 누락)
+- 브라우저 UAT에서 사용자 디자인 피드백 즉시 반영
+
+### What Was Inefficient
+- UI-SPEC의 고정 320 viewBox가 680px 모달에서 2배 확대 → 사용자 지적 후 재작업
+- 리뷰 수정이 UAT 이후라 UAT 2회
+- OneDrive + git worktree 권한 문제로 병렬 실행 불가 → 순차 실행
+
+### Key Lessons
+- SVG 차트는 실제 컨테이너 폭 기준으로 그린다 (고정 viewBox 확대 금지)
+- 하드코딩 데이터 보정은 실제 히스토리 측정 후 결정
+- 코드 리뷰를 UAT 전에 돌리면 UAT 1회로 끝남
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Requirements | Deferred |
 |-----------|--------|-------|--------------|----------|
 | v1.1 | 4 | 11 | 14/14 | 1 |
 | v1.2 | 2 | 2 | 3/3 | 1 |
+| v1.3 | 3 | 5 | 13/13 | 1 |
