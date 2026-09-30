@@ -6,7 +6,7 @@
     <title>ETF 직접 비교 | etfsave.life</title>
     <meta name="description" content="선택한 ETF 2~4개의 총보수, 기타비용, 매매중개수수료, 실부담비용, 순자산을 한 표로 나란히 비교합니다.">
     <meta name="author" content="etfsave.life">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#e8edf5">
     <meta name="robots" content="noindex,follow">
     <meta name="googlebot" content="noindex,follow">
     <meta name="content-language" content="ko-KR">
@@ -48,7 +48,6 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
 </head>
 <body data-page="compare">
-    <!-- DRAFT (Phase 15): header/footer copied from index.html; Phase 16 aligns this page to the post-a11y template. -->
     <a href="#main-content" class="skip-link" data-i18n="aria_skip_to_content">본문 바로가기</a>
     <div class="background-gradient">
         <div class="orb orb-1"></div>
@@ -60,7 +59,7 @@
     <header class="site-header">
         <div class="header-container">
             <div class="logo"><a href="/">ETFSAVE</a></div>
-            <nav id="primaryNav" class="main-nav" aria-label="Primary navigation">
+            <nav id="primaryNav" class="main-nav" data-i18n-aria="aria_primary_nav" aria-label="Primary navigation">
                 <ul>
                     <li><a href="/" class="nav-link" data-i18n="nav_home">메인</a></li>
                     <li><a href="/pension/" class="nav-link" data-i18n="nav_pension">연금저축펀드&IRP</a></li>
@@ -90,7 +89,7 @@
         </div>
     </header>
 
-    <main id="main-content" class="container compare-page">
+    <main id="main-content" class="container compare-page" tabindex="-1">
         <h1 id="cmp-title" data-i18n="compare_page_title">ETF 직접 비교</h1>
         <p class="cmp-intro" data-i18n="compare_intro">수수료가 가장 낮은 항목은 "최저"로 표시돼요. 값이 없는 항목은 "-"로 보이며 비교에서 제외돼요.</p>
         <noscript><p class="cmp-notice">이 페이지는 JavaScript가 필요해요. 메인 목록으로 이동해 주세요. <a href="/">ETF 목록으로 돌아가기</a></p></noscript>
@@ -133,6 +132,7 @@
                 </div>
                 <div class="footer-links">
                     <a href="#" id="privacyPolicyLink" data-i18n="footer_privacy">개인정보처리방침</a>
+                    <a href="/feed.xml" data-i18n="footer_rss">RSS 피드 구독</a>
                 </div>
                 <div class="footer-copyright">
                     <p data-i18n="footer_copy">© 2026 etfsave.life</p>
