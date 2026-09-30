@@ -1,0 +1,460 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>etfsave.life 수수료 변동</title>
+    <link>https://etfsave.life/changelog/</link>
+    <description>국내 ETF 총보수·기타비용 변동 알림</description>
+    <language>ko</language>
+    <atom:link href="https://etfsave.life/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Sep 2026 09:00:00 +0900</lastBuildDate>
+    <item>
+      <title>1Q 미국나스닥100 (0069M0) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:0069M0</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.17% → 0.16% (인하)
+매매중개수수료: 0.2025% → 0.1876% (인하)
+실부담비용: 0.378% → 0.3531% (인하)</description>
+    </item>
+    <item>
+      <title>ACE 중국본토CSI300 (168580) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:168580</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.11% → 0.1% (인하)
+매매중개수수료: 0.0532% → 0.0442% (인하)
+실부담비용: 0.8632% → 0.8442% (인하)</description>
+    </item>
+    <item>
+      <title>TIGER 차이나CSI300 (192090) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:192090</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.2% → 0.19% (인하)
+매매중개수수료: 0.0557% → 0.0553% (인하)
+실부담비용: 0.8857% → 0.8753% (인하)</description>
+    </item>
+    <item>
+      <title>PLUS 미국S&amp;P500(H) (269540) 총보수 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:269540</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>총보수: 0.3% → 0.0062% (인하)
+매매중개수수료: 0.1389% → 0.1422% (인상)
+실부담비용: 0.5289% → 0.2384% (인하)</description>
+    </item>
+    <item>
+      <title>PLUS 미국S&amp;P500 (429760) 총보수 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:429760</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>총보수: 0.07% → 0.0062% (인하)
+매매중개수수료: 0.1067% → 0.1083% (인상)
+실부담비용: 0.2967% → 0.2345% (인하)</description>
+    </item>
+    <item>
+      <title>HANARO 미국S&amp;P500 (432840) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:432840</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.28% → 0.27% (인하)
+매매중개수수료: 0.0087% → 0.0086% (인하)
+실부담비용: 0.3337% → 0.3236% (인하)</description>
+    </item>
+    <item>
+      <title>SOL 미국배당다우존스(H) (452360) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:452360</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.07% (인하)
+매매중개수수료: 0.1147% → 0.1204% (인상)
+실부담비용: 0.2447% → 0.2404% (인하)</description>
+    </item>
+    <item>
+      <title>KIWOOM 미국나스닥100(H) (453080) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:453080</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.13% → 0.14% (인상)
+매매중개수수료: 0.2127% → 0.2018% (인하)
+실부담비용: 0.3827% → 0.3818% (인하)</description>
+    </item>
+    <item>
+      <title>TIGER 인도니프티50 (453870) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:453870</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.13% → 0.14% (인상)
+매매중개수수료: 0.0572% → 0.0559% (인하)
+실부담비용: 0.3772% → 0.3859% (인상)</description>
+    </item>
+    <item>
+      <title>SOL 미국나스닥100 (476030) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:476030</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.11% → 0.09% (인하)
+매매중개수수료: 0.0949% → 0.0993% (인상)
+실부담비용: 0.2104% → 0.1948% (인하)</description>
+    </item>
+    <item>
+      <title>RISE 미국30년국채액티브 (481340) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:481340</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.09% (인상)
+매매중개수수료: 0.0151% → 0.0172% (인상)
+실부담비용: 0.1451% → 0.1572% (인상)</description>
+    </item>
+    <item>
+      <title>KODEX 미국배당다우존스 (489250) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-09-10:489250</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.07% → 0.08% (인상)
+매매중개수수료: 0.0923% → 0.0934% (인상)
+실부담비용: 0.1722% → 0.1833% (인상)</description>
+    </item>
+    <item>
+      <title>ACE 중국본토CSI300 (168580) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:168580</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.12% → 0.11% (인하)
+매매중개수수료: 0.0528% → 0.0532% (인상)
+실부담비용: 0.8728% → 0.8632% (인하)</description>
+    </item>
+    <item>
+      <title>TIGER 차이나CSI300 (192090) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:192090</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.22% → 0.2% (인하)
+매매중개수수료: 0.0585% → 0.0557% (인하)
+실부담비용: 0.9085% → 0.8857% (인하)</description>
+    </item>
+    <item>
+      <title>RISE 차이나항셍테크 (371150) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:371150</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.31% → 0.32% (인상)
+매매중개수수료: 0.2475% → 0.1914% (인하)
+실부담비용: 0.6975% → 0.6514% (인하)</description>
+    </item>
+    <item>
+      <title>ACE 차이나항셍테크 (371870) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:371870</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.32% → 0.3% (인하)
+매매중개수수료: 0.1024% → 0.0776% (인하)
+실부담비용: 0.6724% → 0.6276% (인하)</description>
+    </item>
+    <item>
+      <title>RISE 미국S&amp;P500 (379780) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:379780</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.06% → 0.07% (인상)
+매매중개수수료: 0.0329% → 0.0278% (인하)
+실부담비용: 0.0976% → 0.1025% (인상)</description>
+    </item>
+    <item>
+      <title>HANARO 미국S&amp;P500 (432840) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:432840</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.29% → 0.28% (인하)
+매매중개수수료: 0.0092% → 0.0087% (인하)
+실부담비용: 0.3442% → 0.3337% (인하)</description>
+    </item>
+    <item>
+      <title>SOL 미국S&amp;P500 (433330) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:433330</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.07% (인하)
+매매중개수수료: 0.0656% → 0.0605% (인하)
+실부담비용: 0.1503% → 0.1352% (인하)</description>
+    </item>
+    <item>
+      <title>WON 미국S&amp;P500 (444490) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:444490</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.12% → 0.11% (인하)
+매매중개수수료: 0.1127% → 0.1078% (인하)
+실부담비용: 0.2827% → 0.2678% (인하)</description>
+    </item>
+    <item>
+      <title>KIWOOM 미국S&amp;P500 (449770) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:449770</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.16% → 0.15% (인하)
+매매중개수수료: 0.1491% → 0.1412% (인하)
+실부담비용: 0.3301% → 0.3122% (인하)</description>
+    </item>
+    <item>
+      <title>KIWOOM 미국S&amp;P500(H) (449780) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:449780</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.23% → 0.22% (인하)
+매매중개수수료: 0.1756% → 0.1679% (인하)
+실부담비용: 0.4456% → 0.4279% (인하)</description>
+    </item>
+    <item>
+      <title>KIWOOM 미국나스닥100(H) (453080) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:453080</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.14% → 0.13% (인하)
+매매중개수수료: 0.2027% → 0.2127% (인상)</description>
+    </item>
+    <item>
+      <title>RISE 미국S&amp;P500(H) (453330) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:453330</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.12% → 0.13% (인상)
+매매중개수수료: 0.0682% → 0.0703% (인상)
+실부담비용: 0.1929% → 0.205% (인상)</description>
+    </item>
+    <item>
+      <title>ACE 미국빅테크TOP7 Plus (465580) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:465580</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.07% → 0.06% (인하)
+매매중개수수료: 0.0854% → 0.0852% (인하)
+실부담비용: 0.4554% → 0.4452% (인하)</description>
+    </item>
+    <item>
+      <title>ACE 미국30년국채액티브 (476760) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:476760</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.06% → 0.07% (인상)
+매매중개수수료: 0.0125% → 0.0113% (인하)
+실부담비용: 0.1225% → 0.1313% (인상)</description>
+    </item>
+    <item>
+      <title>SOL 미국테크TOP10 (481190) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-08-10:481190</guid>
+      <pubDate>Mon, 10 Aug 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.09% (인상)
+매매중개수수료: 0.1069% → 0.1052% (인하)
+실부담비용: 0.2369% → 0.2452% (인상)</description>
+    </item>
+    <item>
+      <title>1Q 미국S&amp;P500 (0026S0) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:0026S0</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.12% → 0.13% (인상)
+매매중개수수료: 0.1344% → 0.1444% (인상)
+실부담비용: 0.2599% → 0.2799% (인상)</description>
+    </item>
+    <item>
+      <title>PLUS 미국S&amp;P500(H) (269540) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:269540</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.09% (인상)
+매매중개수수료: 0.1296% → 0.1358% (인상)
+실부담비용: 0.5096% → 0.5258% (인상)</description>
+    </item>
+    <item>
+      <title>RISE 차이나항셍테크 (371150) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:371150</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.3% → 0.31% (인상)
+매매중개수수료: 0.2381% → 0.2475% (인상)
+실부담비용: 0.6781% → 0.6975% (인상)</description>
+    </item>
+    <item>
+      <title>ACE 차이나항셍테크 (371870) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:371870</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.31% → 0.32% (인상)
+매매중개수수료: 0.1112% → 0.1024% (인하)
+실부담비용: 0.6712% → 0.6724% (인상)</description>
+    </item>
+    <item>
+      <title>PLUS 미국S&amp;P500 (429760) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:429760</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.13% → 0.12% (인하)
+매매중개수수료: 0.1225% → 0.1092% (인하)
+실부담비용: 0.3225% → 0.2992% (인하)</description>
+    </item>
+    <item>
+      <title>WON 미국S&amp;P500 (444490) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:444490</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.13% → 0.12% (인하)
+매매중개수수료: 0.1073% → 0.1127% (인상)
+실부담비용: 0.2873% → 0.2827% (인하)</description>
+    </item>
+    <item>
+      <title>WON 200 (448100) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:448100</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.01% → 0% (인하)
+매매중개수수료: 0.0181% → 0.0189% (인상)
+실부담비용: 0.0781% → 0.0689% (인하)</description>
+    </item>
+    <item>
+      <title>TIGER 미국S&amp;P500(H) (448290) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:448290</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.09% (인상)
+매매중개수수료: 0.068% → 0.0776% (인상)
+실부담비용: 0.218% → 0.2376% (인상)</description>
+    </item>
+    <item>
+      <title>TIGER 인도니프티50 (453870) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:453870</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.12% → 0.13% (인상)
+매매중개수수료: 0.0541% → 0.0585% (인상)
+실부담비용: 0.3641% → 0.3785% (인상)</description>
+    </item>
+    <item>
+      <title>RISE 중국본토CSI300 (463300) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:463300</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.17% → 0.18% (인상)
+매매중개수수료: 0.0425% → 0.0418% (인하)
+실부담비용: 0.2625% → 0.2718% (인상)</description>
+    </item>
+    <item>
+      <title>SOL 미국테크TOP10 (481190) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:481190</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.04% → 0.08% (인상)
+매매중개수수료: 0.0896% → 0.1069% (인상)
+실부담비용: 0.1796% → 0.2369% (인상)</description>
+    </item>
+    <item>
+      <title>KODEX 미국배당다우존스 (489250) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-07-11:489250</guid>
+      <pubDate>Sat, 11 Jul 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.08% → 0.07% (인하)
+매매중개수수료: 0.0938% → 0.0944% (인상)
+실부담비용: 0.1837% → 0.1743% (인하)</description>
+    </item>
+    <item>
+      <title>1Q 미국나스닥100 (0069M0) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:0069M0</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.15% → 0.17% (인상)
+매매중개수수료: 0.1608% → 0.1867% (인상)
+실부담비용: 0.3163% → 0.3622% (인상)</description>
+    </item>
+    <item>
+      <title>ACE 중국본토CSI300 (168580) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:168580</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.11% → 0.12% (인상)
+매매중개수수료: 0.0345% → 0.0437% (인상)
+실부담비용: 0.8445% → 0.8637% (인상)</description>
+    </item>
+    <item>
+      <title>TIGER 차이나CSI300 (192090) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:192090</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.23% → 0.22% (인하)
+매매중개수수료: 0.0581% → 0.0569% (인하)
+실부담비용: 0.9181% → 0.9069% (인하)</description>
+    </item>
+    <item>
+      <title>HANARO 미국S&amp;P500 (432840) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:432840</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.3% → 0.29% (인하)
+매매중개수수료: 0.0089% → 0.0088% (인하)
+실부담비용: 0.3539% → 0.3438% (인하)</description>
+    </item>
+    <item>
+      <title>SOL 미국S&amp;P500 (433330) 총보수 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:433330</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>총보수: 0.05% → 0.0047% (인하)
+매매중개수수료: 0.0543% → 0.0658% (인상)
+실부담비용: 0.1843% → 0.1505% (인하)</description>
+    </item>
+    <item>
+      <title>TIGER 미국S&amp;P500(H) (448290) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:448290</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.09% → 0.08% (인하)
+매매중개수수료: 0.0708% → 0.068% (인하)
+실부담비용: 0.2308% → 0.218% (인하)</description>
+    </item>
+    <item>
+      <title>KIWOOM 미국S&amp;P500 (449770) 기타비용 인상</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:449770</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.14% → 0.16% (인상)
+매매중개수수료: 0.0674% → 0.1157% (인상)
+실부담비용: 0.2284% → 0.2967% (인상)</description>
+    </item>
+    <item>
+      <title>KIWOOM 미국S&amp;P500(H) (449780) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:449780</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.24% → 0.23% (인하)
+매매중개수수료: 0.2072% → 0.183% (인하)
+실부담비용: 0.4872% → 0.453% (인하)</description>
+    </item>
+    <item>
+      <title>RISE 미국S&amp;P500(H) (453330) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:453330</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.13% → 0.12% (인하)
+매매중개수수료: 0.0817% → 0.0824% (인상)
+실부담비용: 0.2164% → 0.2071% (인하)</description>
+    </item>
+    <item>
+      <title>RISE 중국본토CSI300 (463300) 기타비용 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:463300</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>기타비용: 0.18% → 0.17% (인하)
+매매중개수수료: 0.043% → 0.0425% (인하)
+실부담비용: 0.273% → 0.2625% (인하)</description>
+    </item>
+    <item>
+      <title>SOL 미국나스닥100 (476030) 총보수 인하</title>
+      <link>https://etfsave.life/changelog/</link>
+      <guid isPermaLink="false">tag:etfsave.life,2026-06-11:476030</guid>
+      <pubDate>Thu, 11 Jun 2026 09:00:00 +0900</pubDate>
+      <description>총보수: 0.05% → 0.0055% (인하)
+매매중개수수료: 0.0877% → 0.0885% (인상)
+실부담비용: 0.2477% → 0.204% (인하)</description>
+    </item>
+  </channel>
+</rss>
