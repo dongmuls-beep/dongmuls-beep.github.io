@@ -8,10 +8,10 @@
 
 ### 스냅샷 저장소 (HIST)
 
-- [ ] **HIST-01**: 매일 ETL 후 4개 수수료 항목(총보수·기타비용·매매중개수수료·실부담비용) 중 값이 바뀐 것만 `fee-history.json`에 KST 날짜와 함께 추가된다 (같은 날 재실행 시 중복 없음)
-- [ ] **HIST-02**: 종목은 종목코드로 식별된다 — 신규 상장은 첫 관측값으로 시작하고, 종목명이 바뀌어도 같은 시계열이 유지된다
-- [ ] **HIST-03**: `fee-history.json`이 없거나 파싱 불가하면 CI 단계가 실패하고 기존 파일을 덮어쓰지 않는다
-- [ ] **HIST-04**: 일일 자동 커밋에 `fee-history.json`이 포함된다
+- [x] **HIST-01**: 매일 ETL 후 4개 수수료 항목(총보수·기타비용·매매중개수수료·실부담비용) 중 값이 바뀐 것만 `fee-history.json`에 KST 날짜와 함께 추가된다 (같은 날 재실행 시 중복 없음)
+- [x] **HIST-02**: 종목은 종목코드로 식별된다 — 신규 상장은 첫 관측값으로 시작하고, 종목명이 바뀌어도 같은 시계열이 유지된다
+- [x] **HIST-03**: `fee-history.json`이 없거나 파싱 불가하면 CI 단계가 실패하고 기존 파일을 덮어쓰지 않는다
+- [x] **HIST-04**: 일일 자동 커밋에 `fee-history.json`이 포함된다
 
 ### 과거 복원 (BACK)
 
@@ -47,10 +47,10 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| HIST-01 | Phase 7 | Pending |
-| HIST-02 | Phase 7 | Pending |
-| HIST-03 | Phase 7 | Pending |
-| HIST-04 | Phase 7 | Pending |
+| HIST-01 | Phase 7 | Complete |
+| HIST-02 | Phase 7 | Complete |
+| HIST-03 | Phase 7 | Complete |
+| HIST-04 | Phase 7 | Complete |
 | BACK-01 | Phase 8 | Pending |
 | BACK-02 | Phase 8 | Pending |
 | BACK-03 | Phase 8 | Pending |
