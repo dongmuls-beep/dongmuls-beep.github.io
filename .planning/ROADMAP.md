@@ -53,7 +53,10 @@ Plans:
 - 대량 보정성 변동 시 build_changelog가 경고만 출력하고 항목을 추가하지 않음 (테스트로 확인)
 - 제거가 자동 업데이트 이후에도 유지됨 (재유입 경로 차단)
 
-**Plans:** 0 plans
+**Plans:** 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — 대량 보정 감지 + 기존 항목 멱등 정리 + 테스트, CI 배포 후 운영 changelog 검증
 
 ## Progress
 
