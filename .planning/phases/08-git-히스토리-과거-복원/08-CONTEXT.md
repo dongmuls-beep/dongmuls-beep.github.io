@@ -17,7 +17,9 @@ Requirements: BACK-01, BACK-02, BACK-03
 
 ### 과거 데이터 처리
 - 하루 여러 커밋이면 KST 기준 그날 마지막 커밋만 사용 (커밋 시각 `%cI` → +9 고정 오프셋 날짜)
-- 대량 보정: `build_changelog.detect_bulk_correction`으로 연속 스냅샷 간 자동 감지 + `KNOWN_REBASELINES = {"2026-05-27": [...]}` 하드코딩 백업. 감지된 항목(총보수/기타비용)은 **모든 종목의 해당 항목 이전 포인트 삭제**, 보정일 값으로 새 기준점 시작
+- 대량 보정 (REVISED after research, 사용자 확인 2026-09-30): **감지 기반만**. 2026-05-27 잘못된 값(중간 커밋 59b9a86, 9a8f04c)은 "그날 마지막 커밋" 규칙으로 자연 제거됨. `detect_bulk_correction`이 연속 일별 스냅샷 간 감지할 때만 해당 항목(총보수/기타비용, + 실부담비용) 모든 종목 이전 포인트 삭제 후 새 기준점. **하드코딩 무조건 삭제 없음** (정상 이력 36종목 손실 방지). 합성 fixture로 재기준화 로직 테스트
+- 종목코드 정규화: 숫자만인 6자리 미만 코드는 `zfill(6)` (69500 → 069500)
+- 최종 스냅샷(현재 data.json)에 없는 코드(고아 6개: 304660, 304670, 426020, 458250, 472870, 476750)는 리포트에 기록 후 제거 → 59개 시리즈
 - 오타 필드 `매매중계수수료`(2026-02-13 이전) → `매매중개수수료` alias
 - 파싱 불가 / 리스트 아님 / 행 수 급감 커밋은 건너뛰고 리포트에 기록
 - 순서: `git log --reverse -- data.json` 순서 + 커밋 시각→KST 날짜; 날짜가 역행하는 커밋은 건너뛰고 리포트
@@ -30,6 +32,8 @@ Requirements: BACK-01, BACK-02, BACK-03
 - 로컬 1회 실행 후 결과 커밋; CI workflow에 추가하지 않음 (`fetch-depth` 변경 없음)
 
 ### Claude's Discretion
+- 리포트에서 같은 날 대체된 커밋(superseded)과 건너뛴 커밋(파싱 불가/역행 등)을 구분 표시
+- 선택적 sanity cap(수수료 > 5 거부)은 planner 재량
 - Phase 7 `build_fee_history.py`의 `apply_snapshot`, `dump_history`, `validate_history`, `normalize` 재사용 (import), 새 로직은 backfill 스크립트에만
 - git 호출은 `subprocess` + `encoding="utf-8"` (Windows cp949 회피)
 - 테스트는 git 호출 없이 스냅샷 리스트를 받는 순수 함수(예: `replay(snapshots) -> (history, report)`)로 분리해 fixture 기반
