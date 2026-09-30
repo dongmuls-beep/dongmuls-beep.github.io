@@ -1307,7 +1307,8 @@ function feeCellHtml(value, code, name, field) {
         name,
         field: getFeeFieldLabel(field),
     });
-    return `<button type="button" class="fee-history-btn" data-code="${escapeHtml(code)}" data-field="${field}" aria-label="${escapeHtml(label)}">${text}</button>`;
+    // Accessible name starts with the visible value (WCAG 2.5.3 Label in Name).
+    return `<button type="button" class="fee-history-btn" data-code="${escapeHtml(code)}" data-field="${field}" aria-label="${escapeHtml(`${text} ${label}`)}">${text}</button>`;
 }
 
 function loadFeeHistory() {
