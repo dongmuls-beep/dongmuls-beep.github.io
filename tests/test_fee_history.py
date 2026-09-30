@@ -258,6 +258,21 @@ def test_main_valid_and_idempotent(env):
     assert hist.read_bytes() == first
 
 
+def test_main_interrupted_write_keeps_old_file(env, monkeypatch):
+    _, hist = env
+    hist.write_text(fh.dump_history(fh.empty_history()), encoding="utf-8")
+    before = hist.read_bytes()
+
+    def boom(src, dst):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(fh.os, "replace", boom)
+    with pytest.raises(OSError):
+        fh.main([])
+    assert hist.read_bytes() == before
+    assert not any(p.name.endswith(".tmp") for p in hist.parent.iterdir())
+
+
 def test_main_bad_data_leaves_history(env):
     data, hist = env
     hist.write_text(fh.dump_history(fh.empty_history()), encoding="utf-8")

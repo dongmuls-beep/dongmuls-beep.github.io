@@ -6,6 +6,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+import os
 import sys
 from datetime import date as date_cls
 from datetime import datetime, timedelta, timezone
@@ -155,6 +156,18 @@ def dump_history(history: dict[str, Any]) -> str:
     )
 
 
+def write_atomic(path: Path, text: str) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    try:
+        with open(tmp, "w", encoding="utf-8", newline="\n") as fp:
+            fp.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        if tmp.exists():
+            tmp.unlink()
+        raise
+
+
 def load_rows(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         raise FileNotFoundError(f"{path} not found")
@@ -184,7 +197,7 @@ def main(argv: list[str] | None = None) -> int:
     text = dump_history(new)
     existing = HISTORY_FILE.read_text(encoding="utf-8") if HISTORY_FILE.exists() else None
     if init or text != existing:
-        HISTORY_FILE.write_text(text, encoding="utf-8", newline="\n")
+        write_atomic(HISTORY_FILE, text)
         print(f"[fee-history] recorded {count} changes for {date}")
     else:
         print("[fee-history] no changes; kept existing fee-history.json")
