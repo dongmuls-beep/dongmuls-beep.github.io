@@ -1,7 +1,8 @@
 ---
 phase: 14-mobile-a11y
 verified: 2026-09-30T00:00:00Z
-status: human_needed
+status: passed
+human_verification_resolved: "2026-10-06 — all items passed in 16-HUMAN-UAT.md (15/15)"
 score: 5/5 roadmap success criteria verified (automated); 9/9 requirements code-evidenced
 overrides_applied: 0
 gaps: []

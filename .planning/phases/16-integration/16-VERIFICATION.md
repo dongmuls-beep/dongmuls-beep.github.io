@@ -1,7 +1,8 @@
 ---
 phase: 16-integration
 verified: 2026-09-30T00:00:00Z
-status: human_needed
+status: passed
+human_verification_resolved: "2026-10-06 — all items passed in 16-HUMAN-UAT.md (15/15)"
 score: 6/6 16-01 must-have truths verified in code; 5/5 automated audit items passed
 overrides_applied: 0
 gaps: []
