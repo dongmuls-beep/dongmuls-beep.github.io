@@ -74,6 +74,37 @@
 - 하드코딩 데이터 보정은 실제 히스토리 측정 후 결정
 - 코드 리뷰를 UAT 전에 돌리면 UAT 1회로 끝남
 
+## Milestone: v1.4 — 신뢰성·접근성·비교 도구
+
+**Shipped:** 2026-10-06
+**Phases:** 7 | **Plans:** 21
+
+### What Was Built
+- 결측 수수료 null 파이프라인 (ETL → data.json → 표·비교·차트·계산기·RSS 모두 결측 인지)
+- 결정적 RSS 2.0 feed.xml + 구독 링크
+- 모바일 접근성 Critical/Major 일괄 수정, 8개 언어 ARIA
+- /compare/ 직접 비교 + 겹침 차트 + 누적 비용 계산기(전 종목 순위표)
+
+### What Worked
+- 파일 소유권 분리로 Wave 0 4-way, Wave 1 2-way 병렬 실행 — OneDrive라 worktree 없이도 충돌 없음
+- 사람 UAT를 Phase 16 끝으로 몰아 한 번에 처리
+- 헤드리스 Chrome + CDP(node 내장 WebSocket)로 UAT 레이아웃·대비·번역 항목을 직접 측정 — 사람 확인을 실제 기기·스크린리더·원어민 항목으로 좁힘
+
+### What Was Inefficient
+- 단위 테스트가 놓친 통합 버그 3건을 UAT에서 발견: 표 없는 페이지에서 비교 바가 언어팩 로드 전 렌더(번역 키 노출), "숫자로 보기" 펼침 시 320px 페이지 넘침, 계산기 2개 고정 비교의 UX 한계
+- SUMMARY frontmatter `requirements-completed` 누락/키 불일치로 감사에서 수동 교차 확인 필요
+- 감사 도구 자동 성과 추출이 deviation 메모를 성과로 잡음 → 수동 작성
+
+### Patterns Established
+- `etf:*` 커스텀 이벤트 seam (table-rendered / data-ready / data-error / lang-changed)
+- 비동기 의존(언어팩 등)에 반응하는 UI는 "준비 완료" 이벤트를 구독, DOMContentLoaded 1회 렌더에 의존 금지
+- UAT 레이아웃 판정은 scrollWidth vs clientWidth 측정 (헤드리스 --window-size 스크린샷은 착시)
+
+### Key Lessons
+- 표가 있는 페이지에서만 테스트된 공용 스크립트는 표 없는 페이지에서 따로 확인해야 한다
+- 접히는 UI(details)는 펼친 상태로 폭 테스트할 것
+- 비교 도구는 N개 비교가 기본 기대치 — 2개 고정 비교는 처음부터 피할 것
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Requirements | Deferred |
@@ -81,3 +112,4 @@
 | v1.1 | 4 | 11 | 14/14 | 1 |
 | v1.2 | 2 | 2 | 3/3 | 1 |
 | v1.3 | 3 | 5 | 13/13 | 1 |
+| v1.4 | 7 | 21 | 28/28 | 1 |
