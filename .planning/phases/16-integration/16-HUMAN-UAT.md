@@ -1,9 +1,9 @@
 ---
-status: testing
+status: complete
 phase: 16-integration
 source: [16-02-PLAN.md Task 2, 14-VERIFICATION.md human_verification, 15-HUMAN-UAT.md]
 started: 2026-09-30T00:00:00Z
-updated: 2026-10-02T00:00:00Z
+updated: 2026-10-06T00:00:00Z
 ---
 
 # v1.4 Human UAT (Phase 14 + 15 + 16)
@@ -11,13 +11,8 @@ updated: 2026-10-02T00:00:00Z
 Setup: `python -m http.server 8080` from project root, open http://localhost:8080. DevTools widths 320, 375, 1280.
 
 ## Current Test
-<!-- OVERWRITE each test - shows where we are -->
 
-number: 11
-name: C1. Real phone check
-expected: |
-  h1 solid and readable, arrows meet AA contrast; touch targets >= 44px; header hides on scroll-down and returns on scroll-up/focus; changelog table scrolls horizontally with fade.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -69,11 +64,13 @@ note: "Claude CDP measure: badge text 5.58:1; lines 5.19/3.87/3.42:1 (>=3 graphi
 
 ### 11. C1. Real phone check
 expected: h1 solid and readable, arrows meet AA contrast; touch targets >= 44px; header hides on scroll-down and returns on scroll-up/focus; changelog table scrolls horizontally with fade.
-result: [pending]
+result: pass
+note: "User reported pass 2026-10-06."
 
 ### 12. C2. Screen reader
 expected: (VoiceOver/TalkBack/NVDA) Mobile card table reads each value with column name; copy-code button works; loading/error/empty/count states announced; note whether non-code `.cell-label` spans are read twice (14-REVIEW IN-01).
-result: [pending]
+result: pass
+note: "User reported pass 2026-10-06."
 
 ### 13. D1. Translations on /compare/
 expected: `/compare/?lang=` en, vi, zh, ja, th, tl (km if possible): compare and calculator strings read naturally, not cut off — esp. calc_disclaimer, compare_bar_limit, calc_return.
@@ -82,7 +79,8 @@ note: "Claude CDP at 320px, 7 langs: no clipped text, no overflow, no raw keys. 
 
 ### 14. D2. Native speaker review
 expected: Native speaker reviews th, tl, km, vi drafts plus aria strings in all 8 languages.
-result: [pending]
+result: pass
+note: "User reported pass 2026-10-06."
 
 ### 15. D3. footer_rss label
 expected: `footer_rss` label reads naturally in all 8 languages.
@@ -92,9 +90,9 @@ note: "Claude review: ko RSS 피드 구독 / en Subscribe via RSS / vi Đăng k�
 ## Summary
 
 total: 15
-passed: 12
+passed: 15
 issues: 0
-pending: 3
+pending: 0
 skipped: 0
 blocked: 0
 
