@@ -321,7 +321,7 @@
   "compare_select_label": "Chọn {name} để so sánh",
   "compare_bar_count": "Đã chọn {count}",
   "compare_bar_need_more": "Vui lòng chọn ít nhất 2",
-  "compare_bar_limit": "Bạn chỉ có thể so sánh tối đa 4",
+  "compare_bar_limit": "Bạn chỉ có thể so sánh tối đa 4 ETF",
   "compare_bar_go": "So sánh",
   "compare_bar_clear": "Bỏ chọn",
   "compare_bar_label": "Thanh chọn ETF để so sánh",

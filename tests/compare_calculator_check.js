@@ -85,7 +85,7 @@ const TR = {
     calc_col_final: "최종 평가금액 (원)",
     calc_table_caption: "보유기간 누적 수수료가 적은 순서",
     compare_best_badge: "최저",
-    calc_result: "{years}년간 {a}보다 {b}가 약 {amount}원 더 부담해요",
+    calc_result: "{years}년간 {a}보다 {b} 쪽이 약 {amount}원 더 부담해요",
     calc_result_same: "{years}년간 두 ETF의 누적 비용 차이는 거의 없어요",
     calc_contributed: "총 납입 원금 {amount}원",
     calc_excluded: "{names}은(는) 수수료 값이 없어 계산에서 제외했어요.",

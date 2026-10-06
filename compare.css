@@ -539,6 +539,8 @@ td[data-best="true"] .cmp-value {
 
 .cmp-chart-alt {
   margin-top: 16px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .cmp-chart-alt summary {

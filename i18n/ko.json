@@ -373,7 +373,7 @@
   "calc_return_hint": "가정 값이에요. 기본은 0%예요.",
   "calc_col_rank": "순위",
   "calc_col_etf": "ETF",
-  "calc_result": "{years}년간 {a}보다 {b}가 약 {amount}원 더 부담해요",
+  "calc_result": "{years}년간 {a}보다 {b} 쪽이 약 {amount}원 더 부담해요",
   "calc_result_same": "{years}년간 ETF 간 누적 비용 차이는 거의 없어요",
   "calc_col_fees": "누적 수수료 (원)",
   "calc_col_gap": "최저 대비 (원)",

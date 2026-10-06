@@ -321,7 +321,7 @@
   "compare_select_label": "Select {name} to compare",
   "compare_bar_count": "{count} selected",
   "compare_bar_need_more": "Select at least 2",
-  "compare_bar_limit": "You can compare up to 4",
+  "compare_bar_limit": "You can compare up to 4 ETFs",
   "compare_bar_go": "Compare",
   "compare_bar_clear": "Clear",
   "compare_bar_label": "ETF comparison selection bar",
