@@ -623,12 +623,20 @@ td[data-best="true"] .cmp-value {
   width: auto;
 }
 
-.cmp-calc-table th[scope="col"]:first-child {
+.cmp-calc-table th[scope="col"] {
   min-width: 0;
 }
 
-.cmp-calc-table td {
+.cmp-calc-table td,
+.cmp-calc-table th[scope="col"]:first-child {
   white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+  .cmp-calc-table th,
+  .cmp-calc-table td {
+    padding: 8px;
+  }
 }
 
 .cmp-calc-meta {

@@ -13,10 +13,10 @@ Setup: `python -m http.server 8080` from project root, open http://localhost:808
 ## Current Test
 <!-- OVERWRITE each test - shows where we are -->
 
-number: 9
-name: B4. Calculator
+number: 11
+name: C1. Real phone check
 expected: |
-  Input is full width; values round-trip through URL; disclaimer sits below the headline.
+  h1 solid and readable, arrows meet AA contrast; touch targets >= 44px; header hides on scroll-down and returns on scroll-up/focus; changelog table scrolls horizontally with fade.
 awaiting: user response
 
 ## Tests
@@ -32,9 +32,8 @@ result: pass
 
 ### 3. A3. Compare bar on /isa/ and /pension/
 expected: Bar appears only when an existing selection exists. These pages have no checkboxes.
-result: issue
-reported: "보이는데 갑자기 비교 바가 로케일이 영문으로바뀌었음 compare_bar_count compare_bar_clear compare_bar_go 이렇게 나옴"
-severity: major
+result: pass
+note: "Initially issue (raw i18n keys). Fixed 945723d. Re-verified 2026-10-06 by Claude via headless Chrome CDP at 375px (user delegated): /isa/, /pension/ ko/en/ja translated, ko->vi switch re-renders, hidden with no selection."
 
 ### 4. A4. RSS link
 expected: Footer RSS link on `/` and `/changelog/` opens `/feed.xml`; on /changelog/ the two footer links are visibly separated; page source has `<link rel="alternate" type="application/rss+xml">`; RSS label translates after language switch.
@@ -60,13 +59,13 @@ result: pass
 
 ### 9. B4. Calculator
 expected: Input is full width; values round-trip through URL; disclaimer sits below the headline.
-result: issue
-reported: "계산기에서는 왜 멀티 비교가 어려운거야? 이거도 고려해줘" (/compare/?compare=360200,379780,360750)
-severity: major
+result: pass
+note: "User asked for multi-ETF calc -> ranked table (847f0de + mobile padding). Verified 2026-10-06 by Claude via headless CDP: inputs full width, amt/yrs/mon/ret round-trip URL, order headline>table>meta>disclaimer, no page h-scroll at 320/375, en/th/km headers OK."
 
 ### 10. B5. Non-color distinction
 expected: Lowest badge and each chart series distinguishable without color; contrast OK.
-result: [pending]
+result: pass
+note: "Claude CDP measure: badge text 5.58:1; lines 5.19/3.87/3.42:1 (>=3 graphics); dash none/8-4/2-4; markers circle/rect/polygon; disclaimer 6.73:1."
 
 ### 11. C1. Real phone check
 expected: h1 solid and readable, arrows meet AA contrast; touch targets >= 44px; header hides on scroll-down and returns on scroll-up/focus; changelog table scrolls horizontally with fade.
@@ -91,9 +90,9 @@ result: [pending]
 ## Summary
 
 total: 15
-passed: 5
-issues: 2
-pending: 6
+passed: 8
+issues: 0
+pending: 5
 skipped: 2
 blocked: 0
 
@@ -106,7 +105,7 @@ blocked: 0
   test: 3
   root_cause: "/isa/, /pension/ have no table so etf:table-rendered never fires; bar rendered once at DOMContentLoaded before language pack fetch resolved"
   fix: "script.js updateLanguage emits etf:lang-changed; compare-select.js re-syncs on it"
-  status_after_fix: fixed (needs re-test)
+  status_after_fix: fixed, verified
   artifacts: [script.js, compare-select.js]
   missing: []
 
@@ -116,6 +115,6 @@ blocked: 0
   severity: major
   test: 9
   fix: "User chose ranked table: removed 기준/비교 selects; all ETFs ranked by cumulative fees with gap vs lowest and final value; headline = cheapest vs most expensive. i18n calc_base_etf/calc_other_etf/calc_per_etf replaced by calc_col_*/calc_table_caption (8 langs); calc_result_same no longer says 'two'."
-  status_after_fix: fixed (needs re-test)
+  status_after_fix: fixed, verified
   artifacts: [compare-calculator.js, compare.css, i18n/*.json, tests/compare_calculator_check.js, tests/test_i18n_compare.py]
   missing: []
