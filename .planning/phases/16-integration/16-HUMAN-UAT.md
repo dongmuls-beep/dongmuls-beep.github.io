@@ -23,8 +23,8 @@ awaiting: user response
 
 ### 1. A1. Layout at 320/375/1280
 expected: At 320, 375 and 1280, none of `/`, `/compare/?compare=<2-4 codes>`, `/changelog/`, `/isa/`, `/pension/` has broken layout or a horizontal page scroll.
-result: skipped
-reason: "건너뛰고 계속진행" (user skipped)
+result: pass
+note: "Re-run 2026-10-06 by Claude (user delegated) via headless Chrome CDP: /, /compare/, /changelog/, /isa/, /pension/ at 320/375/1280 all scrollWidth==viewport. Found+fixed (309aacf): opening 숫자로 보기 on /compare/ at 320/375 pushed page to 441px -> .cmp-chart-alt overflow-x:auto."
 
 ### 2. A2. Compare selection on main table
 expected: Checking 2-4 boxes (incl. mobile card view) shows the compare bar; bar button opens /compare/; toast (e.g. "copied") appears above the bar, not on top; bar does not cover the footer.
@@ -42,8 +42,8 @@ note: "feed.xml valid; <script/> in viewer = browser extension (none in file). S
 
 ### 5. A5. /compare/ skip link and header
 expected: Tab then Enter on skip link moves focus to main. Header, nav and hamburger behave as on main page.
-result: skipped
-reason: "건너뛰기" (user skipped; local server stopped)
+result: pass
+note: "Re-run by Claude via CDP at 375/1280: skip link is first tab stop, visible on focus, moves focus to MAIN#main-content; hamburger opens (aria-expanded, label 메뉴 닫기), Esc closes and returns focus; identical to main page."
 
 ### 6. B1. Compare bar behavior
 expected: With 1 selected, go link disabled; selecting a 5th ETF is blocked with a notice; selection kept across tabs and after language switch.
@@ -77,7 +77,8 @@ result: [pending]
 
 ### 13. D1. Translations on /compare/
 expected: `/compare/?lang=` en, vi, zh, ja, th, tl (km if possible): compare and calculator strings read naturally, not cut off — esp. calc_disclaimer, compare_bar_limit, calc_return.
-result: [pending]
+result: pass
+note: "Claude CDP at 320px, 7 langs: no clipped text, no overflow, no raw keys. Wording fixes: ko calc_result particle-safe ('{b} 쪽이'), en/vi/km compare_bar_limit add 'ETF(s)', zh compare/calc block full-width punctuation. Naturalness is model judgment; native review stays in D2."
 
 ### 14. D2. Native speaker review
 expected: Native speaker reviews th, tl, km, vi drafts plus aria strings in all 8 languages.
@@ -85,15 +86,16 @@ result: [pending]
 
 ### 15. D3. footer_rss label
 expected: `footer_rss` label reads naturally in all 8 languages.
-result: [pending]
+result: pass
+note: "Claude review: ko RSS 피드 구독 / en Subscribe via RSS / vi Đăng ký RSS / zh RSS 订阅 / ja RSSフィードを購読 / th สมัครรับฟีด RSS / tl Mag-subscribe sa RSS / km ជាវ RSS - idiomatic; th/tl/km also covered by D2 native review."
 
 ## Summary
 
 total: 15
-passed: 8
+passed: 12
 issues: 0
-pending: 5
-skipped: 2
+pending: 3
+skipped: 0
 blocked: 0
 
 ## Gaps
