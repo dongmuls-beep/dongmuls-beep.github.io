@@ -1,5 +1,28 @@
 # Milestones
 
+## v1.4 신뢰성·접근성·비교 도구 (Shipped: 2026-10-06)
+
+**Delivered:** 결측 수수료를 가짜 0이 아닌 null로 처리해 데이터 신뢰성을 높이고, 모바일 접근성을 보강했으며, 투자자용 비교 도구(ETF 2~4개 직접 비교·누적 비용 계산기·RSS 피드)를 추가.
+
+**Phases completed:** 7 phases (10–16), 21 plans
+**Requirements:** 28/28 (DATA-07~10, FEED-01~04, CALC-01~05, A11Y-01~09, CMP-01~06)
+**Audit:** tech_debt (integration 28/28, flows 6/6, no blockers); human UAT 15/15
+**Git:** 98 commits since v1.3, 52 code files changed (+8,041 / −215)
+
+**Key accomplishments:**
+
+- `p_float` 결측 → `None`/`null`, 결측 낀 쌍은 changelog·fee-history 변동에서 제외 → 가짜 0 수수료 부채(v1.3 WR-04) 해소 (Phase 10)
+- 프런트 null-safe: 결측 "-" 표시·정렬 맨 뒤·가짜 배지 없음, `etf:*` 이벤트 seam (Phase 11)
+- 총보수·기타비용 변동만 담은 결정적 RSS 2.0 `feed.xml` 일일 생성 + 메인·변경이력 구독 링크 (Phase 12, 16)
+- 모바일 a11y: h1·화살표 AA 대비, 헤더 숨김, 44px 터치, skip link, 로딩/에러/빈 상태, 8개 언어 ARIA (Phase 14)
+- `/compare/`: 2~4개 선택·비교 바, 최저 배지 표, 겹침 추이 차트(선 모양+마커), 누적 비용 계산기(전 종목 순위표, URL 공유) (Phase 13, 15)
+- UAT 중 수정: 비교 바 번역 키 노출, 계산기 멀티 비교 순위표, 차트 데이터 표 페이지 넘침, 번역 다듬기
+- 테스트 145 → pytest 387 + node 9
+
+**Known deferred items at close:** 1 (knowledge-base debug audit false positive, see STATE.md) + tech debt in milestones/v1.4-MILESTONE-AUDIT.md
+
+---
+
 ## v1.3 수수료 변동 그래프 (Shipped: 2026-09-30)
 
 **Delivered:** 수수료 셀을 클릭하면 해당 항목의 과거 변동 추이를 차트와 내역으로 보여주고, 이를 위한 일일 스냅샷 이력 저장소를 구축.

@@ -2,88 +2,64 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 신뢰성·접근성·비교 도구
-status: executing
-last_updated: "2026-09-30T06:00:00.000Z"
-last_activity: 2026-09-30
+status: Awaiting next milestone
+stopped_at: v1.4 milestone complete
+last_updated: "2026-10-06T02:40:26.593Z"
+last_activity: 2026-10-06 — Milestone v1.4 completed and archived
 progress:
   total_phases: 7
   completed_phases: 7
   total_plans: 21
   completed_plans: 21
-  percent: 0
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-09-30)
+See: .planning/PROJECT.md (updated 2026-10-06)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
-**Current milestone:** v1.4 — 신뢰성·접근성·비교 도구
-**Current focus:** Wave 0 계획 (Phase 10, 11, 12, 13 병렬)
+**Current milestone:** 없음 (v1.4 완료)
+**Current focus:** 다음 마일스톤 정의 — `/gsd:new-milestone`
 
 ## Current Position
 
-Phase: 16 complete — all v1.4 phases done (28/28)
+Phase: Milestone v1.4 complete
 Plan: —
-Status: Awaiting human UAT (.planning/phases/16-integration/16-HUMAN-UAT.md)
-Last activity: 2026-09-30 — Phases 14-15 executed in parallel (human UAT deferred to Phase 16)
-
-Progress: [░░░░░░░░░░] 0% (0/7 phases)
-
-## Execution Waves
-
-- Wave 0 (병렬): Phase 10 데이터 신뢰성, Phase 11 script.js seam, Phase 12 RSS, Phase 13 계산기 엔진
-- Wave 1 (병렬): Phase 14 모바일 접근성, Phase 15 비교 + 계산기 UI (Phase 11 선행, Phase 15는 Phase 13도)
-- Wave 2 (직렬): Phase 16 통합·검증
+Status: Awaiting next milestone
+Last activity: 2026-10-06 — Milestone v1.4 completed and archived
 
 ## Completed Milestones
 
-- **v1.1 안정성·보안·품질 개선** — Phases 1-4, 14/14 요구사항 (shipped 2026-09-30)
-- **v1.2 데이터 정확성 보강** — Phases 5-6, 3/3 요구사항 (shipped 2026-09-30)
-- **v1.3 수수료 변동 그래프** — Phases 7-9 (shipped 2026-09-30) — see .planning/MILESTONES.md
+- **v1.1 안정성·보안·품질 개선** — Phases 1-4 (shipped 2026-09-30)
+- **v1.2 데이터 정확성 보강** — Phases 5-6 (shipped 2026-09-30)
+- **v1.3 수수료 변동 그래프** — Phases 7-9 (shipped 2026-09-30)
+- **v1.4 신뢰성·접근성·비교 도구** — Phases 10-16, 28/28 (shipped 2026-10-06) — see .planning/MILESTONES.md
 
 ## Accumulated Context
 
-### Decisions (v1.4)
+### Constraints (carry forward)
 
-- 신규 의존성 0 (Python stdlib + 브라우저 API)
-- 결측은 `null` (0.0 아님), 프런트는 `Number.isFinite`로 가드
-- 비교는 새 정적 페이지 `/compare/`, RSS 2.0 `feed.xml`(총보수/기타비용 변동만)
-- 최대 병렬: 파일 소유권 분리 (OneDrive라 git worktree 불가)
-- 이전 결정 로그는 milestones/ 아카이브 및 PROJECT.md 참조
+- `script.js`/`style.css` UTF-8 BOM; 신규 파일 LF/BOM 없음
+- CI가 `fee-history.json`·`feed.xml` 단독 작성자; pre-commit 훅이 `changelog.json`/`data.json` 덮어씀 → 테스트는 fixture
+- OneDrive: git worktree 불가; 병렬 에이전트는 `git commit --only -- <paths>`
+- Push 전 `git pull --rebase origin main` (CI 일일 자동 커밋)
 
-### Constraints
+### Open follow-ups
 
-- `script.js`/`style.css` UTF-8 BOM + CRLF 보존, 신규 파일은 LF/BOM 없음
-- CI가 `fee-history.json` 단독 작성자; pre-commit 훅이 `changelog.json`/`data.json` 덮어씀 → 테스트는 fixture 사용
-- `daily_update.yml` 소유자는 Phase 12
-
-### Research Flags
-
-- Phase 10: KOFIA `-`/공백 의미 확인
-- Phase 14: C5 표 시맨틱 결정
-- Phase 15: 겹침 차트 설계, 면책 문구, 전역 스코프 스파이크
+- 첫 CI 실행에서 daily_update.yml node 검사 단계 확인 (로컬 YAML 미검증)
+- v1.4 기술 부채: milestones/v1.4-MILESTONE-AUDIT.md
 
 ### Blockers
 
 없음
 
-## Session
+## Deferred Items
 
-**Last session:** 2026-09-30
-**Stopped at:** v1.4 roadmap created
-**Next action:** Wave 0 실행 — /gsd:execute-phase 10, 11, 12, 13 (병렬). Phase 14 plan에 table_value_missing i18n 키 8개 언어 추가 필수 (Phase 11 요구)
+Items acknowledged and deferred at milestone close on 2026-10-06:
 
-
-## Resume Handoff (2026-09-30 ~16:45)
-
-- ALL Phases 10-16 complete (28/28 reqs), pytest 387 + node 9/9 pass. Phase 16 done 16:38 (commits 2163b6c..a2d0972).
-- On resume: user runs 16-HUMAN-UAT.md (15 items; `python -m http.server 8080`). Record results via `/gsd-verify-work 16`.
-- CI node step in daily_update.yml untested locally (no PyYAML) — check first CI run after push.
-- sitemap unchanged (/compare/ is noindex).
-- Then: user does human UAT (16-HUMAN-UAT.md: browser 320/375/desktop, screen reader, th/tl/km/vi/ja/zh disclaimer review) → `/gsd-audit-milestone` → `/gsd-complete-milestone`.
-- Nothing pushed yet. Before push: `git pull --rebase origin main` (CI auto-commits daily).
-- Deferred: 14 IN-01 (double column label SR), 15 info items, 12 IN-01/02, backlog items in REQUIREMENTS Future.
-- config: workflow.use_worktrees=false (OneDrive). Parallel agents must commit with `git commit --only -- <paths>`.
+| Category | Item | Status |
+|----------|------|--------|
+| debug | knowledge-base | false positive (resolved-session knowledge base file, not an open session) |

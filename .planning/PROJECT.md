@@ -6,18 +6,11 @@
 
 ## Current State
 
-v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → 부드러운 곡선 SVG 차트 + 변동 내역 모달, fee-history.json 일일 누적(59종목, 2026-02~ backfill). 테스트 145개 + 차트 node 검사 CI. 알려진 부채: etl_process.p_float 파싱 실패 시 0.0 반환.
+v1.4 신뢰성·접근성·비교 도구 shipped (2026-10-06). 결측 수수료 null 처리(가짜 0 제거), 모바일 접근성 보강, `/compare/` 직접 비교(2~4개, 겹침 차트, 누적 비용 계산기 순위표), 총보수·기타비용 변동 RSS 피드. 테스트: pytest 387 + node 9 (CI). 남은 부채는 milestones/v1.4-MILESTONE-AUDIT.md 참조 (RSS 실패 silent, 15-REVIEW info 항목, 320px 계산기 표 등).
 
-## Current Milestone: v1.4 신뢰성·접근성·비교 도구
+## Next Milestone Goals
 
-**Goal:** 데이터 신뢰성·모바일 접근성을 보강하고, 투자자용 비교 도구(직접 비교·누적 비용 계산기·RSS)를 추가한다.
-
-**Target features:**
-- p_float 파싱 실패 시 0.0 대신 결측 처리 → 가짜 0 수수료 변동 차단
-- 모바일 접근성/UI Critical+Major 수정 (h1 대비, 헤더 숨김, 모바일 changelog 표, 터치 영역 44px, 로딩/에러 상태, ARIA 번역)
-- ETF 2~4개 선택 직접 비교 화면
-- 누적 비용 계산기 (투자금 × 보유기간)
-- 수수료 인하 RSS 피드 정적 생성
+아직 정하지 않음 — `/gsd:new-milestone`으로 정의. 후보: v1.4 기술 부채 정리, REQUIREMENTS Future 백로그.
 
 ## Core Value
 
@@ -27,6 +20,11 @@ v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → �
 
 ### Validated
 
+- ✓ 결측 수수료 null 처리, 가짜 변동 차단, 프런트 "-"·정렬·배지 (DATA-07~10) — v1.4
+- ✓ 총보수·기타비용 변동 RSS 2.0 피드 + 구독 링크 (FEED-01~04) — v1.4
+- ✓ 모바일 접근성 Critical/Major + 8개 언어 ARIA (A11Y-01~09) — v1.4
+- ✓ ETF 2~4개 직접 비교 페이지·겹침 차트 (CMP-01~06) — v1.4
+- ✓ 누적 비용 계산기, 전 종목 순위표, URL 공유, 면책 8개 언어 (CALC-01~05) — v1.4
 - ✓ 수수료 변동 시점만 기록하는 fee-history.json 일일 누적 (HIST-01~04) — v1.3
 - ✓ data.json git 히스토리 backfill (BACK-01~03) — v1.3
 - ✓ 수수료 셀 클릭 시 변동 추이 차트·내역 모달, 8개 언어 (CHART-01~06) — v1.3
@@ -51,11 +49,7 @@ v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → �
 
 ### Active
 
-- [ ] p_float 파싱 실패 결측 처리 (WR-04 부채)
-- [ ] 모바일 접근성/UI Critical+Major (ui-review.md)
-- [ ] ETF 직접 비교
-- [ ] 누적 비용 계산기
-- [ ] 수수료 인하 RSS 피드
+(다음 마일스톤에서 정의)
 
 ### Out of Scope
 
@@ -99,6 +93,11 @@ v1.3 수수료 변동 그래프 shipped (2026-09-30). 수수료 셀 클릭 → �
 | backfill 재기준화는 감지 기반만, 하드코딩 삭제 없음 (v1.3) | 05-27 오류는 그날 마지막 커밋 규칙으로 제거, 정상 이력 보존 | ✓ Good |
 | 차트는 계단형 대신 monotone 곡선 (v1.3) | 사용자 디자인 선호; 오버슈트 없음, 정확한 날짜는 내역 리스트 | ✓ Good |
 | changelog 정리는 CI에서 멱등 실행 (v1.2) | pre-commit hook이 운영본으로 덮어써 로컬 편집 무효 | ✓ Good |
+| 결측은 0.0이 아닌 null, 프런트는 Number.isFinite 가드 (v1.4) | 가짜 0 수수료·가짜 최저 표시 방지 | ✓ Good |
+| 신규 의존성 0 (stdlib + 브라우저 API) (v1.4) | 빌드 없는 정적 사이트 유지 | ✓ Good |
+| 비교는 별도 정적 페이지 /compare/ (noindex), 선택은 sessionStorage (v1.4) | 기존 표 영향 최소화, 탭 간 유지 | ✓ Good |
+| 계산기는 기준/비교 2개 대신 전 종목 순위표 (v1.4 UAT) | 사용자 요청: 3~4개 비교가 어려움 | ✓ Good |
+| 파일 소유권 분리로 최대 병렬 실행, worktree 미사용 (v1.4) | OneDrive 환경 제약 | ✓ Good — `git commit --only` 필요 |
 
 ## Evolution
 
@@ -118,4 +117,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-30 — v1.4 milestone started*
+*Last updated: 2026-10-06 after v1.4 milestone*
