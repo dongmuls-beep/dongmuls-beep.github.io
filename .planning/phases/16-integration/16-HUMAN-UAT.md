@@ -1,89 +1,109 @@
 ---
-status: partial
+status: testing
 phase: 16-integration
 source: [16-02-PLAN.md Task 2, 14-VERIFICATION.md human_verification, 15-HUMAN-UAT.md]
 started: 2026-09-30T00:00:00Z
-updated: 2026-09-30T00:00:00Z
+updated: 2026-10-02T00:00:00Z
 ---
 
-# v1.4 Human UAT Checklist (Phase 14 + 15 + 16)
+# v1.4 Human UAT (Phase 14 + 15 + 16)
 
-## Setup
-
-From the project root, run `python -m http.server 8080`, then open http://localhost:8080.
-
-Use DevTools device widths 320, 375 and desktop (1280). Mark each item `[x]` when it passes, or write the problem (page, width, language) under it.
+Setup: `python -m http.server 8080` from project root, open http://localhost:8080. DevTools widths 320, 375, 1280.
 
 ## Current Test
+<!-- OVERWRITE each test - shows where we are -->
 
-[awaiting human testing]
+number: 8
+name: B3. Overlay chart
+expected: |
+  Series have dash/marker styles and a legend; metric switch works; "숫자로 보기" works.
+awaiting: user response
 
-## A. Layout and integration (Phase 16)
+## Tests
 
-- [ ] **A1.** At 320, 375 and 1280, none of these pages has broken layout or a horizontal page scroll: `/`, `/compare/?compare=<2-4 codes>`, `/changelog/`, `/isa/`, `/pension/`.
-- [ ] **A2.** Compare selection on the main table:
-  - Check 2 to 4 boxes, including in the mobile card view. The compare bar appears.
-  - The bar button opens /compare/.
-  - A toast, such as "copied", appears above the bar, not on top of it.
-  - The bar does not cover the footer.
-- [ ] **A3.** On `/isa/` and `/pension/`, the bar appears only when there is an existing selection. These pages have no checkboxes.
-- [ ] **A4.** RSS link:
-  - The footer RSS link on `/` and `/changelog/` opens `/feed.xml`.
-  - On /changelog/, the two footer links are visibly separated.
-  - The page source has `<link rel="alternate" type="application/rss+xml">`.
-  - The RSS label is translated after a language switch.
-- [ ] **A5.** On `/compare/`, the skip link works: Tab, then Enter, moves focus to main. The header, nav and hamburger behave the same as on the main page.
+### 1. A1. Layout at 320/375/1280
+expected: At 320, 375 and 1280, none of `/`, `/compare/?compare=<2-4 codes>`, `/changelog/`, `/isa/`, `/pension/` has broken layout or a horizontal page scroll.
+result: skipped
+reason: "건너뛰고 계속진행" (user skipped)
 
-## B. Compare / calculator (from 15-HUMAN-UAT)
+### 2. A2. Compare selection on main table
+expected: Checking 2-4 boxes (incl. mobile card view) shows the compare bar; bar button opens /compare/; toast (e.g. "copied") appears above the bar, not on top; bar does not cover the footer.
+result: pass
 
-- [ ] **B1.** Compare bar behavior:
-  - With 1 selected, the go link is disabled.
-  - Selecting a 5th ETF is blocked, with a notice.
-  - The selection is kept across tabs and after a language switch.
-- [ ] **B2.** The /compare/ table:
-  - The "최저" (lowest) badges show.
-  - Invalid or short codes show a notice.
-  - With fewer than 2 ETFs, the page shows guidance.
-  - The first column stays fixed (sticky) at 320.
-- [ ] **B3.** The overlay chart:
-  - Series have dash/marker styles and a legend.
-  - The metric switch works.
-  - "숫자로 보기" (show as numbers) works.
-- [ ] **B4.** The calculator:
-  - The input is full width.
-  - Values round-trip through the URL.
-  - The disclaimer sits below the headline.
-- [ ] **B5.** Without relying on color, you can tell the lowest badge and each chart series apart. Contrast is OK.
+### 3. A3. Compare bar on /isa/ and /pension/
+expected: Bar appears only when an existing selection exists. These pages have no checkboxes.
+result: issue
+reported: "보이는데 갑자기 비교 바가 로케일이 영문으로바뀌었음 compare_bar_count compare_bar_clear compare_bar_go 이렇게 나옴"
+severity: major
 
-## C. Mobile a11y (from 14-VERIFICATION)
+### 4. A4. RSS link
+expected: Footer RSS link on `/` and `/changelog/` opens `/feed.xml`; on /changelog/ the two footer links are visibly separated; page source has `<link rel="alternate" type="application/rss+xml">`; RSS label translates after language switch.
+result: pass
+note: "feed.xml valid; <script/> in viewer = browser extension (none in file). Side observation: suspicious 총보수 values in feed (269540 0.3→0.0062, 433330 0.05→0.0047, 476030 0.05→0.0055) — check data separately."
 
-- [ ] **C1.** On a real phone:
-  - The h1 is solid and readable, and the arrows meet AA contrast.
-  - Touch targets are at least 44px.
-  - The header hides on scroll-down and comes back on scroll-up or focus.
-  - The changelog table scrolls horizontally, with the fade.
-- [ ] **C2.** Screen reader (VoiceOver, TalkBack or NVDA):
-  - In the mobile card table, each value is read with its column name.
-  - The copy-code button works.
-  - Loading, error, empty and count states are announced.
-  - Check 14-REVIEW IN-01 here: whether the non-code `.cell-label` spans are read twice.
+### 5. A5. /compare/ skip link and header
+expected: Tab then Enter on skip link moves focus to main. Header, nav and hamburger behave as on main page.
+result: skipped
+reason: "건너뛰기" (user skipped; local server stopped)
 
-## D. Translation review
+### 6. B1. Compare bar behavior
+expected: With 1 selected, go link disabled; selecting a 5th ETF is blocked with a notice; selection kept across tabs and after language switch.
+result: pass
 
-- [ ] **D1.** Open `/compare/` with `?lang=` set to en, vi, zh, ja, th, tl (and km if possible). The compare and calculator strings read naturally and are not cut off. Check these especially:
-  - calc_disclaimer (legal text)
-  - compare_bar_limit
-  - calc_return
-- [ ] **D2.** A native speaker reviews the th, tl, km and vi drafts, plus the aria strings in all 8 languages.
-- [ ] **D3.** The new `footer_rss` label reads naturally in all 8 languages.
+### 7. B2. /compare/ table
+expected: "최저" badges show; invalid/short codes show a notice; fewer than 2 ETFs shows guidance; first column sticky at 320.
+result: pass
+
+### 8. B3. Overlay chart
+expected: Series have dash/marker styles and a legend; metric switch works; "숫자로 보기" works.
+result: [pending]
+
+### 9. B4. Calculator
+expected: Input is full width; values round-trip through URL; disclaimer sits below the headline.
+result: [pending]
+
+### 10. B5. Non-color distinction
+expected: Lowest badge and each chart series distinguishable without color; contrast OK.
+result: [pending]
+
+### 11. C1. Real phone check
+expected: h1 solid and readable, arrows meet AA contrast; touch targets >= 44px; header hides on scroll-down and returns on scroll-up/focus; changelog table scrolls horizontally with fade.
+result: [pending]
+
+### 12. C2. Screen reader
+expected: (VoiceOver/TalkBack/NVDA) Mobile card table reads each value with column name; copy-code button works; loading/error/empty/count states announced; note whether non-code `.cell-label` spans are read twice (14-REVIEW IN-01).
+result: [pending]
+
+### 13. D1. Translations on /compare/
+expected: `/compare/?lang=` en, vi, zh, ja, th, tl (km if possible): compare and calculator strings read naturally, not cut off — esp. calc_disclaimer, compare_bar_limit, calc_return.
+result: [pending]
+
+### 14. D2. Native speaker review
+expected: Native speaker reviews th, tl, km, vi drafts plus aria strings in all 8 languages.
+result: [pending]
+
+### 15. D3. footer_rss label
+expected: `footer_rss` label reads naturally in all 8 languages.
+result: [pending]
 
 ## Summary
 
 total: 15
-passed: 0
-issues: 0
-pending: 15
-skipped: 0
+passed: 4
+issues: 1
+pending: 8
+skipped: 2
 blocked: 0
 
 ## Gaps
+
+- truth: "On /isa/ and /pension/, compare bar appears only with existing selection and shows translated labels"
+  status: failed
+  reason: "User reported: compare bar shows raw i18n keys (compare_bar_count, compare_bar_clear, compare_bar_go) instead of translated text on /isa/, /pension/"
+  severity: major
+  test: 3
+  root_cause: "/isa/, /pension/ have no table so etf:table-rendered never fires; bar rendered once at DOMContentLoaded before language pack fetch resolved"
+  fix: "script.js updateLanguage emits etf:lang-changed; compare-select.js re-syncs on it"
+  status_after_fix: fixed (needs re-test)
+  artifacts: [script.js, compare-select.js]
+  missing: []

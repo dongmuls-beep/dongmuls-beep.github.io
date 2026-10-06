@@ -320,6 +320,7 @@ async function updateLanguage(lang, options = {}) {
     applyTranslations();
     applySeoTranslations();
     updateHomeCoverageMetric();
+    emitEtfEvent("etf:lang-changed");
 
     const selector = document.getElementById("languageSelect");
     if (selector && selector.value !== currentLanguage) {
@@ -678,6 +679,7 @@ function getTranslation(key) {
 
 // Seam events. "etf:table-rendered" fires whenever tbody is replaced (loading, error, empty or data rows);
 // on success it fires before "etf:data-ready", on failure "etf:data-error" follows it.
+// "etf:lang-changed" fires after every language pack is applied (pages without a table rely on it).
 function emitEtfEvent(name) {
     if (typeof document.dispatchEvent === "function" && typeof CustomEvent === "function") document.dispatchEvent(new CustomEvent(name));
 }

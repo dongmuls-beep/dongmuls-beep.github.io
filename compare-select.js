@@ -338,6 +338,7 @@
     if (typeof document !== "undefined" && document.addEventListener) {
         document.addEventListener("change", onChange);
         document.addEventListener("etf:table-rendered", sync);
+        document.addEventListener("etf:lang-changed", sync);
         if (document.readyState !== "loading") sync();
         else document.addEventListener("DOMContentLoaded", sync);
     }
