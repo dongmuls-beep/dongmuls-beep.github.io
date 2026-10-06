@@ -83,7 +83,7 @@ const contract = [
   ".cmp-line-1", ".cmp-line-2", ".cmp-line-3", ".cmp-line-4", ".cmp-marker", ".cmp-marker-1", ".cmp-marker-2", ".cmp-marker-3",
   ".cmp-marker-4", ".cmp-legend", ".cmp-legend-item", ".cmp-swatch", ".cmp-legend-note", ".cmp-chart-alt", ".cmp-chart-table",
   ".cmp-calc-form", ".cmp-field", ".cmp-label", ".cmp-input", ".cmp-select", ".cmp-hint", ".cmp-field-error",
-  '.cmp-input[aria-invalid="true"]', ".cmp-calc-pair", ".cmp-calc-result", ".cmp-calc-headline", ".cmp-calc-list",
+  '.cmp-input[aria-invalid="true"]', ".cmp-calc-result", ".cmp-calc-headline", ".cmp-calc-table",
   ".cmp-calc-meta", ".cmp-warning", ".cmp-disclaimer",
 ];
 for (const s of contract) assert(css.includes(s), "class contract missing selector: " + s);

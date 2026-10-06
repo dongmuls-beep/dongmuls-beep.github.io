@@ -71,7 +71,7 @@
         return typeof f === "number" && isFinite(f) ? f : null;
     }
 
-    function buildCalcResult(inputs, items, baseCode, otherCode) {
+    function buildCalcResult(inputs, items) {
         var n = CompareCalc.normalizeInputs(inputs);
         items = items || [];
         var fees = items.map(function (i) {
@@ -94,33 +94,21 @@
         var warnings = perEtf.filter(function (e) { return !e.excluded && e.warning === "fee_high"; }).map(function (e) { return e.name; });
         var contributed = sims.length ? sims[0].totalContributed : n.lumpSum + n.monthly * n.years * 12;
 
-        var headline = null;
-        var a = null, b = null, ia = -1, ib = -1;
-        items.forEach(function (item, idx) {
-            if (item.code === baseCode && ia < 0) ia = idx;
-            if (item.code === otherCode && ib < 0) ib = idx;
+        // Rank by cumulative fees paid (ties share a rank); headline = cheapest vs most expensive.
+        var ranked = perEtf.filter(function (e) { return !e.excluded; })
+            .sort(function (x, y) { return x.totalFees - y.totalFees; });
+        ranked.forEach(function (e, idx) {
+            e.gap = e.totalFees - ranked[0].totalFees;
+            e.rank = idx > 0 && Math.abs(e.totalFees - ranked[idx - 1].totalFees) < 1 ? ranked[idx - 1].rank : idx + 1;
         });
-        if (ia >= 0 && ib >= 0 && ia !== ib && !perEtf[ia].excluded && !perEtf[ib].excluded) {
-            a = items[ia];
-            b = items[ib];
-            var c = CompareCalc.compare(n, feeOf(a), feeOf(b));
-            if (!c.excluded) {
-                if (Math.abs(c.feesDifference) < 1) {
-                    headline = { kind: "same", years: n.years };
-                } else {
-                    // "더 부담" = cumulative fees paid (totalFees difference), not final-value difference.
-                    var bHigher = c.feesDifference > 0;
-                    headline = {
-                        kind: "more",
-                        years: n.years,
-                        low: bHigher ? a : b,
-                        high: bHigher ? b : a,
-                        amount: Math.round(Math.abs(c.feesDifference))
-                    };
-                }
-            }
+        var headline = null;
+        if (ranked.length >= 2) {
+            var top = ranked[ranked.length - 1];
+            headline = top.gap < 1
+                ? { kind: "same", years: n.years }
+                : { kind: "more", years: n.years, low: ranked[0], high: top, amount: Math.round(top.gap) };
         }
-        return { inputs: n, headline: headline, perEtf: perEtf, excludedNames: excludedNames, warnings: warnings, contributed: contributed };
+        return { inputs: n, headline: headline, ranked: ranked, perEtf: perEtf, excludedNames: excludedNames, warnings: warnings, contributed: contributed };
     }
 
     function renderResultHtml(result) {
@@ -134,12 +122,20 @@
         }
         h += '<div class="cmp-calc-result" role="group">';
         h += '<p id="cmp-calc-headline" class="cmp-calc-headline" role="status" aria-live="polite" aria-atomic="true">' + esc(text) + "</p>";
-        h += '<ul class="cmp-calc-list">';
-        result.perEtf.forEach(function (e) {
-            if (e.excluded) return;
-            h += "<li>" + esc(tr("calc_per_etf", { name: e.name, fees: fmt(e.totalFees), final: fmt(e.fvWithFee) })) + "</li>";
-        });
-        h += "</ul>";
+        if (result.ranked.length) {
+            h += '<div class="cmp-table-wrap" role="region" tabindex="0" aria-labelledby="cmp-calc-caption">';
+            h += '<table class="cmp-table cmp-calc-table"><caption id="cmp-calc-caption" class="cmp-sr-only">' + esc(tr("calc_table_caption")) + "</caption>";
+            h += '<thead><tr><th scope="col">' + esc(tr("calc_col_rank")) + '</th><th scope="col">' + esc(tr("calc_col_etf")) + '</th><th scope="col">' + esc(tr("calc_col_fees")) +
+                '</th><th scope="col">' + esc(tr("calc_col_gap")) + '</th><th scope="col">' + esc(tr("calc_col_final")) + "</th></tr></thead><tbody>";
+            result.ranked.forEach(function (e) {
+                var best = e.gap < 1;
+                h += "<tr><td>" + e.rank + '</td><th scope="row">' + esc(e.name) + '<span class="cmp-etf-code">' + esc(e.code) + "</span></th>";
+                h += "<td>" + fmt(e.totalFees) + "</td>";
+                h += best ? '<td data-best="true"><span class="cmp-best">' + esc(tr("compare_best_badge")) + "</span></td>" : "<td>+" + fmt(e.gap) + "</td>";
+                h += "<td>" + fmt(e.fvWithFee) + "</td></tr>";
+            });
+            h += "</tbody></table></div>";
+        }
         h += '<p class="cmp-calc-meta">' + esc(tr("calc_contributed", { amount: fmt(result.contributed) })) + "</p>";
         if (result.excludedNames.length) {
             h += '<p class="cmp-notice" role="status">' + esc(tr("calc_excluded", { names: result.excludedNames.join(", ") })) + "</p>";
@@ -156,8 +152,6 @@
     var S = {
         ctx: null,
         values: null,
-        base: null,
-        other: null,
         built: false,
         urlTimer: null,
         inputTimer: null,
@@ -166,12 +160,8 @@
         notes: {},
         labels: {},
         hints: {},
-        baseSel: null,
-        otherSel: null,
         out: null,
-        copyBtn: null,
-        baseLabel: null,
-        otherLabel: null
+        copyBtn: null
     };
 
     function $(id) {
@@ -222,23 +212,6 @@
         });
         body.appendChild(form);
 
-        var pair = mk("div", "cmp-calc-pair");
-        S.baseLabel = mk("label", "cmp-label", { for: "cmp-base" });
-        S.baseSel = mk("select", "cmp-select", { id: "cmp-base" });
-        S.otherLabel = mk("label", "cmp-label", { for: "cmp-other" });
-        S.otherSel = mk("select", "cmp-select", { id: "cmp-other" });
-        var w1 = mk("div", "cmp-field");
-        w1.appendChild(S.baseLabel);
-        w1.appendChild(S.baseSel);
-        var w2 = mk("div", "cmp-field");
-        w2.appendChild(S.otherLabel);
-        w2.appendChild(S.otherSel);
-        pair.appendChild(w1);
-        pair.appendChild(w2);
-        body.appendChild(pair);
-        S.baseSel.addEventListener("change", function () { S.base = S.baseSel.value; update(); });
-        S.otherSel.addEventListener("change", function () { S.other = S.otherSel.value; update(); });
-
         S.out = mk("div", null, { id: "cmp-calc-out" });
         body.appendChild(S.out);
         S.copyBtn = mk("button", "cmp-btn", { type: "button", id: "cmp-calc-copy" });
@@ -255,38 +228,7 @@
             S.labels[f.key].textContent = tr(f.label);
             if (f.hint) S.hints[f.key].textContent = tr(f.hint);
         });
-        S.baseLabel.textContent = tr("calc_base_etf");
-        S.otherLabel.textContent = tr("calc_other_etf");
         S.copyBtn.textContent = tr("compare_copy_link");
-    }
-
-    function validItems() {
-        return ((S.ctx && S.ctx.items) || []).filter(function (i) { return feeOf(i) !== null; });
-    }
-
-    function fillSelect(sel, items, current) {
-        while (sel.firstChild) sel.removeChild(sel.firstChild);
-        items.forEach(function (i) {
-            var o = document.createElement("option");
-            o.value = i.code;
-            o.textContent = i.name;
-            sel.appendChild(o);
-        });
-        sel.value = current;
-    }
-
-    function fillPairs() {
-        var items = validItems();
-        var codes = items.map(function (i) { return i.code; });
-        if (codes.indexOf(S.base) < 0) S.base = codes[0] || null;
-        if (codes.indexOf(S.other) < 0 || S.other === S.base) {
-            S.other = null;
-            for (var k = 0; k < codes.length; k++) {
-                if (codes[k] !== S.base) { S.other = codes[k]; break; }
-            }
-        }
-        fillSelect(S.baseSel, items, S.base);
-        fillSelect(S.otherSel, items, S.other);
     }
 
     function setFieldValues(v) {
@@ -358,7 +300,7 @@
             }
         });
         S.values = n;
-        S.out.innerHTML = renderResultHtml(buildCalcResult(n, S.ctx.items, S.base, S.other));
+        S.out.innerHTML = renderResultHtml(buildCalcResult(n, S.ctx.items));
         S.out.removeAttribute("hidden");
         scheduleUrl();
     }
@@ -400,7 +342,6 @@
         if (!ensureForm()) return;
         if (first) S.values = readCalcParams(location.search);
         applyTexts();
-        fillPairs();
         if (first) setFieldValues(S.values);
         update();
     }

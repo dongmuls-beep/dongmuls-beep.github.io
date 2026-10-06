@@ -69,11 +69,14 @@ NEW_KEYS = ['seo_compare_title',
  'calc_monthly',
  'calc_return',
  'calc_return_hint',
- 'calc_base_etf',
- 'calc_other_etf',
+ 'calc_col_rank',
+ 'calc_col_etf',
  'calc_result',
  'calc_result_same',
- 'calc_per_etf',
+ 'calc_col_fees',
+ 'calc_col_gap',
+ 'calc_col_final',
+ 'calc_table_caption',
  'calc_contributed',
  'calc_excluded',
  'calc_fee_high',
@@ -83,7 +86,12 @@ NEW_KEYS = ['seo_compare_title',
  'calc_clamped',
  'calc_disclaimer']
 
-KO_EXPECTED = {'calc_base_etf': '기준 ETF',
+KO_EXPECTED = {'calc_col_rank': '순위',
+ 'calc_col_etf': 'ETF',
+ 'calc_col_fees': '누적 수수료 (원)',
+ 'calc_col_gap': '최저 대비 (원)',
+ 'calc_col_final': '최종 평가금액 (원)',
+ 'calc_table_caption': '보유기간 누적 수수료가 적은 순서',
  'calc_clamped': '최대 {limit}까지만 계산해요.',
  'calc_contributed': '총 납입 원금 {amount}원',
  'calc_disclaimer': '이 계산은 입력한 가정에 따른 단순 추정이며 투자 권유나 수익 보장이 아니에요. 실제 수수료, 세금, 수익률은 달라질 수 있어요.',
@@ -95,10 +103,8 @@ KO_EXPECTED = {'calc_base_etf': '기준 ETF',
  'calc_intro': '보수와 비용 차이가 오래 쌓이면 얼마나 벌어지는지 계산해 볼 수 있어요. 아래 수익률은 실제 전망이 아닌 가정이에요.',
  'calc_lump': '일시금 (원)',
  'calc_monthly': '월 적립금 (원)',
- 'calc_other_etf': '비교 ETF',
- 'calc_per_etf': '{name}: 누적 수수료 약 {fees}원 · 최종 평가금액 약 {final}원',
  'calc_result': '{years}년간 {a}보다 {b}가 약 {amount}원 더 부담해요',
- 'calc_result_same': '{years}년간 두 ETF의 누적 비용 차이는 거의 없어요',
+ 'calc_result_same': '{years}년간 ETF 간 누적 비용 차이는 거의 없어요',
  'calc_return': '기대수익률 (연 %, 가정)',
  'calc_return_hint': '가정 값이에요. 기본은 0%예요.',
  'calc_title': '누적 비용 계산기',
@@ -152,7 +158,12 @@ KO_EXPECTED = {'calc_base_etf': '기준 ETF',
  'seo_compare_description': '선택한 ETF 2~4개의 총보수, 기타비용, 매매중개수수료, 실부담비용, 순자산을 한 표로 나란히 비교합니다.',
  'seo_compare_title': 'ETF 직접 비교 | etfsave.life'}
 
-EN_EXPECTED = {'calc_base_etf': 'Base ETF',
+EN_EXPECTED = {'calc_col_rank': 'Rank',
+ 'calc_col_etf': 'ETF',
+ 'calc_col_fees': 'Total fees (KRW)',
+ 'calc_col_gap': 'vs. lowest (KRW)',
+ 'calc_col_final': 'Final value (KRW)',
+ 'calc_table_caption': 'ETFs ranked by total fees over the holding period',
  'calc_clamped': 'Values are capped at {limit}.',
  'calc_contributed': 'Total contributed {amount} KRW',
  'calc_disclaimer': 'This is a simple estimate based on your assumptions, not investment advice or '
@@ -166,10 +177,8 @@ EN_EXPECTED = {'calc_base_etf': 'Base ETF',
                'forecast.',
  'calc_lump': 'Lump sum (KRW)',
  'calc_monthly': 'Monthly contribution (KRW)',
- 'calc_other_etf': 'Compared ETF',
- 'calc_per_etf': '{name}: total fees about {fees} KRW · final value about {final} KRW',
  'calc_result': 'Over {years} years, {b} costs about {amount} KRW more than {a}',
- 'calc_result_same': 'Over {years} years the two ETFs cost almost the same',
+ 'calc_result_same': 'Over {years} years these ETFs cost almost the same',
  'calc_return': 'Expected return (% per year, assumption)',
  'calc_return_hint': 'This is an assumption. Default is 0%.',
  'calc_title': 'Cumulative Cost Calculator',
@@ -240,8 +249,8 @@ def _load(lang):
 
 
 def test_new_keys_count():
-    assert len(NEW_KEYS) == 68
-    assert len(set(NEW_KEYS)) == 68
+    assert len(NEW_KEYS) == 71
+    assert len(set(NEW_KEYS)) == 71
     assert set(KO_EXPECTED) == set(NEW_KEYS) == set(EN_EXPECTED)
 
 

@@ -606,12 +606,6 @@ td[data-best="true"] .cmp-value {
   color: var(--danger);
 }
 
-.cmp-calc-pair {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
 .cmp-calc-result {
   margin-top: 24px;
 }
@@ -624,12 +618,17 @@ td[data-best="true"] .cmp-value {
   margin: 0 0 16px;
 }
 
-.cmp-calc-list {
-  font-size: 16px;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-  margin: 0;
-  padding-left: 24px;
+.cmp-calc-table th[scope="row"] {
+  position: static;
+  width: auto;
+}
+
+.cmp-calc-table th[scope="col"]:first-child {
+  min-width: 0;
+}
+
+.cmp-calc-table td {
+  white-space: nowrap;
 }
 
 .cmp-calc-meta {
@@ -673,8 +672,7 @@ td[data-best="true"] .cmp-value {
     display: none;
   }
 
-  .cmp-calc-form,
-  .cmp-calc-pair {
+  .cmp-calc-form {
     grid-template-columns: 1fr 1fr;
   }
 }

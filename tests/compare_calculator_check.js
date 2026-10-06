@@ -78,11 +78,15 @@ const TR = {
     calc_monthly: "월 적립금 (원)",
     calc_return: "기대수익률",
     calc_return_hint: "가정 값이에요.",
-    calc_base_etf: "기준 ETF",
-    calc_other_etf: "비교 ETF",
+    calc_col_rank: "순위",
+    calc_col_etf: "ETF",
+    calc_col_fees: "누적 수수료 (원)",
+    calc_col_gap: "최저 대비 (원)",
+    calc_col_final: "최종 평가금액 (원)",
+    calc_table_caption: "보유기간 누적 수수료가 적은 순서",
+    compare_best_badge: "최저",
     calc_result: "{years}년간 {a}보다 {b}가 약 {amount}원 더 부담해요",
     calc_result_same: "{years}년간 두 ETF의 누적 비용 차이는 거의 없어요",
-    calc_per_etf: "{name}: 누적 수수료 약 {fees}원 · 최종 평가금액 약 {final}원",
     calc_contributed: "총 납입 원금 {amount}원",
     calc_excluded: "{names}은(는) 수수료 값이 없어 계산에서 제외했어요.",
     calc_fee_high: "{name}: 실부담비용이 {limit}%를 넘어 입력 오류일 수 있어요.",
@@ -188,7 +192,7 @@ const items = [
     { code: "C", name: "C name", real: null },
 ];
 const inp = { lumpSum: 1e7, years: 10, monthly: 0, annualReturnPct: 0 };
-let r = UI.buildCalcResult(inp, items, "A", "B");
+let r = UI.buildCalcResult(inp, items);
 const cmp = CC.compare(inp, 0.09, 0.3236);
 assert.strictEqual(r.headline.kind, "more");
 assert.strictEqual(r.headline.low.code, "A");
@@ -200,35 +204,59 @@ assert.strictEqual(r.perEtf[2].excluded, true);
 assert.deepStrictEqual(plain(r.excludedNames), ["C name"]);
 assert.strictEqual(r.contributed, 1e7);
 
-r = UI.buildCalcResult(inp, items, "B", "A");
+// order-independent: input order does not change ranking/headline
+r = UI.buildCalcResult(inp, [items[1], items[0]]);
 assert.strictEqual(r.headline.low.code, "A");
 assert.strictEqual(r.headline.high.code, "B");
 
+// multi: 4 ETFs ranked by cumulative fees, gap vs cheapest, headline spans cheapest..most expensive
+const four = [
+    { code: "D", name: "D name", real: 0.5 },
+    { code: "A", name: "A name", real: 0.09 },
+    { code: "E", name: "E name", real: 0.2 },
+    { code: "F", name: "F name", real: 0.09 },
+];
+r = UI.buildCalcResult(inp, four);
+assert.deepStrictEqual(plain(r.ranked.map((e) => e.code)), ["A", "F", "E", "D"]);
+assert.deepStrictEqual(plain(r.ranked.map((e) => e.rank)), [1, 1, 3, 4], "ties share rank");
+assert.strictEqual(r.ranked[0].gap, 0);
+assert.strictEqual(r.ranked[1].gap, 0);
+const cAD = CC.compare(inp, 0.09, 0.5);
+assert.ok(Math.abs(r.ranked[3].gap - cAD.feesDifference) < 1e-6);
+assert.strictEqual(r.headline.low.code, "A");
+assert.strictEqual(r.headline.high.code, "D");
+assert.strictEqual(r.headline.amount, Math.round(cAD.feesDifference));
+
 const same = [{ code: "A", name: "A", real: 0.2 }, { code: "B", name: "B", real: 0.2 }];
-assert.strictEqual(UI.buildCalcResult(inp, same, "A", "B").headline.kind, "same");
-assert.strictEqual(UI.buildCalcResult(inp, items, "A", "C").headline, null);
-const one = UI.buildCalcResult(inp, [items[0], items[2]], "A", "C");
+assert.strictEqual(UI.buildCalcResult(inp, same).headline.kind, "same");
+const one = UI.buildCalcResult(inp, [items[0], items[2]]);
 assert.strictEqual(one.headline, null);
+assert.strictEqual(one.ranked.length, 1);
 assert.deepStrictEqual(plain(one.excludedNames), ["C name"]);
-const hi = UI.buildCalcResult(inp, [items[0], { code: "H", name: "H name", real: 6 }], "A", "H");
+const hi = UI.buildCalcResult(inp, [items[0], { code: "H", name: "H name", real: 6 }]);
 assert.deepStrictEqual(plain(hi.warnings), ["H name"]);
 assert.strictEqual(hi.headline.kind, "more");
-assert.strictEqual(UI.buildCalcResult(inp, items, "A", "A").headline, null);
 
-let html = UI.renderResultHtml(UI.buildCalcResult(inp, items, "A", "B"));
+let html = UI.renderResultHtml(UI.buildCalcResult(inp, items));
 assert.ok(html.indexOf('role="group"') > 0 && html.indexOf("cmp-calc-result") > 0);
 assert.ok(html.includes('id="cmp-calc-headline"') && html.includes('aria-live="polite"') && html.includes('aria-atomic="true"'));
 const hl = html.match(/<p id="cmp-calc-headline"[^>]*>([^<]*)<\/p>/)[1];
 assert.ok(hl.includes("년간") && hl.includes("A name") && hl.includes("B name") && hl.includes("원 더 부담"), hl);
 assert.ok(hl.includes(Math.round(Math.abs(cmp.feesDifference)).toLocaleString("ko-KR")));
-const order = ["cmp-calc-headline", "cmp-calc-list", "cmp-calc-meta", "cmp-notice", "cmp-disclaimer"].map((k) => html.indexOf(k));
+const order = ["cmp-calc-headline", "cmp-calc-table", "cmp-calc-meta", "cmp-notice", "cmp-disclaimer"].map((k) => html.indexOf(k));
 assert.ok(order.every((v, i) => v >= 0 && (i === 0 || v > order[i - 1])), "order " + order);
 assert.ok(html.trim().endsWith('</p></div>') && html.lastIndexOf("cmp-disclaimer") > html.lastIndexOf("cmp-notice"));
 assert.ok(html.includes(Math.round(cmp.a.totalFees).toLocaleString("ko-KR")));
-assert.ok(!html.includes("C name:"), "excluded not listed as a line item");
-const none = UI.renderResultHtml(UI.buildCalcResult(inp, [], "A", "B"));
+assert.ok(html.includes("+" + Math.round(cmp.feesDifference).toLocaleString("ko-KR")), "gap vs lowest shown");
+assert.ok(html.includes('<th scope="row">A name') && html.includes("cmp-best"), "row headers + lowest badge");
+assert.ok(html.includes("<caption") && html.includes("순위") && html.includes("최저 대비"));
+assert.ok(!html.includes(">C name<"), "excluded not listed as a row");
+const fourHtml = UI.renderResultHtml(UI.buildCalcResult(inp, four));
+assert.strictEqual((fourHtml.match(/<tr>/g) || []).length, 5, "header + 4 rows");
+const none = UI.renderResultHtml(UI.buildCalcResult(inp, []));
 assert.ok(none.includes("cmp-disclaimer"), "disclaimer present with null headline");
-const xss = UI.renderResultHtml(UI.buildCalcResult(inp, [{ code: "A", name: "<img src=x>", real: 0.1 }, { code: "B", name: "B", real: 0.5 }], "A", "B"));
+assert.ok(!none.includes("<table"), "no table without ETFs");
+const xss = UI.renderResultHtml(UI.buildCalcResult(inp, [{ code: "A", name: "<img src=x>", real: 0.1 }, { code: "B", name: "B", real: 0.5 }]));
 assert.ok(!xss.includes("<img") && xss.includes("&lt;img"));
 const hiHtml = UI.renderResultHtml(hi);
 assert.ok(hiHtml.includes("cmp-warning") && hiHtml.includes("H name"));
@@ -249,9 +277,8 @@ assert.strictEqual(R["cmp-yrs"].value, "20");
 assert.strictEqual(R["cmp-amt"].getAttribute("inputmode"), "numeric");
 assert.strictEqual(R["cmp-ret"].getAttribute("inputmode"), "decimal");
 assert.ok(R["cmp-calc-out"].innerHTML.includes("20년간"), "headline for 20 years");
-assert.strictEqual(R["cmp-base"].children.length, 2, "C (no fee) excluded from options");
-assert.strictEqual(R["cmp-other"].children.length, 2);
-assert.notStrictEqual(R["cmp-base"].value, R["cmp-other"].value);
+assert.ok(!R["cmp-base"] && !R["cmp-other"], "no pair selects");
+assert.ok(R["cmp-calc-out"].innerHTML.includes("cmp-calc-table"), "ranked table rendered");
 assert.strictEqual(R["cmp-calc-copy"].textContent, "링크 복사");
 
 // invalid
@@ -295,7 +322,6 @@ const kids = W.dom.body.children.length;
 cb(dctx);
 assert.strictEqual(W.dom.body.children.length, kids, "no second form");
 assert.strictEqual(R["cmp-amt"].listeners.input.length, lis, "no extra listeners");
-assert.strictEqual(R["cmp-base"].children.length, 2);
 // compare/lang preserved in synced url
 assert.ok(W.replaced[W.replaced.length - 1].includes("compare=A,B"));
 

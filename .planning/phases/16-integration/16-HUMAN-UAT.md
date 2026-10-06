@@ -13,10 +13,10 @@ Setup: `python -m http.server 8080` from project root, open http://localhost:808
 ## Current Test
 <!-- OVERWRITE each test - shows where we are -->
 
-number: 8
-name: B3. Overlay chart
+number: 9
+name: B4. Calculator
 expected: |
-  Series have dash/marker styles and a legend; metric switch works; "숫자로 보기" works.
+  Input is full width; values round-trip through URL; disclaimer sits below the headline.
 awaiting: user response
 
 ## Tests
@@ -56,11 +56,13 @@ result: pass
 
 ### 8. B3. Overlay chart
 expected: Series have dash/marker styles and a legend; metric switch works; "숫자로 보기" works.
-result: [pending]
+result: pass
 
 ### 9. B4. Calculator
 expected: Input is full width; values round-trip through URL; disclaimer sits below the headline.
-result: [pending]
+result: issue
+reported: "계산기에서는 왜 멀티 비교가 어려운거야? 이거도 고려해줘" (/compare/?compare=360200,379780,360750)
+severity: major
 
 ### 10. B5. Non-color distinction
 expected: Lowest badge and each chart series distinguishable without color; contrast OK.
@@ -89,9 +91,9 @@ result: [pending]
 ## Summary
 
 total: 15
-passed: 4
-issues: 1
-pending: 8
+passed: 5
+issues: 2
+pending: 6
 skipped: 2
 blocked: 0
 
@@ -106,4 +108,14 @@ blocked: 0
   fix: "script.js updateLanguage emits etf:lang-changed; compare-select.js re-syncs on it"
   status_after_fix: fixed (needs re-test)
   artifacts: [script.js, compare-select.js]
+  missing: []
+
+- truth: "Calculator compares all selected ETFs (2-4) at once, not just a base/other pair"
+  status: failed
+  reason: "User reported: multi-ETF comparison is hard in calculator. Engine already simulates all (simulateMany); only headline is pair-based via 기준/비교 selects."
+  severity: major
+  test: 9
+  fix: "User chose ranked table: removed 기준/비교 selects; all ETFs ranked by cumulative fees with gap vs lowest and final value; headline = cheapest vs most expensive. i18n calc_base_etf/calc_other_etf/calc_per_etf replaced by calc_col_*/calc_table_caption (8 langs); calc_result_same no longer says 'two'."
+  status_after_fix: fixed (needs re-test)
+  artifacts: [compare-calculator.js, compare.css, i18n/*.json, tests/compare_calculator_check.js, tests/test_i18n_compare.py]
   missing: []
