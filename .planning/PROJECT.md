@@ -8,9 +8,15 @@
 
 v1.4 신뢰성·접근성·비교 도구 shipped (2026-10-06). 결측 수수료 null 처리(가짜 0 제거), 모바일 접근성 보강, `/compare/` 직접 비교(2~4개, 겹침 차트, 누적 비용 계산기 순위표), 총보수·기타비용 변동 RSS 피드. 테스트: pytest 387 + node 9 (CI). 남은 부채는 milestones/v1.4-MILESTONE-AUDIT.md 참조 (RSS 실패 silent, 15-REVIEW info 항목, 320px 계산기 표 등).
 
-## Next Milestone Goals
+## Current Milestone: v1.5 기술 부채 정리
 
-아직 정하지 않음 — `/gsd:new-milestone`으로 정의. 후보: v1.4 기술 부채 정리, REQUIREMENTS Future 백로그.
+**Goal:** v1.4 감사(milestones/v1.4-MILESTONE-AUDIT.md)에서 남은 기술 부채를 해소해 CI·피드·/compare/ 품질을 마감한다.
+
+**Target features:**
+- 데이터·CI 신뢰성: RSS 빌드 실패 silent 해소, 총보수 급락 3건 원천 확인, CI node 검사 단계 확인
+- RSS 피드 품질: 중복 행 제거, 유효숫자 포맷, 결정성 테스트 강화, .gitattributes·.tmp 잔여물
+- /compare/ UI·a11y 정리: 15-REVIEW 5건, 14-REVIEW aria-hidden, 320px 계산기 표, 언어 변경 seam 통일
+- 소소한 정리: footer-links gap, SUMMARY frontmatter 보정, VERIFICATION status 정리
 
 ## Core Value
 
@@ -49,7 +55,7 @@ v1.4 신뢰성·접근성·비교 도구 shipped (2026-10-06). 결측 수수료 
 
 ### Active
 
-(다음 마일스톤에서 정의)
+(v1.5 요구사항 정의 중)
 
 ### Out of Scope
 
@@ -117,4 +123,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-06 after v1.4 milestone*
+*Last updated: 2026-10-24 after v1.5 milestone start*
