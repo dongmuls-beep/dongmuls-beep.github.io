@@ -40,4 +40,22 @@
 
 ## Traceability
 
-(로드맵 생성 시 채워짐)
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DATA-11 | Phase 17 | Pending |
+| DATA-12 | Phase 17 | Pending |
+| CI-01 | Phase 17 | Pending |
+| FEED-05 | Phase 18 | Pending |
+| FEED-06 | Phase 18 | Pending |
+| FEED-07 | Phase 18 | Pending |
+| FEED-08 | Phase 18 | Pending |
+| CMP-07 | Phase 19 | Pending |
+| CMP-08 | Phase 19 | Pending |
+| CMP-09 | Phase 19 | Pending |
+| CMP-10 | Phase 19 | Pending |
+| CMP-11 | Phase 19 | Pending |
+| A11Y-10 | Phase 19 | Pending |
+| POLISH-01 | Phase 20 | Pending |
+| POLISH-02 | Phase 20 | Pending |
+
+Coverage: 15/15 mapped

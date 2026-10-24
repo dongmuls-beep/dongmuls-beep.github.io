@@ -6,7 +6,7 @@ status: planning
 last_updated: "2026-10-24T04:57:41.666Z"
 last_activity: 2026-10-24
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,15 +20,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-06)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
-**Current milestone:** 없음 (v1.4 완료)
-**Current focus:** 다음 마일스톤 정의 — `/gsd:new-milestone`
+**Current milestone:** v1.5 기술 부채 정리 (Phases 17-20)
+**Current focus:** Phase 17 계획 — `/gsd:plan-phase 17`
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 17 (데이터·CI 신뢰성) — not started
 Plan: —
-Status: Defining requirements
-Last activity: 2026-10-24 — Milestone v1.5 started
+Status: Roadmap created, ready to plan
+Last activity: 2026-10-24 — v1.5 roadmap created
 
 ## Completed Milestones
 
