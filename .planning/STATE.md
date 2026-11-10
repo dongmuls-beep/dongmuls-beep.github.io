@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: 기술 부채 정리
 status: verifying
-last_updated: "2026-11-10T13:42:25.747Z"
+last_updated: "2026-11-10T18:33:48.989Z"
 last_activity: 2026-11-10
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 9
+  completed_plans: 8
   percent: 75
 ---
 

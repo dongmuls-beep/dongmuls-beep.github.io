@@ -129,7 +129,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 20-01-PLAN.md — .footer-links flex row + token gap, CSS contract test (POLISH-01)
+- [x] 20-01-PLAN.md — .footer-links flex row + token gap, CSS contract test (POLISH-01)
 - [ ] 20-02-PLAN.md — fact-driven requirements-completed backfill + 14-16 VERIFICATION/UAT alignment (POLISH-02)
 **UI hint**: yes
 **Owns**: style.css (.footer-links), .planning/milestones 및 phase 디렉터리 문서
@@ -157,4 +157,4 @@ Plans:
 | 17. 데이터·CI 신뢰성 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 18. RSS 피드 품질 | v1.5 | 1/1 | Complete   | 2026-11-10 |
 | 19. /compare/ UI·접근성 정리 | v1.5 | 3/3 | Complete   | 2026-11-10 |
-| 20. 소소한 정리·문서 보정 | v1.5 | 0/0 | Not started | - |
+| 20. 소소한 정리·문서 보정 | v1.5 | 1/2 | In Progress|  |
