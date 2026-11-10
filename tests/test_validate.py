@@ -187,3 +187,22 @@ class TestNullCost:
         validate_etl_results([make_item('1', 'Big', 6.0)], [{'종목코드': '1', '실부담비용': 0.1}])
         out = capsys.readouterr().out
         assert "DATA-01" in out and "DATA-03" in out
+
+
+class TestFeeRatioAnomaly:
+    """DATA-12: 총보수 5배 이상 변동 경고 (soft)"""
+
+    @pytest.mark.parametrize('prev,new', [(0.05, 0.0047), (0.3, 0.0062), (0.005, 0.05)])
+    def test_ratio_warns(self, capsys, prev, new):
+        validate_etl_results([make_item('433330', 'SOL', new)], [make_item('433330', 'SOL', prev)])
+        out = capsys.readouterr().out
+        assert '[WARNING] DATA-12' in out and '433330' in out
+
+    @pytest.mark.parametrize('prev,new', [(0.05, 0.04), (0.0, 0.0), (None, 0.05), (0.05, None)])
+    def test_no_warning(self, capsys, prev, new):
+        validate_etl_results([make_item('433330', 'SOL', new)], [make_item('433330', 'SOL', prev)])
+        assert 'DATA-12' not in capsys.readouterr().out
+
+    def test_prev_none(self, capsys):
+        validate_etl_results([make_item('433330', 'SOL', 0.05)], None)
+        assert 'DATA-12' not in capsys.readouterr().out

@@ -698,6 +698,23 @@ def validate_etl_results(results, prev_data):
                         f"(임계값: ±{ANOMALY_THRESHOLD}%p)"
                     )
 
+    # --- DATA-12: 총보수 5배 이상 급변 감지 (양방향, 이전 data.json 대비) ---
+    FEE_RATIO_THRESHOLD = 5.0
+    if prev_data is not None:
+        prev_fee = {item.get('종목코드'): item.get('총보수') for item in prev_data}
+        for item in results:
+            code = item.get('종목코드', '')
+            new_fee = item.get('총보수')
+            old_fee = prev_fee.get(code)
+            if not new_fee or not old_fee or new_fee <= 0 or old_fee <= 0:
+                continue
+            if max(new_fee, old_fee) / min(new_fee, old_fee) >= FEE_RATIO_THRESHOLD:
+                print(
+                    f"[WARNING] DATA-12: {item.get('종목명', code)}({code}) "
+                    f"총보수 급변 — 이전: {old_fee}%, 현재: {new_fee}% "
+                    f"({FEE_RATIO_THRESHOLD:g}배 이상 변동, 원천 확인 필요)"
+                )
+
 
 def validate_market_data(results):
     """
