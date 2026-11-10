@@ -94,7 +94,9 @@ Plans:
   2. 수치가 6자리 유효숫자로 잘리지 않고 원래 값 그대로 표시된다
   3. 같은 입력으로 두 번 빌드하면 byte 단위로 동일한 출력이 나오고 테스트가 이를 실제로 비교한다
   4. feed.xml에 .gitattributes가 적용되고 빌드 후 잔여 .tmp 파일이 없다
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 18-01-PLAN.md — 중복 제거·정확한 수치·결정성 테스트·빈 피드 보호·.gitattributes(feed.xml)
 **Owns**: RSS 빌드 스크립트, 피드 테스트, .gitattributes
 
 ### Phase 19: /compare/ UI·접근성 정리
