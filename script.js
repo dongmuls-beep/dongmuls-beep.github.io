@@ -1026,15 +1026,15 @@ function renderTable(rows) {
         row.innerHTML = `
             <td class="clickable code-cell" role="cell" data-label="${cl[0]}" title="${escapeHtml(getTranslation("aria_copy_code"))}"><span class="cell-label" aria-hidden="true">${cl[0]}</span>${escapeHtml(code)}</td>
             <td role="cell" data-label="${cl[1]}" class="name-cell">
-                <span class="cell-label">${cl[1]}</span>
+                <span class="cell-label" aria-hidden="true">${cl[1]}</span>
                 <a href="${naverUrl}" target="_blank" rel="noopener noreferrer" class="stock-link">${escapeHtml(name)}</a>
             </td>
-            <td class="text-right" role="cell" data-label="${cl[2]}"><span class="cell-label">${cl[2]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.fee], code, name, "fee"))}</td>
-            <td class="text-right" role="cell" data-label="${cl[3]}"><span class="cell-label">${cl[3]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.other], code, name, "other"))}</td>
-            <td class="text-right" role="cell" data-label="${cl[4]}"><span class="cell-label">${cl[4]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.trade], code, name, "trade"))}</td>
-            <td class="text-right highlight" role="cell" data-label="${cl[5]}"><span class="cell-label">${cl[5]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.real], code, name, "real"))}${changeHtml}</td>
-            <td class="text-right" role="cell" data-label="${cl[6]}"><span class="cell-label">${cl[6]}</span>${withMissingAlt(formatAUM(item[dataKeys.aum]))}</td>
-            <td class="text-right" role="cell" data-label="${cl[7]}"><span class="cell-label">${cl[7]}</span>${withMissingAlt(formatVolume(item[dataKeys.volume]))}</td>
+            <td class="text-right" role="cell" data-label="${cl[2]}"><span class="cell-label" aria-hidden="true">${cl[2]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.fee], code, name, "fee"))}</td>
+            <td class="text-right" role="cell" data-label="${cl[3]}"><span class="cell-label" aria-hidden="true">${cl[3]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.other], code, name, "other"))}</td>
+            <td class="text-right" role="cell" data-label="${cl[4]}"><span class="cell-label" aria-hidden="true">${cl[4]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.trade], code, name, "trade"))}</td>
+            <td class="text-right highlight" role="cell" data-label="${cl[5]}"><span class="cell-label" aria-hidden="true">${cl[5]}</span>${withMissingAlt(feeCellHtml(item[dataKeys.real], code, name, "real"))}${changeHtml}</td>
+            <td class="text-right" role="cell" data-label="${cl[6]}"><span class="cell-label" aria-hidden="true">${cl[6]}</span>${withMissingAlt(formatAUM(item[dataKeys.aum]))}</td>
+            <td class="text-right" role="cell" data-label="${cl[7]}"><span class="cell-label" aria-hidden="true">${cl[7]}</span>${withMissingAlt(formatVolume(item[dataKeys.volume]))}</td>
         `;
 
         const codeCell = row.querySelector(".code-cell");
