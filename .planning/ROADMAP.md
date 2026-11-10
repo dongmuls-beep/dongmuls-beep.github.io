@@ -110,7 +110,11 @@ Plans:
   4. 언어를 바꾸면 `etf:lang-changed`로 /compare/가 갱신된다 (title MutationObserver 없음)
   5. 320px에서 순위표 "최저 대비" 열이 잘리지 않고 ETF명 열이 고정된다
   6. 코드 외 `.cell-label` span이 일관되게 aria-hidden 처리된다
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 19-01-PLAN.md — compare-view: corner th, ?compare= truncation, etf:lang-changed, retry focus, scroll hint for all wraps
+- [ ] 19-02-PLAN.md — calculator locale + single live region, 320px rank table (sticky name, gap column)
+- [ ] 19-03-PLAN.md — chart dead code + resize redraw + retry focus, .cell-label aria-hidden
 **UI hint**: yes
 **Owns**: compare/ 페이지 JS·HTML, script.js, style.css (compare 영역)
 
