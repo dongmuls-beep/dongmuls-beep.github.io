@@ -8,7 +8,7 @@
 
 ### 데이터·CI 신뢰성 (DATA / CI)
 
-- [ ] **DATA-11**: RSS 빌드가 실패하면 CI가 실패로 표시된다 (기존 feed.xml은 유지)
+- [x] **DATA-11**: RSS 빌드가 실패하면 CI가 실패로 표시된다 (기존 feed.xml은 유지)
 - [ ] **DATA-12**: 총보수 급락 3건(269540, 433330, 476030)이 원천 데이터 오류인지 확인되고, 오류면 수정·재발 방지된다
 - [ ] **CI-01**: `daily_update.yml`의 node 검사 단계가 실제 CI 실행에서 통과함을 확인한다
 
@@ -42,7 +42,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-11 | Phase 17 | Pending |
+| DATA-11 | Phase 17 | Complete |
 | DATA-12 | Phase 17 | Pending |
 | CI-01 | Phase 17 | Pending |
 | FEED-05 | Phase 18 | Pending |
