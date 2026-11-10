@@ -62,6 +62,7 @@ jobs:
         run: python scripts/build_changelog.py
 
       - name: Build RSS Feed
+        id: rss
         run: python scripts/build_rss.py
         continue-on-error: true
 
@@ -73,3 +74,8 @@ jobs:
         with:
           commit_message: "Auto-update ETF data (Daily)"
           file_pattern: "data.json changelog.json update-meta.json fee-history.json feed.xml"
+
+      - name: Fail if RSS build failed
+        if: steps.rss.outcome == 'failure'
+        shell: bash
+        run: echo "::error::RSS build failed; feed.xml kept from previous run" && exit 1
