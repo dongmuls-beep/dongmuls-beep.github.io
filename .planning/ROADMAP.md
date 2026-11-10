@@ -112,7 +112,7 @@ Plans:
   6. 코드 외 `.cell-label` span이 일관되게 aria-hidden 처리된다
 **Plans**: 3 plans
 Plans:
-- [ ] 19-01-PLAN.md — compare-view: corner th, ?compare= truncation, etf:lang-changed, retry focus, scroll hint for all wraps
+- [x] 19-01-PLAN.md — compare-view: corner th, ?compare= truncation, etf:lang-changed, retry focus, scroll hint for all wraps
 - [ ] 19-02-PLAN.md — calculator locale + single live region, 320px rank table (sticky name, gap column)
 - [ ] 19-03-PLAN.md — chart dead code + resize redraw + retry focus, .cell-label aria-hidden
 **UI hint**: yes
@@ -152,5 +152,5 @@ Plans:
 | 16. 통합·검증 | v1.4 | 2/2 | Complete | 2026-10-06 |
 | 17. 데이터·CI 신뢰성 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 18. RSS 피드 품질 | v1.5 | 1/1 | Complete   | 2026-11-10 |
-| 19. /compare/ UI·접근성 정리 | v1.5 | 0/0 | Not started | - |
+| 19. /compare/ UI·접근성 정리 | v1.5 | 1/3 | In Progress|  |
 | 20. 소소한 정리·문서 보정 | v1.5 | 0/0 | Not started | - |
