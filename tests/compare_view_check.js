@@ -158,6 +158,7 @@ function makeEl(id) {
         textContent: "",
         innerHTML: "",
         listeners: {},
+        focus() { focusState.active = this; },
         classes: new Set(),
         setAttribute(k, v) { this.attrs[k] = String(v); },
         removeAttribute(k) { delete this.attrs[k]; },
@@ -187,19 +188,24 @@ async function settle() {
     for (let i = 0; i < 4; i++) await tick();
 }
 
-function bootRuntime(search, fetchImpl) {
+const focusState = { active: null };
+
+function bootRuntime(search, fetchImpl, opts) {
+    focusState.active = null;
     const ids = ["cmp-live", "cmp-app", "cmp-toolbar", "cmp-copy", "cmp-notices", "cmp-state", "cmp-table-section",
         "cmp-table-h", "cmp-table-body", "cmp-chart", "cmp-calc", "cmp-title"];
     const els = {};
     ids.forEach((id) => (els[id] = makeEl(id)));
     const calls = { fetch: 0 };
+    const docListeners = {};
     const doc = {
+        get activeElement() { return focusState.active || doc.body; },
         readyState: "complete",
         body: { dataset: { page: "compare" } },
-        addEventListener: noop,
+        addEventListener(type, fn) { (docListeners[type] = docListeners[type] || []).push(fn); },
         getElementById: (id) => els[id] || null,
         querySelector: () => null,
-        querySelectorAll: () => [],
+        querySelectorAll: (opts && opts.querySelectorAll) || (() => []),
     };
     const sandbox = {
         document: doc,
@@ -209,14 +215,13 @@ function bootRuntime(search, fetchImpl) {
         console: { log: noop, error: noop, warn: noop },
         Intl, URL, URLSearchParams, setTimeout, clearTimeout, Promise, Map, Set,
         location: { search, href: "https://etfsave.life/compare/" + search },
-        MutationObserver: class { observe() {} },
         fetch: (...args) => { calls.fetch++; return fetchImpl(...args); },
     };
     const c = vm.createContext(sandbox);
     vm.runInContext(readSrc("script.js"), c, { filename: "script.js" });
     vm.runInContext("currentTranslations = " + JSON.stringify(TRANSLATIONS), c);
     vm.runInContext(readSrc("compare-view.js"), c, { filename: "compare-view.js" });
-    return { c, els, calls };
+    return { c, els, calls, doc, docListeners };
 }
 
 const okFetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(FIXTURE) });
@@ -301,7 +306,57 @@ const okFetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(FI
         assert.strictEqual(btnB.textContent, "링크 복사", "B reset");
     }
 
+    // (e) CMP-10: etf:lang-changed re-render, one listener, no title observer
+    {
+        const rt = bootRuntime("?compare=360200,0026S0", okFetch);
+        let renders = 0;
+        rt.c.CompareView.onRender(() => renders++);
+        await settle();
+        assert.strictEqual((rt.docListeners["etf:lang-changed"] || []).length, 1, "one lang listener");
+        assert.strictEqual(renders, 1);
+        vm.runInContext('currentTranslations.compare_table_title = "Metrics"', rt.c);
+        rt.docListeners["etf:lang-changed"][0]();
+        assert.strictEqual(rt.els["cmp-table-h"].textContent, "Metrics");
+        assert.strictEqual(renders, 2, "exactly one extra render");
+    }
+    // (f) CMP-09: focus after retry
+    {
+        let n = 0;
+        const rt = bootRuntime("?compare=360200,0026S0", () => (n++ === 0 ? Promise.reject(new Error("net")) : okFetch()));
+        await settle();
+        const click = () => rt.els["cmp-app"].listeners.click.forEach((fn) =>
+            fn({ target: { closest: (sel) => (sel === "[data-cmp-retry]" ? {} : null) } }));
+        click();
+        assert.strictEqual(rt.doc.activeElement, rt.els["cmp-state"], "focus on state box during retry");
+        assert.strictEqual(rt.els["cmp-state"].attrs.tabindex, "-1");
+        await settle();
+        assert.strictEqual(rt.doc.activeElement, rt.els["cmp-table-h"], "focus on heading after success");
+        assert.strictEqual(rt.els["cmp-table-h"].attrs.tabindex, "-1");
+        assert.notStrictEqual(rt.doc.activeElement, rt.doc.body);
+        // failing retry keeps focus on #cmp-state
+        const rt2 = bootRuntime("?compare=360200,0026S0", () => Promise.reject(new Error("net")));
+        await settle();
+        rt2.els["cmp-app"].listeners.click.forEach((fn) =>
+            fn({ target: { closest: (sel) => (sel === "[data-cmp-retry]" ? {} : null) } }));
+        await settle();
+        assert.strictEqual(rt2.doc.activeElement, rt2.els["cmp-state"]);
+    }
+    // (g) updateScrollable over all wraps
+    {
+        const mk = (sw, cw) => { const w = makeEl("w"); w.scrollWidth = sw; w.clientWidth = cw; w.classes.add("is-scrollable"); return w; };
+        const wide = mk(500, 300), narrow = mk(300, 300);
+        wide.classes.delete("is-scrollable");
+        const rt = bootRuntime("?compare=360200,0026S0", okFetch, { querySelectorAll: () => [wide, narrow] });
+        await settle();
+        assert.strictEqual(typeof rt.c.CompareView.updateScrollable, "function");
+        rt.c.CompareView.updateScrollable();
+        assert.ok(wide.classes.has("is-scrollable"));
+        assert.ok(!narrow.classes.has("is-scrollable"));
+    }
+
     // ---------- Task 3: static page assertions ----------
+    assert.strictEqual((fs.readFileSync(path.join(ROOT, "compare", "index.html"), "utf8").match(/aria-live=/g) || []).length, 1, "single live region");
+    assert.ok(!readSrc("compare-view.js").includes("Mutation" + "Observer"), "no title observer");
     const pageBuf = fs.readFileSync(path.join(ROOT, "compare", "index.html"));
     assert.ok(!(pageBuf[0] === 0xef && pageBuf[1] === 0xbb && pageBuf[2] === 0xbf), "no BOM");
     const page = pageBuf.toString("utf8");

@@ -161,7 +161,8 @@
         resizeBound: false,
         subscribers: [],
         beforeCopy: [],
-        resizeTimer: null
+        resizeTimer: null,
+        refocus: false
     };
 
     function el(id) {
@@ -239,6 +240,7 @@
         }
         state.rendered = false;
         state.errored = true;
+        state.refocus = false;
     }
 
     function loadData() {
@@ -278,10 +280,12 @@
     }
 
     function updateScrollable() {
-        var wrap = document.querySelector(".cmp-table-wrap");
-        if (!wrap) return;
-        if (wrap.scrollWidth > wrap.clientWidth) wrap.classList.add("is-scrollable");
-        else wrap.classList.remove("is-scrollable");
+        if (typeof document.querySelectorAll !== "function") return;
+        var wraps = document.querySelectorAll(".cmp-table-wrap");
+        for (var i = 0; i < wraps.length; i++) {
+            if (wraps[i].scrollWidth > wraps[i].clientWidth) wraps[i].classList.add("is-scrollable");
+            else wraps[i].classList.remove("is-scrollable");
+        }
     }
 
     function renderNotices(parsed) {
@@ -330,6 +334,7 @@
             }
             if (app) app.setAttribute("aria-busy", "false");
             state.rendered = false;
+            state.refocus = false;
             return;
         }
 
@@ -355,6 +360,14 @@
         if (app) app.setAttribute("aria-busy", "false");
         state.rendered = true;
         state.subscribers.slice().forEach(callSubscriber);
+        updateScrollable();
+        if (state.refocus) {
+            state.refocus = false;
+            if (heading) {
+                heading.setAttribute("tabindex", "-1");
+                if (typeof heading.focus === "function") heading.focus();
+            }
+        }
     }
 
     function copyCurrentUrl(button) {
@@ -407,9 +420,16 @@
             app.addEventListener("click", function (event) {
                 var target = event.target;
                 if (target && typeof target.closest === "function" && target.closest("[data-cmp-retry]")) {
+                    var box = el("cmp-state");
+                    if (box) box.setAttribute("tabindex", "-1");
+                    state.refocus = true;
                     loadData();
+                    if (box && typeof box.focus === "function") box.focus();
                 }
             });
+        }
+        if (typeof document.addEventListener === "function") {
+            document.addEventListener("etf:lang-changed", markI18nReady);
         }
     }
 
@@ -441,12 +461,6 @@
         } else {
             waitForTranslations(30);
         }
-        var title = el("cmp-title");
-        if (title && typeof MutationObserver === "function") {
-            new MutationObserver(function () {
-                markI18nReady();
-            }).observe(title, { childList: true, subtree: true, characterData: true });
-        }
         loadData();
     }
 
@@ -466,7 +480,8 @@
         copyCurrentUrl: copyCurrentUrl,
         announce: announce,
         t: t,
-        hasScriptGlobals: hasScriptGlobals
+        hasScriptGlobals: hasScriptGlobals,
+        updateScrollable: updateScrollable
     };
 
     (typeof globalThis !== "undefined" ? globalThis : window).CompareView = CompareView;
