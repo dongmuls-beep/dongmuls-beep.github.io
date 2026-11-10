@@ -31,7 +31,7 @@
 ### 소소한 정리 (POLISH)
 
 - [x] **POLISH-01**: `.footer-links a`에 gap 규칙을 추가한다
-- [ ] **POLISH-02**: 누락된 SUMMARY frontmatter `requirements-completed`를 보정하고, 14~16 VERIFICATION status를 UAT 결과에 맞게 정리한다
+- [x] **POLISH-02**: 누락된 SUMMARY frontmatter `requirements-completed`를 보정하고, 14~16 VERIFICATION status를 UAT 결과에 맞게 정리한다
 
 ## Out of Scope
 
@@ -56,6 +56,6 @@
 | CMP-11 | Phase 19 | Complete |
 | A11Y-10 | Phase 19 | Complete |
 | POLISH-01 | Phase 20 | Complete |
-| POLISH-02 | Phase 20 | Pending |
+| POLISH-02 | Phase 20 | Complete |
 
 Coverage: 15/15 mapped

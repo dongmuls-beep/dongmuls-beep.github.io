@@ -63,7 +63,7 @@ Full details: [milestones/v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md)
 - [x] **Phase 17: 데이터·CI 신뢰성** - RSS 빌드 실패 시 CI 실패 표시, 수수료 급락 3건 검증, node 검사 단계 CI 확인 (completed 2026-11-10)
 - [x] **Phase 18: RSS 피드 품질** - 중복 행 제거, 정확한 수치, 실효성 있는 결정성 테스트, .gitattributes/.tmp 정리 (completed 2026-11-10)
 - [x] **Phase 19: /compare/ UI·접근성 정리** - 차트 리사이즈, th/절단 수정, 계산기 로케일·포커스, 언어 이벤트 통일, 320px 순위표 (completed 2026-11-10)
-- [ ] **Phase 20: 소소한 정리·문서 보정** - footer gap, SUMMARY frontmatter, VERIFICATION status
+- [x] **Phase 20: 소소한 정리·문서 보정** - footer gap, SUMMARY frontmatter, VERIFICATION status (completed 2026-11-10)
 
 ## Phase Details
 
@@ -130,7 +130,7 @@ Plans:
 
 Plans:
 - [x] 20-01-PLAN.md — .footer-links flex row + token gap, CSS contract test (POLISH-01)
-- [ ] 20-02-PLAN.md — fact-driven requirements-completed backfill + 14-16 VERIFICATION/UAT alignment (POLISH-02)
+- [x] 20-02-PLAN.md — fact-driven requirements-completed backfill + 14-16 VERIFICATION/UAT alignment (POLISH-02)
 **UI hint**: yes
 **Owns**: style.css (.footer-links), .planning/milestones 및 phase 디렉터리 문서
 
@@ -157,4 +157,4 @@ Plans:
 | 17. 데이터·CI 신뢰성 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 18. RSS 피드 품질 | v1.5 | 1/1 | Complete   | 2026-11-10 |
 | 19. /compare/ UI·접근성 정리 | v1.5 | 3/3 | Complete   | 2026-11-10 |
-| 20. 소소한 정리·문서 보정 | v1.5 | 1/2 | In Progress|  |
+| 20. 소소한 정리·문서 보정 | v1.5 | 2/2 | Complete   | 2026-11-10 |
