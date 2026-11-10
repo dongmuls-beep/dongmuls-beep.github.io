@@ -54,6 +54,7 @@ const TRANSLATIONS = {
     compare_best_badge: "최저",
     compare_scroll_hint: "좌우로 밀어 보세요",
     compare_table_title: "비교 지표",
+    compare_chart_metric_label: "비교 항목",
     compare_empty_title: "비교할 ETF를 2개 이상 선택해 주세요",
     compare_empty_body: "목록에서 체크",
     compare_back_to_list: "ETF 목록으로 돌아가기",
@@ -95,6 +96,19 @@ assert.deepStrictEqual(parse(""), { codes: [], dropped: [], capped: false });
 // >200 chars: only first 200 considered
 const longParam = "360200," + "A".repeat(200) + ",0026S0";
 assert.deepStrictEqual(parse(longParam).codes, ["360200"]);
+// CMP-08: 4 codes round-trip, trimmed
+assert.deepStrictEqual(parse("360200,0026S0,069500,102110"), { codes: ["360200", "0026S0", "069500", "102110"], dropped: [], capped: false });
+assert.deepStrictEqual(parse(" 360200 , 0026s0 ,069500,102110 ").codes, ["360200", "0026S0", "069500", "102110"]);
+// token cut by the 200 bound is dropped, not turned into a code
+const cutHead = "360200," + "Q".repeat(186) + ",";
+assert.strictEqual(cutHead.length, 194);
+const cutRes = parse(cutHead + "0695001");
+assert.deepStrictEqual(cutRes.codes, ["360200"]);
+assert.ok(!cutRes.dropped.includes("069500") && !cutRes.dropped.includes("0695001"));
+// valid code ending exactly at index 199, comma at 200: kept
+const edge = "360200," + "Q".repeat(186) + "," + "069500" + ",0026S0";
+assert.strictEqual(edge.charAt(200), ",");
+assert.deepStrictEqual(parse(edge).codes, ["360200", "069500"]);
 // dropped truncation and cap
 assert.strictEqual(parse("abcdefghijklmnopqrstuvwxyz").dropped[0].length, 12);
 const manyBad = Array.from({ length: 30 }, (_, i) => "x" + i).join(",");
@@ -119,6 +133,8 @@ assert.ok(html.includes("선택한 ETF 수수료 비교표"));
 assert.strictEqual((html.match(/<th scope="col"/g) || []).length, 4, "3 ETF cols + corner");
 assert.strictEqual((html.match(/<th scope="row"/g) || []).length, 5);
 assert.ok(!html.includes("0.0000%"));
+assert.ok(html.includes('<th scope="col"><span class="cmp-sr-only">비교 항목</span></th>'), "corner th labelled");
+assert.strictEqual((html.match(/th[^>]*>\s*<\/th>/g) || []).length, 0, "no empty th");
 assert.ok(html.includes("&lt;img src=x onerror=alert(1)&gt;"));
 assert.ok(!html.includes("<img"));
 // fee row: tie on 0.1 -> both marked; 'other' lowest first two tie => A,B both 0.02 -> A,B

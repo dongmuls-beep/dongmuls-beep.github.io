@@ -65,7 +65,14 @@
         var result = { codes: [], dropped: [], capped: false };
         if (rawParam === null || rawParam === undefined || rawParam === "") return result;
 
-        var tokens = String(rawParam).slice(0, MAX_PARAM_LEN).split(",");
+        var raw = String(rawParam);
+        if (raw.length > MAX_PARAM_LEN) {
+            // drop a token cut by the length bound so it cannot form a bogus code (15-REVIEW IN-04)
+            var cut = raw.slice(0, MAX_PARAM_LEN);
+            if (raw.charAt(MAX_PARAM_LEN) !== ",") cut = cut.slice(0, Math.max(cut.lastIndexOf(","), 0));
+            raw = cut;
+        }
+        var tokens = raw.split(",");
         var kept = [];
         for (var i = 0; i < tokens.length; i++) {
             var token = tokens[i].trim().toUpperCase();
@@ -115,7 +122,7 @@
         html += '<div class="cmp-table-wrap" role="region" tabindex="0" aria-label="' + esc(strip(t("compare_table_region"))) + '">';
         html += '<table class="cmp-table">';
         html += '<caption class="cmp-sr-only">' + esc(strip(t("compare_table_caption"))) + "</caption>";
-        html += '<thead><tr><th scope="col"></th>';
+        html += '<thead><tr><th scope="col"><span class="cmp-sr-only">' + esc(strip(t("compare_chart_metric_label"))) + "</span></th>";
         items.forEach(function (item) {
             html += '<th scope="col">' + esc(item.name) + '<span class="cmp-etf-code">' + esc(item.code) + "</span></th>";
         });
