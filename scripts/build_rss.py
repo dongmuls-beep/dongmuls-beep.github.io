@@ -11,6 +11,7 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 from email.utils import format_datetime
 from pathlib import Path
 from typing import Any
@@ -28,9 +29,9 @@ FEED_URL = SITE + "/feed.xml"
 CHANGELOG_URL = SITE + "/changelog/"
 KST = timezone(timedelta(hours=9))
 ATOM_NS = "http://www.w3.org/2005/Atom"
-DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")  # use with fullmatch (no "\n" leak)
+DATE_RE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")  # use with fullmatch (no "\n" leak)
 # XML 1.0 illegal: C0 controls (except tab/LF/CR), lone surrogates, U+FFFE/U+FFFF.
-CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff￾￿]")
+CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\uFFFE\uFFFF]")
 CODE_MAX_LEN = 32
 
 ET.register_namespace("atom", ATOM_NS)
@@ -44,6 +45,12 @@ def valid_number(v: Any) -> float | None:
     except OverflowError:
         return None
     return f if math.isfinite(f) else None
+
+
+def fmt_num(x: float) -> str:
+    # exact stored value: repr = shortest round-trip, Decimal "f" = no exponent form
+    s = format(Decimal(repr(x)), "f")
+    return s.rstrip("0").rstrip(".") if "." in s else s
 
 
 def clean_code(v: Any) -> str | None:
@@ -99,7 +106,7 @@ def make_item(updated_at: str, code: str, rows: list[dict]) -> dict:
     kinds = ", ".join("%s %s" % (r["field"], direction(r)) for r in triggers)
     lines = [
         "%s: %s%% → %s%% (%s)"
-        % (r["field"], format(r["before"], "g"), format(r["after"], "g"), direction(r))
+        % (r["field"], fmt_num(r["before"]), fmt_num(r["after"]), direction(r))
         for r in triggers + support
     ]
     return {
@@ -113,7 +120,7 @@ def make_item(updated_at: str, code: str, rows: list[dict]) -> dict:
 
 
 def build_items(entries: list, total_count: int | None) -> list[dict]:
-    groups: dict[tuple[str, str], list[dict]] = {}
+    groups: dict[tuple[str, str], dict[str, dict]] = {}
     for entry in entries if isinstance(entries, list) else []:
         if not isinstance(entry, dict):
             continue
@@ -130,13 +137,14 @@ def build_items(entries: list, total_count: int | None) -> list[dict]:
             code = clean_code(row["code"])  # WR-01: one normalised code for key/guid/title
             if row.get("field") in TRIGGER_FIELDS + SUPPORT_FIELDS:
                 key = (updated_at, code)
-                groups.setdefault(key, []).append(
-                    {**row, "before": valid_number(row["before"]), "after": valid_number(row["after"])}
-                )
+                # later row wins per field (matches build_changelog same-day replace)
+                groups.setdefault(key, {})[row["field"]] = {
+                    **row, "before": valid_number(row["before"]), "after": valid_number(row["after"])
+                }
     items = [
-        make_item(d, c, rows)
+        make_item(d, c, list(rows.values()))
         for (d, c), rows in groups.items()
-        if any(r["field"] in TRIGGER_FIELDS for r in rows)
+        if any(f in TRIGGER_FIELDS for f in rows)
     ]
     items.sort(key=lambda i: i["code"])
     items.sort(key=lambda i: i["updatedAt"], reverse=True)
@@ -177,9 +185,10 @@ def build_feed_bytes(items: list) -> bytes:
 
 def write_if_changed(path: Path, data: bytes) -> bool:
     path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.unlink(missing_ok=True)  # stale tmp from a killed run, even on the unchanged path
     if path.exists() and path.read_bytes() == data:
         return False
-    tmp = path.with_name(path.name + ".tmp")
     try:
         tmp.write_bytes(data)
         os.replace(tmp, path)
@@ -222,6 +231,11 @@ def _run(argv: list | None) -> int:
               file=sys.stderr)
         return 1
     items = build_items(entries, len(data))
+    out = Path(args.output)
+    if not items and out.exists() and b"<item>" in out.read_bytes():
+        print("[build_rss] error: no items built but %s has items, feed.xml left untouched" % out,
+              file=sys.stderr)
+        return 1
     changed = write_if_changed(Path(args.output), build_feed_bytes(items))
     print("[build_rss] %d items, %s" % (len(items), "written" if changed else "unchanged"))
     return 0

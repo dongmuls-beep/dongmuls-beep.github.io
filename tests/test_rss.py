@@ -3,6 +3,7 @@
 import inspect
 import json
 import os
+import subprocess
 import sys
 import xml.etree.ElementTree as ET
 
@@ -98,10 +99,7 @@ def test_pubdate_rfc822_fixed():
     assert ch.find("lastBuildDate").text == ch.find("item/pubDate").text
 
 
-def test_byte_identical_rerun():
-    e = entry("2026-03-11", [change("A", "n", "총보수", 0.1, 0.2)])
-    items = br.build_items([e], 100)
-    assert br.build_feed_bytes(items) == br.build_feed_bytes(items)
+def test_no_clock_calls():
     src = inspect.getsource(br)
     for banned in ("datetime.now", "date.today", "time.time"):
         assert banned not in src
@@ -265,3 +263,141 @@ def test_date_trailing_newline_rejected():  # WR-05
     bad = {"month": "2026-03", "updatedAt": "2026-03-11\n",
            "changes": [change("A", "n", "총보수", 0.1, 0.2)]}
     assert br.build_items([bad], 100) == []
+
+
+# --- Phase 18 (FEED-05..08) ---
+
+ROOT = os.path.dirname(os.path.dirname(__file__))
+SCRIPT = os.path.join(ROOT, "scripts", "build_rss.py")
+GITATTR = os.path.join(ROOT, ".gitattributes")
+
+
+def test_duplicate_rows_once():
+    row1 = change("A", "n", "총보수", 0.1, 0.2)
+    row2 = change("A", "n", "실부담비용", 0.2, 0.3)
+    items = br.build_items([entry("2026-03-11", [row1, row2]), entry("2026-03-11", [row1, row2])], 100)
+    assert len(items) == 1
+    assert items[0]["description"].count("총보수:") == 1
+    assert items[0]["description"].count("실부담비용:") == 1
+    assert items[0]["title"].count("총보수") == 1
+
+
+def test_duplicate_rows_later_wins():
+    items = br.build_items([
+        entry("2026-03-11", [change("A", "n", "총보수", 0.1, 0.2)]),
+        entry("2026-03-11", [change("A", "n", "총보수", 0.1, 0.3)]),
+    ], 100)
+    assert items[0]["description"] == "총보수: 0.1% → 0.3% (인상)"
+
+
+def test_duplicate_within_one_entry():
+    r = change("A", "n", "총보수", 0.1, 0.2)
+    items = br.build_items([entry("2026-03-11", [r, dict(r)])], 100)
+    assert items[0]["description"].count("총보수:") == 1
+
+
+def test_exact_numbers():
+    def desc(b, a):
+        e = entry("2026-03-11", [change("A", "n", "총보수", b, a)])
+        return br.build_items([e], 100)[0]["description"]
+    assert "0.1234567% → 0.1234568%" in desc(0.1234567, 0.1234568)
+    d = desc(0.00001, 0.00002)
+    assert "0.00001%" in d and "e-" not in d
+    assert "1% → 2%" in desc(1.0, 2)
+    assert "0.07% → 0.05%" in desc(0.07, 0.05)
+
+
+def test_date_non_ascii_digits_rejected():
+    e = entry("٢٠٢٦-٠٣-١١", [change("A", "n", "총보수", 0.1, 0.2)])
+    assert br.build_items([e], 100) == []
+
+
+def test_control_re_escaped():
+    src = inspect.getsource(br)
+    assert chr(0xFFFE) not in src and chr(0xFFFF) not in src
+    assert br.clean_text("a%sb%sc" % (chr(0xFFFE), chr(0xFFFF))) == "abc"
+
+
+def _fixture(tmp_path):
+    entries = []
+    for d, codes in (("2026-03-11", "ABC"), ("2026-03-12", "BCD"), ("2026-03-13", "AD")):
+        ch = [change(c, "이름" + c, f, 0.1, 0.2)
+              for c in codes for f in ("총보수", "기타비용", "매매중개수수료", "실부담비용")]
+        entries.append(entry(d, ch))
+    entries[0]["changes"].append(change("A", "이름A", "총보수", 0.1, 0.2))  # duplicate
+    entries[1]["changes"].append(change("Z", "한글 ETF & 이름", "총보수", 0.05, 0.04))
+    cl = tmp_path / "changelog.json"
+    dt = tmp_path / "data.json"
+    cl.write_text(json.dumps(entries, ensure_ascii=False), encoding="utf-8")
+    dt.write_text(json.dumps([{"종목코드": str(i)} for i in range(100)]), encoding="utf-8")
+    return cl, dt
+
+
+def test_deterministic_build_subprocess(tmp_path, capsys):
+    cl, dt = _fixture(tmp_path)
+    outs = []
+    for seed in ("0", "12345"):
+        out = tmp_path / ("out%s.xml" % seed)
+        r = subprocess.run(
+            [sys.executable, SCRIPT, "--changelog", str(cl), "--data", str(dt), "--output", str(out)],
+            env={**os.environ, "PYTHONHASHSEED": seed}, capture_output=True,
+        )
+        assert r.returncode == 0
+        outs.append(out)
+    b1, b2 = outs[0].read_bytes(), outs[1].read_bytes()
+    assert b1 == b2
+    assert b"\r" not in b1 and b1.endswith(b"</rss>\n")
+    assert len(ET.fromstring(b1).findall("channel/item")) >= 3
+    capsys.readouterr()
+    assert br.main(["--changelog", str(cl), "--data", str(dt), "--output", str(outs[0])]) == 0
+    assert "unchanged" in capsys.readouterr().out
+    assert outs[0].read_bytes() == b1
+
+
+def test_items_order_independent():
+    es = [
+        entry("2026-03-11", [change("A", "n", "총보수", 0.1, 0.2), change("A", "n", "실부담비용", 0.2, 0.3),
+                             change("B", "m", "기타비용", 0.1, 0.2)]),
+        entry("2026-03-12", [change("C", "k", "총보수", 0.3, 0.2), change("C", "k", "매매중개수수료", 0.1, 0.2)]),
+    ]
+    rev = [{**e, "changes": list(reversed(e["changes"]))} for e in es]
+    assert br.build_feed_bytes(br.build_items(es, 100)) == br.build_feed_bytes(br.build_items(rev, 100))
+
+
+def test_no_tmp_left_after_success(tmp_path):
+    cl, dt = _fixture(tmp_path)
+    out = tmp_path / "feed.xml"
+    argv = ["--changelog", str(cl), "--data", str(dt), "--output", str(out)]
+    for _ in range(2):  # written, then unchanged
+        (tmp_path / "feed.xml.tmp").write_bytes(b"stale")
+        assert br.main(argv) == 0
+        assert list(tmp_path.glob("*.tmp")) == []
+
+
+def _empty_inputs(tmp_path):
+    (tmp_path / "c.json").write_text("[]", encoding="utf-8")
+    (tmp_path / "d.json").write_text("[]", encoding="utf-8")
+    return ["--changelog", str(tmp_path / "c.json"), "--data", str(tmp_path / "d.json")]
+
+
+def test_empty_items_keep_existing_feed(tmp_path, capsys):
+    out = tmp_path / "feed.xml"
+    e = entry("2026-03-11", [change("A", "n", "총보수", 0.1, 0.2)])
+    out.write_bytes(br.build_feed_bytes(br.build_items([e], 100)))
+    before = out.read_bytes()
+    assert br.main(_empty_inputs(tmp_path) + ["--output", str(out)]) == 1
+    assert out.read_bytes() == before
+    assert "no items" in capsys.readouterr().err
+    assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_empty_items_fresh_output(tmp_path):
+    out = tmp_path / "feed.xml"
+    assert br.main(_empty_inputs(tmp_path) + ["--output", str(out)]) == 0
+    assert ET.fromstring(out.read_bytes()).findall("channel/item") == []
+
+
+def test_gitattributes_feed_lf():
+    with open(GITATTR, encoding="utf-8") as f:
+        lines = [ln.strip() for ln in f.read().splitlines()]
+    assert "feed.xml text eol=lf" in lines
