@@ -14,10 +14,10 @@
 
 ### RSS 피드 품질 (FEED)
 
-- [ ] **FEED-05**: 같은 날짜·코드·필드의 중복 행이 피드에 한 번만 나온다
-- [ ] **FEED-06**: 수치가 6자리 유효숫자로 잘리지 않고 정확히 표시된다
-- [ ] **FEED-07**: 결정성 테스트가 "같은 입력 → 같은 출력"을 실제로 검증한다
-- [ ] **FEED-08**: feed.xml에 `.gitattributes`가 적용되고 잔여 `.tmp`가 남지 않는다
+- [x] **FEED-05**: 같은 날짜·코드·필드의 중복 행이 피드에 한 번만 나온다
+- [x] **FEED-06**: 수치가 6자리 유효숫자로 잘리지 않고 정확히 표시된다
+- [x] **FEED-07**: 결정성 테스트가 "같은 입력 → 같은 출력"을 실제로 검증한다
+- [x] **FEED-08**: feed.xml에 `.gitattributes`가 적용되고 잔여 `.tmp`가 남지 않는다
 
 ### /compare/ UI·접근성 (CMP / A11Y)
 
@@ -45,10 +45,10 @@
 | DATA-11 | Phase 17 | Complete |
 | DATA-12 | Phase 17 | Complete |
 | CI-01 | Phase 17 | Complete |
-| FEED-05 | Phase 18 | Pending |
-| FEED-06 | Phase 18 | Pending |
-| FEED-07 | Phase 18 | Pending |
-| FEED-08 | Phase 18 | Pending |
+| FEED-05 | Phase 18 | Complete |
+| FEED-06 | Phase 18 | Complete |
+| FEED-07 | Phase 18 | Complete |
+| FEED-08 | Phase 18 | Complete |
 | CMP-07 | Phase 19 | Pending |
 | CMP-08 | Phase 19 | Pending |
 | CMP-09 | Phase 19 | Pending |
