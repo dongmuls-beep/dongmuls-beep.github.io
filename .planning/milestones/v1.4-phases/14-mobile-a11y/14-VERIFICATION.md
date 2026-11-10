@@ -22,6 +22,7 @@ human_verification:
 
 **Goal:** Mobile users can read and operate the table and history without contrast, touch, screen-reader or keyboard barriers.
 **Status:** human_needed (no gaps). **Re-verification:** No.
+**Resolved 2026-10-06:** human items passed in 16-HUMAN-UAT.md (15/15 pass); frontmatter status is passed.
 
 ## Test runs (executed by verifier)
 | Command | Result |

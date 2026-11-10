@@ -20,6 +20,7 @@ human_verification:
 # Phase 15 Verification (direct compare + calculator UI)
 
 **Result:** all automated checks pass; the only open items are human checks deferred to Phase 16.
+**Resolved 2026-10-06:** human items passed in 15-HUMAN-UAT.md (3/3 pass) and 16-HUMAN-UAT.md (15/15 pass); frontmatter status is passed.
 
 ## Tests run (this session)
 | Test | Result |
