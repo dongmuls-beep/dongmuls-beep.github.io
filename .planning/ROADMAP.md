@@ -62,7 +62,7 @@ Full details: [milestones/v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md)
 
 - [x] **Phase 17: 데이터·CI 신뢰성** - RSS 빌드 실패 시 CI 실패 표시, 수수료 급락 3건 검증, node 검사 단계 CI 확인 (completed 2026-11-10)
 - [x] **Phase 18: RSS 피드 품질** - 중복 행 제거, 정확한 수치, 실효성 있는 결정성 테스트, .gitattributes/.tmp 정리 (completed 2026-11-10)
-- [ ] **Phase 19: /compare/ UI·접근성 정리** - 차트 리사이즈, th/절단 수정, 계산기 로케일·포커스, 언어 이벤트 통일, 320px 순위표
+- [x] **Phase 19: /compare/ UI·접근성 정리** - 차트 리사이즈, th/절단 수정, 계산기 로케일·포커스, 언어 이벤트 통일, 320px 순위표 (completed 2026-11-10)
 - [ ] **Phase 20: 소소한 정리·문서 보정** - footer gap, SUMMARY frontmatter, VERIFICATION status
 
 ## Phase Details
@@ -114,7 +114,7 @@ Plans:
 Plans:
 - [x] 19-01-PLAN.md — compare-view: corner th, ?compare= truncation, etf:lang-changed, retry focus, scroll hint for all wraps
 - [x] 19-02-PLAN.md — calculator locale + single live region, 320px rank table (sticky name, gap column)
-- [ ] 19-03-PLAN.md — chart dead code + resize redraw + retry focus, .cell-label aria-hidden
+- [x] 19-03-PLAN.md — chart dead code + resize redraw + retry focus, .cell-label aria-hidden
 **UI hint**: yes
 **Owns**: compare/ 페이지 JS·HTML, script.js, style.css (compare 영역)
 
@@ -152,5 +152,5 @@ Plans:
 | 16. 통합·검증 | v1.4 | 2/2 | Complete | 2026-10-06 |
 | 17. 데이터·CI 신뢰성 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 18. RSS 피드 품질 | v1.5 | 1/1 | Complete   | 2026-11-10 |
-| 19. /compare/ UI·접근성 정리 | v1.5 | 2/3 | In Progress|  |
+| 19. /compare/ UI·접근성 정리 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 20. 소소한 정리·문서 보정 | v1.5 | 0/0 | Not started | - |

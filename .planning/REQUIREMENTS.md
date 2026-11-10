@@ -21,12 +21,12 @@
 
 ### /compare/ UI·접근성 (CMP / A11Y)
 
-- [ ] **CMP-07**: 미사용 차트 코드를 제거하고, 창 크기 변경 시 차트가 다시 그려진다
+- [x] **CMP-07**: 미사용 차트 코드를 제거하고, 창 크기 변경 시 차트가 다시 그려진다
 - [x] **CMP-08**: 빈 `<th>`와 `?compare=` 값 절단을 수정한다
-- [ ] **CMP-09**: 계산기 숫자가 선택 언어 로케일을 따르고, 재시도 후 포커스가 유지되며, live region이 중복되지 않는다
+- [x] **CMP-09**: 계산기 숫자가 선택 언어 로케일을 따르고, 재시도 후 포커스가 유지되며, live region이 중복되지 않는다
 - [x] **CMP-10**: 언어 변경 감지를 title MutationObserver 대신 `etf:lang-changed`로 통일한다
 - [x] **CMP-11**: 320px에서 순위표 "최저 대비" 열이 잘리지 않고 ETF명 열이 고정된다
-- [ ] **A11Y-10**: 코드 외 `.cell-label` span의 `aria-hidden` 처리가 일관된다
+- [x] **A11Y-10**: 코드 외 `.cell-label` span의 `aria-hidden` 처리가 일관된다
 
 ### 소소한 정리 (POLISH)
 
@@ -49,12 +49,12 @@
 | FEED-06 | Phase 18 | Complete |
 | FEED-07 | Phase 18 | Complete |
 | FEED-08 | Phase 18 | Complete |
-| CMP-07 | Phase 19 | Pending |
+| CMP-07 | Phase 19 | Complete |
 | CMP-08 | Phase 19 | Complete |
-| CMP-09 | Phase 19 | Pending |
+| CMP-09 | Phase 19 | Complete |
 | CMP-10 | Phase 19 | Complete |
 | CMP-11 | Phase 19 | Complete |
-| A11Y-10 | Phase 19 | Pending |
+| A11Y-10 | Phase 19 | Complete |
 | POLISH-01 | Phase 20 | Pending |
 | POLISH-02 | Phase 20 | Pending |
 
