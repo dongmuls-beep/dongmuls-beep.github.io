@@ -76,7 +76,13 @@ Full details: [milestones/v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md)
   2. 269540, 433330, 476030의 총보수 급락이 원천 오류인지 여부가 근거와 함께 기록된다
   3. 원천 오류로 확인된 건은 데이터가 수정되고 재발 방지 검사가 추가된다
   4. 실제 CI 실행 로그에서 daily_update.yml의 node 검사 단계가 통과한 것이 확인된다
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 17-01-PLAN.md — build_rss.py exit 1 on failure, feed.xml kept; workflow fails run after commit (DATA-11)
+- [ ] 17-02-PLAN.md — 총보수 급락 3건 evidence + DATA-12 recurrence warning (DATA-12)
+- [ ] 17-03-PLAN.md — push (user-approved) + real CI run evidence for node checks (CI-01)
+
 **Owns**: .github/workflows/daily_update.yml, scripts/ ETL, fee-history.json
 
 ### Phase 18: RSS 피드 품질
