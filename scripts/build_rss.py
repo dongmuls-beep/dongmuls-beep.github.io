@@ -199,14 +199,14 @@ def read_json(path: str) -> Any:
 
 
 def main(argv: list | None = None) -> int:
-    # WR-04: RSS is a derived, non-critical artifact; never fail the daily
-    # data pipeline. On any unexpected error, log and leave feed.xml untouched.
+    # WR-04: on any unexpected error, log, leave feed.xml untouched and exit 1
+    # so CI shows the failure; the workflow still commits data before failing the run.
     try:
         return _run(argv)
     except Exception as exc:  # noqa: BLE001
         print("[build_rss] error: %s: %s (feed.xml left untouched)"
               % (type(exc).__name__, exc), file=sys.stderr)
-        return 0
+        return 1
 
 
 def _run(argv: list | None) -> int:
@@ -217,8 +217,11 @@ def _run(argv: list | None) -> int:
     args = p.parse_args(argv)
     entries = read_json(args.changelog)
     data = read_json(args.data)
-    total = len(data) if isinstance(data, list) else None
-    items = build_items(entries if isinstance(entries, list) else [], total)
+    if not isinstance(entries, list) or not isinstance(data, list):
+        print("[build_rss] error: invalid input (changelog/data), feed.xml left untouched",
+              file=sys.stderr)
+        return 1
+    items = build_items(entries, len(data))
     changed = write_if_changed(Path(args.output), build_feed_bytes(items))
     print("[build_rss] %d items, %s" % (len(items), "written" if changed else "unchanged"))
     return 0

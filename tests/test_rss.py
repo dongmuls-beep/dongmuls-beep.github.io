@@ -180,8 +180,8 @@ def test_main_uses_given_paths(tmp_path):
     assert br.main(argv) == 0
     assert len(ET.fromstring(out.read_bytes()).findall("channel/item")) == 1
     out2 = tmp_path / "out2.xml"
-    assert br.main(["--changelog", str(tmp_path / "missing.json"), "--data", str(dt), "--output", str(out2)]) == 0
-    assert ET.fromstring(out2.read_bytes()).findall("channel/item") == []
+    assert br.main(["--changelog", str(tmp_path / "missing.json"), "--data", str(dt), "--output", str(out2)]) == 1
+    assert not out2.exists()
 
 
 # --- Phase 12 review fixes (WR-01..WR-05) ---
@@ -228,19 +228,37 @@ def test_malformed_code_and_huge_numbers_skipped():  # WR-03
     ET.fromstring(br.build_feed_bytes(items))
 
 
-def test_main_never_fails_and_keeps_feed(tmp_path, monkeypatch, capsys):  # WR-04
+def test_main_fails_and_keeps_feed(tmp_path, monkeypatch, capsys):  # WR-04
     out = tmp_path / "feed.xml"
     out.write_bytes(b"OLD")
+    (tmp_path / "x.json").write_text("[]", encoding="utf-8")
+    (tmp_path / "y.json").write_text("[]", encoding="utf-8")
 
     def boom(*a, **k):
         raise RuntimeError("kaboom")
 
     monkeypatch.setattr(br, "build_items", boom)
     argv = ["--changelog", str(tmp_path / "x.json"), "--data", str(tmp_path / "y.json"), "--output", str(out)]
-    assert br.main(argv) == 0
+    assert br.main(argv) == 1
     assert out.read_bytes() == b"OLD"
     assert "kaboom" in capsys.readouterr().err
     assert not (tmp_path / "feed.xml.tmp").exists()
+
+
+def test_main_bad_inputs_keep_feed(tmp_path):
+    good = tmp_path / "good.json"
+    good.write_text("[]", encoding="utf-8")
+    bad = tmp_path / "bad.json"
+    bad.write_text("{not json", encoding="utf-8")
+    obj = tmp_path / "obj.json"
+    obj.write_text("{}", encoding="utf-8")
+    missing = tmp_path / "missing.json"
+    out = tmp_path / "feed.xml"
+    for cl, dt in [(bad, good), (obj, good), (good, missing)]:
+        out.write_bytes(b"OLD")
+        assert br.main(["--changelog", str(cl), "--data", str(dt), "--output", str(out)]) == 1
+        assert out.read_bytes() == b"OLD"
+        assert not (tmp_path / "feed.xml.tmp").exists()
 
 
 def test_date_trailing_newline_rejected():  # WR-05
