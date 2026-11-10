@@ -9,6 +9,7 @@ key-files:
   modified: [index.html, changelog/index.html, fomo/index.html, guide/index.html, isa/index.html, methodology/index.html, pension/index.html]
   created: [tests/test_html_a11y.py]
 requirements: [A11Y-05, A11Y-06, A11Y-07, A11Y-08, A11Y-09]
+requirements-completed: [A11Y-05, A11Y-06, A11Y-07, A11Y-08, A11Y-09]
 metrics:
   completed: 2026-09-30
 ---

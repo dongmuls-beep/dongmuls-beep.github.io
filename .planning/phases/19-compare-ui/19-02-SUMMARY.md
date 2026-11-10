@@ -22,6 +22,7 @@ metrics:
   tasks: 2
   files: 4
   completed: 2026-11-10
+requirements-completed: [CMP-09, CMP-11]
 ---
 
 # Phase 19 Plan 02: calculator locale, announcer, 320px table Summary

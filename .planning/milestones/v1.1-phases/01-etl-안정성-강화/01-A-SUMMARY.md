@@ -9,6 +9,7 @@ key-files:
   modified:
     - etl_process.py
     - .github/workflows/daily_update.yml
+requirements-completed: [ETL-01]
 ---
 
 # Plan 01-A: GAS URL 환경변수화 Summary

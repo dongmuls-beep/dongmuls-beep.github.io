@@ -25,6 +25,7 @@ metrics:
   duration: "~10min"
   completed: 2026-09-30
 requirements: [DATA-10]
+requirements-completed: [DATA-10]
 ---
 
 # Phase 11 Plan 01: script.js seam + null-safe Summary

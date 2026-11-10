@@ -19,6 +19,7 @@ metrics:
   tasks: 2
   files: 2
   completed: 2026-11-10
+requirements-completed: [CMP-08, CMP-09, CMP-10, CMP-11]
 ---
 
 # Phase 19 Plan 01: compare-view fixes Summary

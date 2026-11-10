@@ -10,6 +10,7 @@ key-files:
   created: [tests/a11y_states_check.js]
 metrics:
   completed: 2026-09-30
+requirements-completed: [A11Y-08]
 ---
 
 # Phase 14 Plan 05: Accessible loading/error/empty states Summary

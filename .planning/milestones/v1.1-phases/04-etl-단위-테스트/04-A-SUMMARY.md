@@ -35,6 +35,7 @@ metrics:
   tasks_completed: 2
   files_created: 2
   files_modified: 2
+requirements-completed: [TEST-01, TEST-02, TEST-03]
 ---
 
 # Phase 04 Plan A: 테스트 환경 기반 구성 Summary

@@ -37,6 +37,7 @@ metrics:
   tasks_completed: 2
   files_created: 2
   files_modified: 1
+requirements-completed: [TEST-02, TEST-03]
 ---
 
 # Phase 04 Plan C: ETL 프로세스·검증 단위 테스트 Summary

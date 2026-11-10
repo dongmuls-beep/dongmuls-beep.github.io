@@ -10,6 +10,7 @@ key-files:
   modified: [i18n/ko.json, i18n/en.json, i18n/ja.json, i18n/zh.json, i18n/vi.json, i18n/th.json, i18n/tl.json, i18n/km.json]
   created: [tests/test_i18n_a11y.py]
 requirements: [A11Y-05, A11Y-06, A11Y-07, A11Y-08]
+requirements-completed: [A11Y-05, A11Y-06, A11Y-07, A11Y-08]
 metrics:
   completed: 2026-09-30
 ---

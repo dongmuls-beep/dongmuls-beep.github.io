@@ -22,6 +22,7 @@ metrics:
   completed_date: "2026-05-20T06:47:15Z"
   tasks_completed: 1
   tasks_total: 1
+requirements-completed: [BUG-02]
 ---
 
 # Phase 3 Plan C: renderChangelog() 빈 changes 처리 Summary

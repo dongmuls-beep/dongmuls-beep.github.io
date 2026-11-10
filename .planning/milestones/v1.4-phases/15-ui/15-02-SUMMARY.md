@@ -15,6 +15,7 @@ key-decisions:
   - "Announced item name is read from the row's .stock-link text, not the aria-label."
 metrics:
   completed: 2026-09-30
+requirements-completed: [CMP-01, CMP-02]
 ---
 
 # Phase 15 Plan 02: compare-select Summary

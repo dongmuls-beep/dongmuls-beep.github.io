@@ -12,6 +12,7 @@ decisions:
   - "Task 2 (browser smoke + 6-language translation review) DEFERRED to end of Phase 16 per user decision; recorded as pending, not approved."
 metrics:
   completed: 2026-09-30
+requirements-completed: [CMP-01, CMP-02, CMP-03, CMP-04, CMP-05, CMP-06, CALC-01, CALC-03, CALC-04, CALC-05]
 ---
 
 # Phase 15 Plan 07: Final Gate Summary

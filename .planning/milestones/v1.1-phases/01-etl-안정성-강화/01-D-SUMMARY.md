@@ -9,6 +9,7 @@ key-files:
   created: []
   modified:
     - etl_process.py
+requirements-completed: [ETL-03]
 ---
 
 # Plan 01-D: bare except: 4개 완전 제거 Summary

@@ -10,6 +10,7 @@ key-files:
   created: [tests/a11y_table_check.js]
 metrics:
   completed: 2026-09-30
+requirements-completed: [A11Y-02, A11Y-03, A11Y-05, A11Y-06]
 ---
 
 # Phase 14 Plan 04: script.js a11y behaviour Summary

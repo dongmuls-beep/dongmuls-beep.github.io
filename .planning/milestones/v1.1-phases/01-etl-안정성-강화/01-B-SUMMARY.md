@@ -8,6 +8,7 @@ key-files:
   created: []
   modified:
     - etl_process.py
+requirements-completed: [ETL-02]
 ---
 
 # Plan 01-B: Selenium 지수 백오프 Summary

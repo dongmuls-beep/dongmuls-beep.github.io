@@ -23,6 +23,7 @@ decisions:
   - "The page has no scroll-top button. The only fixed bottom element is .toast (style.css, bottom 24px, z-index 1700), which sat on top of the bar. compare.css now moves it above the bar when body.has-compare-bar is set. style.css is unchanged."
 metrics:
   completed: 2026-09-30
+requirements-completed: [FEED-04]
 ---
 
 # Phase 16 Plan 01: Integration Wiring Summary

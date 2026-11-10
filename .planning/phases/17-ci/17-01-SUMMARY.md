@@ -17,6 +17,7 @@ decisions:
   - "RSS step keeps continue-on-error so data commits; final step fails run via steps.rss.outcome"
 metrics:
   completed: 2026-11-10
+requirements-completed: [DATA-11]
 ---
 
 # Phase 17 Plan 01: RSS failure visibility Summary

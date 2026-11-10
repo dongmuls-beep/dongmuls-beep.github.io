@@ -8,6 +8,7 @@ key-files:
   created: []
   modified:
     - etl_process.py
+requirements-completed: [ETL-03, ETL-04]
 ---
 
 # Plan 01-C: 구체적 예외 처리 + KOFIA 컬럼 검증 Summary

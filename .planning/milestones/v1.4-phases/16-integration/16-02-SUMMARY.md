@@ -13,6 +13,7 @@ decisions:
   - "The audit ran after both fix agents had committed: fix(14) befb0e7 and fix(15) 57daa7a."
 metrics:
   completed: 2026-09-30
+requirements-completed: [FEED-04]
 ---
 
 # Phase 16 Plan 02: Final Integration Audit Summary

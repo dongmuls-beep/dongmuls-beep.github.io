@@ -15,6 +15,7 @@ decisions:
   - "Single commit for all 3 tasks (edits applied in one byte-safe python pass)"
 metrics:
   completed: 2026-09-30
+requirements-completed: [A11Y-01, A11Y-02, A11Y-03, A11Y-04, A11Y-05, A11Y-08, A11Y-09]
 ---
 
 # Phase 14 Plan 01: style.css accessibility rewrite Summary
