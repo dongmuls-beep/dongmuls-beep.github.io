@@ -50,6 +50,7 @@ byId["cmp-chart"].setAttribute("hidden", "");
 const announced = [];
 const renderCallbacks = [];
 let matchMediaResult = true;
+const winListeners = [];
 
 const sandbox = {
     document: {
@@ -60,7 +61,7 @@ const sandbox = {
         createElement: (tag) => { const e = fakeEl(tag); return e; },
         createElementNS: (_ns, tag) => fakeEl(tag),
     },
-    window: { addEventListener: noop, matchMedia: () => ({ matches: matchMediaResult, addEventListener: noop }) },
+    window: { addEventListener: (t, f) => winListeners.push([t, f]), matchMedia: () => ({ matches: matchMediaResult, addEventListener: noop }) },
     navigator: { language: "ko" },
     localStorage: { getItem: () => null, setItem: noop },
     console,
@@ -300,6 +301,23 @@ assert.strictEqual(JSON.stringify(items), itemsBefore, "items not mutated");
     assert.strictEqual(body.listeners.click.length, 1, "one retry listener");
     assert.strictEqual(group.listeners.click.length, 1, "one chip listener");
     assert.strictEqual(has("FEE_CHART.height"), 200);
+
+    // CMP-07: dead helper gone, single debounced resize listener
+    assert.ok(!readSrc("compare-chart.js").includes("function t("), "dead t() removed");
+    const resizers = winListeners.filter((w) => w[0] === "resize");
+    assert.strictEqual(resizers.length, 1, "one resize listener");
+    const before = figure.children[0];
+    figure.clientWidth = 500;
+    let replaced = 0;
+    const origAppend = figure.appendChild.bind(figure);
+    figure.appendChild = (c) => { replaced++; return origAppend(c); };
+    resizers[0][1]();
+    resizers[0][1]();
+    await new Promise((r) => setTimeout(r, 200));
+    assert.strictEqual(replaced, 1, "debounced to a single redraw");
+    assert.notStrictEqual(figure.children[0], before, "svg redrawn on resize");
+    assert.ok(figure.children[0].attrs.viewBox.startsWith("0 0 500"), figure.children[0].attrs.viewBox);
+    assert.deepStrictEqual(chips.map((c) => c.getAttribute("aria-pressed")), ["false", "true", "false", "false"]);
 })().then(async () => {
     // error + retry in a fresh context
     const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -325,6 +343,14 @@ assert.strictEqual(JSON.stringify(items), itemsBefore, "items not mutated");
     await flush();
     assert.strictEqual(calls, 2, "retry calls loadFeeHistory again");
     assert.strictEqual(body.listeners.click.length, 1);
+    assert.strictEqual(status.attrs.tabindex, "-1", "status focusable");
+    assert.strictEqual(status.focused, true, "retry keeps focus on status");
+    // resize in error state must not throw or replace the error
+    const errHtml = "x";
+    status.innerHTML = errHtml;
+    ctx.__fail2 = () => Promise.reject(new Error("offline"));
+    winListeners.filter((w) => w[0] === "resize").forEach((w) => w[1]());
+    await new Promise((r) => setTimeout(r, 200));
 
     // retry succeeds
     ctx.__ok = () => Promise.resolve({ series: {} });

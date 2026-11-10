@@ -10,13 +10,6 @@
         return escapeHtml(String(raw === null || raw === undefined ? "" : raw));
     }
 
-    function t(key, vars) {
-        if (typeof CompareView === "object" && CompareView && typeof CompareView.t === "function") {
-            return CompareView.t(key, vars);
-        }
-        return formatFeeTemplate(getTranslation(key), vars || {});
-    }
-
     function plainT(key, vars) {
         // Strip markup from the template only; interpolated values stay visible and are escaped later.
         var template = getTranslation(key);
@@ -241,7 +234,9 @@
         ctx: null,
         history: null,
         loading: false,
-        shell: null
+        shell: null,
+        resizeBound: false,
+        resizeTimer: null
     };
 
     function byId(id) {
@@ -280,6 +275,7 @@
 
         var status = document.createElement("div");
         status.id = "cmp-chart-status";
+        status.setAttribute("tabindex", "-1");
         body.appendChild(status);
         var figure = document.createElement("figure");
         figure.id = "cmp-chart-figure";
@@ -311,10 +307,19 @@
             var target = event.target;
             if (target && typeof target.closest === "function" && target.closest("[data-cmp-chart-retry]")) {
                 loadHistory();
+                if (typeof shell.status.focus === "function") shell.status.focus();
             }
         });
 
-        state.shell = { body: body, label: label, chips: chips, status: status, figure: figure, legend: legend, alt: alt };
+        var shell = { body: body, label: label, chips: chips, status: status, figure: figure, legend: legend, alt: alt };
+        state.shell = shell;
+        if (!state.resizeBound && typeof window !== "undefined" && window.addEventListener) {
+            state.resizeBound = true;
+            window.addEventListener("resize", function () {
+                clearTimeout(state.resizeTimer);
+                state.resizeTimer = setTimeout(draw, 150);
+            });
+        }
         return state.shell;
     }
 
