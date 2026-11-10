@@ -97,7 +97,8 @@ def test_header_aria_i18n(page):
 def test_crlf_no_bom(page):
     raw = (ROOT / page).read_bytes()
     assert not raw.startswith(b"\xef\xbb\xbf")
-    assert raw.count(b"\n") == raw.count(b"\r\n")
+    # CRLF (Windows autocrlf checkout) or LF (CI checkout) both fine; mixed endings are not.
+    assert raw.count(b"\r\n") in (0, raw.count(b"\n"))
 
 
 def _pos(tags, i):
