@@ -126,7 +126,11 @@ Plans:
   1. `.footer-links a` 링크 사이에 gap이 적용되어 보인다
   2. 모든 SUMMARY frontmatter에 `requirements-completed`가 있다
   3. Phase 14~16 VERIFICATION status가 UAT 결과와 일치한다
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 20-01-PLAN.md — .footer-links flex row + token gap, CSS contract test (POLISH-01)
+- [ ] 20-02-PLAN.md — fact-driven requirements-completed backfill + 14-16 VERIFICATION/UAT alignment (POLISH-02)
 **UI hint**: yes
 **Owns**: style.css (.footer-links), .planning/milestones 및 phase 디렉터리 문서
 
