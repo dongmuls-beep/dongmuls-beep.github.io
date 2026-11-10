@@ -60,7 +60,7 @@ Full details: [milestones/v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md)
 
 ### 🚧 v1.5 기술 부채 정리 (Phases 17-20) — IN PROGRESS
 
-- [ ] **Phase 17: 데이터·CI 신뢰성** - RSS 빌드 실패 시 CI 실패 표시, 수수료 급락 3건 검증, node 검사 단계 CI 확인
+- [x] **Phase 17: 데이터·CI 신뢰성** - RSS 빌드 실패 시 CI 실패 표시, 수수료 급락 3건 검증, node 검사 단계 CI 확인 (completed 2026-11-10)
 - [ ] **Phase 18: RSS 피드 품질** - 중복 행 제거, 정확한 수치, 실효성 있는 결정성 테스트, .gitattributes/.tmp 정리
 - [ ] **Phase 19: /compare/ UI·접근성 정리** - 차트 리사이즈, th/절단 수정, 계산기 로케일·포커스, 언어 이벤트 통일, 320px 순위표
 - [ ] **Phase 20: 소소한 정리·문서 보정** - footer gap, SUMMARY frontmatter, VERIFICATION status
@@ -81,7 +81,7 @@ Full details: [milestones/v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md)
 Plans:
 - [x] 17-01-PLAN.md — build_rss.py exit 1 on failure, feed.xml kept; workflow fails run after commit (DATA-11)
 - [x] 17-02-PLAN.md — 총보수 급락 3건 evidence + DATA-12 recurrence warning (DATA-12)
-- [ ] 17-03-PLAN.md — push (user-approved) + real CI run evidence for node checks (CI-01)
+- [x] 17-03-PLAN.md — push (user-approved) + real CI run evidence for node checks (CI-01)
 
 **Owns**: .github/workflows/daily_update.yml, scripts/ ETL, fee-history.json
 
@@ -144,7 +144,7 @@ Plans:
 | 14. 모바일 접근성 | v1.4 | 5/5 | Complete | 2026-09-30 |
 | 15. 직접 비교 + 계산기 UI | v1.4 | 7/7 | Complete | 2026-09-30 |
 | 16. 통합·검증 | v1.4 | 2/2 | Complete | 2026-10-06 |
-| 17. 데이터·CI 신뢰성 | v1.5 | 2/3 | In Progress|  |
+| 17. 데이터·CI 신뢰성 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 18. RSS 피드 품질 | v1.5 | 0/0 | Not started | - |
 | 19. /compare/ UI·접근성 정리 | v1.5 | 0/0 | Not started | - |
 | 20. 소소한 정리·문서 보정 | v1.5 | 0/0 | Not started | - |
