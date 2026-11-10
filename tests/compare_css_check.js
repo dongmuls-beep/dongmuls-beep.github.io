@@ -84,7 +84,7 @@ const contract = [
   ".cmp-marker-4", ".cmp-legend", ".cmp-legend-item", ".cmp-swatch", ".cmp-legend-note", ".cmp-chart-alt", ".cmp-chart-table",
   ".cmp-calc-form", ".cmp-field", ".cmp-label", ".cmp-input", ".cmp-select", ".cmp-hint", ".cmp-field-error",
   '.cmp-input[aria-invalid="true"]', ".cmp-calc-result", ".cmp-calc-headline", ".cmp-calc-table",
-  ".cmp-calc-meta", ".cmp-warning", ".cmp-disclaimer",
+  ".cmp-calc-meta", ".cmp-warning", ".cmp-disclaimer", ".cmp-calc-gap",
 ];
 for (const s of contract) assert(css.includes(s), "class contract missing selector: " + s);
 
@@ -92,6 +92,31 @@ const allowed = new Set(["14px", "16px", "20px", "28px", "0.875rem", "1rem", "1.
 for (const m of css.matchAll(/font-size\s*:\s*([^;}\s]+)/g)) {
   assert(allowed.has(m[1]), "disallowed font-size " + m[1]);
 }
+
+// <=639px rank table: sticky name column, unclipped gap column
+let mobile = "";
+for (let i = css.indexOf("@media (max-width: 639px)"); i !== -1; i = css.indexOf("@media (max-width: 639px)", i + 1)) {
+  const open = css.indexOf("{", i);
+  let depth = 0, j = open;
+  for (; j < css.length; j++) {
+    if (css[j] === "{") depth++;
+    else if (css[j] === "}" && --depth === 0) break;
+  }
+  mobile += css.slice(open + 1, j);
+}
+function mobileBody(re) {
+  const m = mobile.match(re);
+  assert(m, "missing mobile rule " + re);
+  return m[1];
+}
+const rowB = mobileBody(/\.cmp-calc-table th\[scope="row"\]\s*\{([^}]*)\}/);
+for (const re of [/position\s*:\s*sticky/, /left\s*:\s*0/, /z-index\s*:\s*1/, /background\s*:\s*var\(--surface-soft\)/, /border-right\s*:\s*1px solid var\(--border\)/]) {
+  assert(re.test(rowB), "sticky row th missing " + re);
+}
+assert(/\.cmp-calc-table th\.cmp-calc-gap,\s*\.cmp-calc-table td\.cmp-calc-gap/.test(mobile), "gap selector must be th.cmp-calc-gap + td.cmp-calc-gap");
+const gapB = mobileBody(/\.cmp-calc-table td\.cmp-calc-gap\s*\{([^}]*)\}/);
+assert(/white-space\s*:\s*nowrap/.test(gapB) && /min-width\s*:\s*96px/.test(gapB), "gap nowrap + min-width 96px");
+assert(/\.cmp-table-wrap\s*\{[^}]*overflow-x\s*:\s*auto/.test(css), "wrap overflow-x auto");
 
 assert(/\.cmp-toolbar\[hidden\]\s*\{\s*display:\s*none/.test(css), "WR-01 toolbar hidden");
 console.log("compare_css_check OK");

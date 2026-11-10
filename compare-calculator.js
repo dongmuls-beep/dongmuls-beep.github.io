@@ -25,7 +25,21 @@
         return key;
     }
 
+    function locale() {
+        if (typeof currentLanguage === "string" && typeof getLanguageMeta === "function") return getLanguageMeta(currentLanguage).htmlLang;
+        return "ko-KR";
+    }
+
     function fmt(n) {
+        try {
+            return Math.round(n).toLocaleString(locale());
+        } catch (e) {
+            return Math.round(n).toLocaleString("ko-KR");
+        }
+    }
+
+    // Input grouping stays comma: parseNumberInput only strips commas ("." is the decimal point).
+    function fmtInput(n) {
         return Math.round(n).toLocaleString("ko-KR");
     }
 
@@ -111,34 +125,37 @@
         return { inputs: n, headline: headline, ranked: ranked, perEtf: perEtf, excludedNames: excludedNames, warnings: warnings, contributed: contributed };
     }
 
+    function headlineText(result) {
+        var head = result.headline;
+        if (head && head.kind === "more") {
+            return tr("calc_result", { years: head.years, a: head.low.name, b: head.high.name, amount: fmt(head.amount) });
+        }
+        if (head && head.kind === "same") return tr("calc_result_same", { years: head.years });
+        return "";
+    }
+
     function renderResultHtml(result) {
         var h = "";
-        var head = result.headline;
-        var text = "";
-        if (head && head.kind === "more") {
-            text = tr("calc_result", { years: head.years, a: head.low.name, b: head.high.name, amount: head.amount.toLocaleString("ko-KR") });
-        } else if (head && head.kind === "same") {
-            text = tr("calc_result_same", { years: head.years });
-        }
+        var text = headlineText(result);
         h += '<div class="cmp-calc-result" role="group">';
-        h += '<p id="cmp-calc-headline" class="cmp-calc-headline" role="status" aria-live="polite" aria-atomic="true">' + esc(text) + "</p>";
+        h += '<p id="cmp-calc-headline" class="cmp-calc-headline">' + esc(text) + "</p>";
         if (result.ranked.length) {
             h += '<div class="cmp-table-wrap" role="region" tabindex="0" aria-labelledby="cmp-calc-caption">';
             h += '<table class="cmp-table cmp-calc-table"><caption id="cmp-calc-caption" class="cmp-sr-only">' + esc(tr("calc_table_caption")) + "</caption>";
             h += '<thead><tr><th scope="col">' + esc(tr("calc_col_rank")) + '</th><th scope="col">' + esc(tr("calc_col_etf")) + '</th><th scope="col">' + esc(tr("calc_col_fees")) +
-                '</th><th scope="col">' + esc(tr("calc_col_gap")) + '</th><th scope="col">' + esc(tr("calc_col_final")) + "</th></tr></thead><tbody>";
+                '</th><th scope="col" class="cmp-calc-gap">' + esc(tr("calc_col_gap")) + '</th><th scope="col">' + esc(tr("calc_col_final")) + "</th></tr></thead><tbody>";
             result.ranked.forEach(function (e) {
                 var best = e.gap < 1;
                 h += "<tr><td>" + e.rank + '</td><th scope="row">' + esc(e.name) + '<span class="cmp-etf-code">' + esc(e.code) + "</span></th>";
                 h += "<td>" + fmt(e.totalFees) + "</td>";
-                h += best ? '<td data-best="true"><span class="cmp-best">' + esc(tr("compare_best_badge")) + "</span></td>" : "<td>+" + fmt(e.gap) + "</td>";
+                h += best ? '<td class="cmp-calc-gap" data-best="true"><span class="cmp-best">' + esc(tr("compare_best_badge")) + "</span></td>" : '<td class="cmp-calc-gap">+' + fmt(e.gap) + "</td>";
                 h += "<td>" + fmt(e.fvWithFee) + "</td></tr>";
             });
             h += "</tbody></table></div>";
         }
         h += '<p class="cmp-calc-meta">' + esc(tr("calc_contributed", { amount: fmt(result.contributed) })) + "</p>";
         if (result.excludedNames.length) {
-            h += '<p class="cmp-notice" role="status">' + esc(tr("calc_excluded", { names: result.excludedNames.join(", ") })) + "</p>";
+            h += '<p class="cmp-notice">' + esc(tr("calc_excluded", { names: result.excludedNames.join(", ") })) + "</p>";
         }
         result.warnings.forEach(function (name) {
             h += '<p class="cmp-warning">' + esc(tr("calc_fee_high", { name: name, limit: CompareCalc.LIMITS.FEE_HIGH_PCT })) + "</p>";
@@ -161,6 +178,7 @@
         labels: {},
         hints: {},
         out: null,
+        lastHeadline: undefined,
         copyBtn: null
     };
 
@@ -233,7 +251,7 @@
 
     function setFieldValues(v) {
         FIELDS.forEach(function (f) {
-            S.inputs[f.key].value = f.amount ? fmt(v[f.key]) : String(v[f.key]);
+            S.inputs[f.key].value = f.amount ? fmtInput(v[f.key]) : String(v[f.key]);
         });
     }
 
@@ -244,14 +262,14 @@
         raw[f.key] = n;
         var norm = CompareCalc.normalizeInputs(raw);
         var val = norm[f.key];
-        S.inputs[f.key].value = f.amount ? fmt(val) : String(val);
+        S.inputs[f.key].value = f.amount ? fmtInput(val) : String(val);
     }
 
     function clampLimit(f, raw) {
         var L = CompareCalc.LIMITS;
         if (f.key === "years") return raw > L.MAX_YEARS ? L.MAX_YEARS : L.MIN_YEARS;
         if (f.key === "annualReturnPct") return raw > L.MAX_RETURN_PCT ? L.MAX_RETURN_PCT : L.MIN_RETURN_PCT;
-        return L.MAX_AMOUNT.toLocaleString("ko-KR");
+        return fmt(L.MAX_AMOUNT);
     }
 
     function showError(f, on) {
@@ -282,6 +300,7 @@
         });
         if (invalid) {
             S.out.setAttribute("hidden", "");
+            S.lastHeadline = null;
             var msgs = FIELDS.filter(function (f) { return S.inputs[f.key].getAttribute("aria-invalid") === "true"; })
                 .map(function (f) { return tr(f.err); });
             if (typeof CompareView === "object") CompareView.announce(msgs.join(" "));
@@ -300,8 +319,16 @@
             }
         });
         S.values = n;
-        S.out.innerHTML = renderResultHtml(buildCalcResult(n, S.ctx.items));
+        var result = buildCalcResult(n, S.ctx.items);
+        var text = headlineText(result);
+        S.out.innerHTML = renderResultHtml(result);
         S.out.removeAttribute("hidden");
+        if (typeof CompareView === "object" && CompareView) {
+            // Single announcer: #cmp-live. First render and unchanged text stay silent.
+            if (S.lastHeadline !== undefined && text && text !== S.lastHeadline) CompareView.announce(text);
+            if (typeof CompareView.updateScrollable === "function") CompareView.updateScrollable();
+        }
+        S.lastHeadline = text;
         scheduleUrl();
     }
 
@@ -352,6 +379,7 @@
         readCalcParams: readCalcParams,
         buildCalcSearch: buildCalcSearch,
         buildCalcResult: buildCalcResult,
+        headlineText: headlineText,
         renderResultHtml: renderResultHtml
     };
     root().CompareCalculatorUI = api;

@@ -639,6 +639,23 @@ td[data-best="true"] .cmp-value {
   .cmp-calc-table td {
     padding: 8px;
   }
+
+  .cmp-calc-table th[scope="row"] {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface-soft);
+    border-right: 1px solid var(--border);
+    max-width: 128px;
+    overflow-wrap: anywhere;
+  }
+
+  /* th.cmp-calc-gap outranks .cmp-calc-table th[scope="col"] { min-width: 0 } */
+  .cmp-calc-table th.cmp-calc-gap,
+  .cmp-calc-table td.cmp-calc-gap {
+    white-space: nowrap;
+    min-width: 96px;
+  }
 }
 
 .cmp-calc-meta {

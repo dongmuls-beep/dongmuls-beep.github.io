@@ -239,7 +239,10 @@ assert.strictEqual(hi.headline.kind, "more");
 
 let html = UI.renderResultHtml(UI.buildCalcResult(inp, items));
 assert.ok(html.indexOf('role="group"') > 0 && html.indexOf("cmp-calc-result") > 0);
-assert.ok(html.includes('id="cmp-calc-headline"') && html.includes('aria-live="polite"') && html.includes('aria-atomic="true"'));
+assert.ok(html.includes('id="cmp-calc-headline"') && !/aria-live/.test(html) && !/role="status"/.test(html));
+assert.strictEqual(UI.headlineText(UI.buildCalcResult(inp, items)), hl0(html));
+assert.strictEqual((html.match(/cmp-calc-gap/g) || []).length, 3, "gap th + 2 gap tds");
+function hl0(h) { return h.match(/<p id="cmp-calc-headline"[^>]*>([^<]*)<\/p>/)[1]; }
 const hl = html.match(/<p id="cmp-calc-headline"[^>]*>([^<]*)<\/p>/)[1];
 assert.ok(hl.includes("년간") && hl.includes("A name") && hl.includes("B name") && hl.includes("원 더 부담"), hl);
 assert.ok(hl.includes(Math.round(Math.abs(cmp.feesDifference)).toLocaleString("ko-KR")));
@@ -261,6 +264,26 @@ assert.ok(!xss.includes("<img") && xss.includes("&lt;img"));
 const hiHtml = UI.renderResultHtml(hi);
 assert.ok(hiHtml.includes("cmp-warning") && hiHtml.includes("H name"));
 
+// locale
+{
+    const res = UI.buildCalcResult(inp, items);
+    const fees = Math.round(res.ranked[0].totalFees);
+    const amt = res.headline.amount;
+    for (const [lang, tag] of [["en", "en-US"], ["vi", "vi-VN"], ["xx", "ko-KR"]]) {
+        vm.runInContext('currentLanguage = "' + lang + '"', T.ctx);
+        const out = UI.renderResultHtml(res);
+        assert.ok(out.includes(fees.toLocaleString(tag)), lang + " fee");
+        assert.ok(hl0(out).includes(amt.toLocaleString(tag)), lang + " headline");
+    }
+    vm.runInContext('currentLanguage = "ko"', T.ctx);
+}
+{
+    const V = build("?compare=A,B&amt=5,000,000");
+    vm.runInContext('currentLanguage = "vi"', V.ctx);
+    V.getCb()({ items, lang: "vi" });
+    assert.strictEqual(V.dom.registry["cmp-amt"].value, "5,000,000", "input keeps comma grouping in vi");
+}
+
 // ---------- Task 3: DOM ----------
 const W = build("?compare=A,B&amt=5,000,000&yrs=20");
 const cb = W.getCb();
@@ -269,7 +292,11 @@ W.dom.doc.getElementById("cmp-calc"); // registry lookup sanity
 W.dom.section.setAttribute("id", "cmp-calc");
 W.dom.body.setAttribute("id", "cmp-calc-body");
 const dctx = { items, lang: "ko" };
+let scrolls = 0;
+W.ctx.CompareView.updateScrollable = () => scrolls++;
 cb(dctx);
+assert.strictEqual(scrolls, 1, "updateScrollable after render");
+assert.strictEqual(W.announced.length, 0, "first render silent");
 const R = W.dom.registry;
 assert.strictEqual(R["cmp-calc"].getAttribute("hidden"), null, "section unhidden");
 assert.strictEqual(R["cmp-amt"].value, "5,000,000");
@@ -281,18 +308,33 @@ assert.ok(!R["cmp-base"] && !R["cmp-other"], "no pair selects");
 assert.ok(R["cmp-calc-out"].innerHTML.includes("cmp-calc-table"), "ranked table rendered");
 assert.strictEqual(R["cmp-calc-copy"].textContent, "링크 복사");
 
+// announce once
+R["cmp-amt"].value = "7,000,000";
+R["cmp-amt"].fire("input");
+assert.strictEqual(W.announced.length, 1);
+assert.strictEqual(W.announced[0], W.UI.headlineText(W.UI.buildCalcResult(W.UI.readCalcParams("?amt=7000000&yrs=20"), items)));
+R["cmp-amt"].fire("input");
+assert.strictEqual(W.announced.length, 1, "same text not re-announced");
+delete W.ctx.CompareView.updateScrollable;
+R["cmp-amt"].value = "5,000,000";
+R["cmp-amt"].fire("input"); // must not throw without updateScrollable
+assert.strictEqual(W.announced.length, 2);
+const beforeInvalid = W.announced.length;
+
 // invalid
 R["cmp-amt"].value = "abc";
 R["cmp-amt"].fire("input");
 assert.strictEqual(R["cmp-amt"].getAttribute("aria-invalid"), "true");
 assert.notStrictEqual(R["cmp-calc-out"].getAttribute("hidden"), null);
-assert.ok(W.announced.length >= 1);
+assert.ok(W.announced.length > beforeInvalid);
+const afterInvalid = W.announced.length;
 // valid again, URL synced
 W.replaced.length = 0;
 R["cmp-amt"].value = "３０，０００원";
 R["cmp-amt"].fire("input");
 assert.strictEqual(R["cmp-amt"].getAttribute("aria-invalid"), null);
 assert.strictEqual(R["cmp-calc-out"].getAttribute("hidden"), null);
+assert.strictEqual(W.announced.length, afterInvalid + 1, "valid after invalid announces headline once");
 const last = W.replaced[W.replaced.length - 1];
 assert.ok(last.includes("amt=30000") && last.includes("yrs=20"), last);
 // clamp notice
