@@ -106,7 +106,10 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   3. 별도 워크플로가 매일 추가하고 기존 Selenium ETL과 실패가 묶이지 않는다
   4. 누락 비율 초과 시 기존 파일이 유지되고 job이 실패한다
   5. 로그·예외에 serviceKey/URL이 노출되지 않고, 테스트는 실제 API 없이 통과한다
-**Plans**: TBD
+**Plans:** 3 plans
+- [ ] 22-01-PLAN.md — 데이터 계약 + 코어 모듈(마스킹·파싱·병합·가드·원자적 쓰기) + 오프라인 테스트
+- [ ] 22-02-PLAN.md — backfill/incremental CLI + 별도 워크플로 price_update.yml + 배선 테스트
+- [ ] 22-03-PLAN.md — 실제 백필 1회 실행·로컬 커밋(push는 사용자 승인)
 **Owns**: scripts/ 가격 스크립트, 새 워크플로, prices/, tests/test_price_*.py
 
 ### Phase 23: 계산·저장 코어
