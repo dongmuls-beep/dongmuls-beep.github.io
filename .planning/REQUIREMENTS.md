@@ -8,11 +8,11 @@
 
 ### 스파이크 (SPIKE) — 게이트 0, 코드 작성 전
 
-- [ ] **SPIKE-01**: 공공데이터포털(금융위 주식시세) API의 이용허락(재배포·출처 표시·광고 사이트 사용), 일 호출 한도, `basDt` 과거 조회 범위, 수정주가 여부, 응답 필드·`numOfRows` 상한·`serviceKey` 인코딩이 근거와 함께 기록된다. 비영리·무광고 공개 이용의 적합성(재배포 위험 포함)을 판정해 기록한다. 과거 조회 불가면 계획을 멈추고 사용자에게 대안을 묻는다
-- [ ] **SPIKE-02**: 영숫자 코드(예: `0026S0`) 포함 `data.json` 59개 종목이 모두 조회되는지 확인하고 코드 표기 규칙을 기록한다
-- [ ] **SPIKE-03**: 백필 호출량(종목 수 × 기간 ÷ 페이지 크기)과 실행 시간을 계산해 기록한다
-- [ ] **SPIKE-04**: 프런트 스택(React 18 UMD 고정+SRI vs 바닐라 JS)을 비교해 결정을 기록한다
-- [ ] **SPIKE-05**: 분할이 있었던 실제 ETF로 종가 불연속을 확인하고 처리 방침을 기록한다
+- [x] **SPIKE-01**: 공공데이터포털(금융위 주식시세) API의 이용허락(재배포·출처 표시·광고 사이트 사용), 일 호출 한도, `basDt` 과거 조회 범위, 수정주가 여부, 응답 필드·`numOfRows` 상한·`serviceKey` 인코딩이 근거와 함께 기록된다. 비영리·무광고 공개 이용의 적합성(재배포 위험 포함)을 판정해 기록한다. 과거 조회 불가면 계획을 멈추고 사용자에게 대안을 묻는다
+- [x] **SPIKE-02**: 영숫자 코드(예: `0026S0`) 포함 `data.json` 59개 종목이 모두 조회되는지 확인하고 코드 표기 규칙을 기록한다
+- [x] **SPIKE-03**: 백필 호출량(종목 수 × 기간 ÷ 페이지 크기)과 실행 시간을 계산해 기록한다
+- [x] **SPIKE-04**: 프런트 스택(React 18 UMD 고정+SRI vs 바닐라 JS)을 비교해 결정을 기록한다
+- [x] **SPIKE-05**: 분할이 있었던 실제 ETF로 종가 불연속을 확인하고 처리 방침을 기록한다
 
 ### 가격 데이터 (PRICE)
 
@@ -60,11 +60,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SPIKE-01 | Phase 21 | Pending |
-| SPIKE-02 | Phase 21 | Pending |
-| SPIKE-03 | Phase 21 | Pending |
-| SPIKE-04 | Phase 21 | Pending |
-| SPIKE-05 | Phase 21 | Pending |
+| SPIKE-01 | Phase 21 | Complete |
+| SPIKE-02 | Phase 21 | Complete |
+| SPIKE-03 | Phase 21 | Complete |
+| SPIKE-04 | Phase 21 | Complete |
+| SPIKE-05 | Phase 21 | Complete |
 | PRICE-01 | Phase 22 | Pending |
 | PRICE-02 | Phase 22 | Pending |
 | PRICE-03 | Phase 22 | Pending |

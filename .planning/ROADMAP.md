@@ -73,7 +73,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 
 ### 🚧 v1.6 ETF 평가금액 추이 대시보드 (Phases 21-25) — IN PROGRESS
 
-- [ ] **Phase 21: 게이트 0 스파이크** - API 이용조건·과거 범위·수정주가, 59개 종목 조회, 백필 규모, 스택 결정, 분할 불연속
+- [x] **Phase 21: 게이트 0 스파이크** - API 이용조건·과거 범위·수정주가, 59개 종목 조회, 백필 규모, 스택 결정, 분할 불연속 (completed 2026-11-11)
 - [ ] **Phase 22: 가격 수집 파이프라인** - prices/{code}.json 계약, 백필, 별도 일일 워크플로, 누락 임계 실패, 테스트
 - [ ] **Phase 23: 계산·저장 코어** - 순수 JS 평가금액 모듈, 로컬 저장 스키마, 내보내기·가져오기 검증
 - [ ] **Phase 24: /portfolio/ UI·i18n** - 입력, 추이 그래프, 합계·비중·기간, 가중평균 보수, 8개 언어, a11y
@@ -91,9 +91,9 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   3. 백필 호출량·시간 추정과 프런트 스택(React UMD vs 바닐라) 결정이 기록된다
   4. 분할 ETF의 종가 불연속 확인 결과와 처리 방침이 기록된다
   5. 불허이거나 과거 조회 불가면 이후 단계 계획을 멈추고 사용자에게 대안을 묻는다
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 - [x] 21-01-PLAN.md — 공개문서 판정(이용허락·한도), 백필 추정, 스택 결정
-- [ ] 21-02-PLAN.md — 서비스키 체크포인트, 마스킹 실호출(59개·분할), 종합 판정
+- [x] 21-02-PLAN.md — 서비스키 체크포인트, 마스킹 실호출(59개·분할), 종합 판정
 **Owns**: .planning/phases/21-*/ (문서만, 서비스키는 저장·커밋 금지)
 
 ### Phase 22: 가격 수집 파이프라인
@@ -170,7 +170,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 | 18. RSS 피드 품질 | v1.5 | 1/1 | Complete   | 2026-11-10 |
 | 19. /compare/ UI·접근성 정리 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 20. 소소한 정리·문서 보정 | v1.5 | 2/2 | Complete   | 2026-11-10 |
-| 21. 게이트 0 스파이크 | v1.6 | 1/2 | In Progress|  |
+| 21. 게이트 0 스파이크 | v1.6 | 2/2 | Complete    | 2026-11-11 |
 | 22. 가격 수집 파이프라인 | v1.6 | 0/? | Not started | - |
 | 23. 계산·저장 코어 | v1.6 | 0/? | Not started | - |
 | 24. /portfolio/ UI·i18n | v1.6 | 0/? | Not started | - |

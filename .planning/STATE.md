@@ -2,15 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: ETF 평가금액 추이 대시보드
-status: Defining requirements
-last_updated: "2026-11-11T04:56:32.590Z"
+status: ready_to_plan
+last_updated: 2026-11-11T05:20:31.005Z
 last_activity: 2026-11-11 — Milestone v1.6 started
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
+stopped_at: Phase 21 complete (2/2) — ready to discuss Phase 22
 ---
 
 # Project State
@@ -21,14 +22,14 @@ See: .planning/PROJECT.md (updated 2026-11-11)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
 **Current milestone:** none (v1.5 shipped 2026-11-11)
-**Current focus:** Planning next milestone (v1.6 candidate: SEED-001)
+**Current focus:** Phase 22 — 가격 수집 파이프라인
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-11-11 — Milestone v1.6 started
+Phase: 22
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-11-11
 
 ## Completed Milestones
 
