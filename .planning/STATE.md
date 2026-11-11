@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: 기술 부채 정리
-status: verifying
-last_updated: "2026-11-10T18:35:31.538Z"
-last_activity: 2026-11-10
+status: Awaiting next milestone
+last_updated: "2026-11-11T03:12:54.328Z"
+last_activity: 2026-11-11 — Milestone v1.5 completed and archived
 progress:
   total_phases: 4
   completed_phases: 4
@@ -17,18 +17,18 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-06)
+See: .planning/PROJECT.md (updated 2026-11-11)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
-**Current milestone:** v1.5 기술 부채 정리 (Phases 17-20)
-**Current focus:** Phase 17 — 데이터·CI 신뢰성
+**Current milestone:** none (v1.5 shipped 2026-11-11)
+**Current focus:** Planning next milestone (v1.6 candidate: SEED-001)
 
 ## Current Position
 
-Phase: 17 (데이터·CI 신뢰성) — EXECUTING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-11-10
+Phase: Milestone v1.5 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-11 — Milestone v1.5 completed and archived
 
 ## Completed Milestones
 
@@ -62,3 +62,15 @@ Items acknowledged and deferred at milestone close on 2026-10-06:
 | Category | Item | Status |
 |----------|------|--------|
 | debug | knowledge-base | false positive (resolved-session knowledge base file, not an open session) |
+
+Items acknowledged and deferred at milestone close on 2026-11-11:
+
+| Category | Item | Status |
+|----------|------|--------|
+| debug | knowledge-base | false positive (resolved-session knowledge base file) |
+| seed | SEED-001-portfolio-dashboard | dormant, next milestone candidate (v1.6) |
+| verification | 19-VERIFICATION human items | screen reader single announcement, Retry focus ring look (rest confirmed via headless Chrome 2026-11-11) |
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

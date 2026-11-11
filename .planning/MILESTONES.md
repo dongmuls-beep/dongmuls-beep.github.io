@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.5 기술 부채 정리 (Shipped: 2026-11-11)
+
+**Phases completed:** 4 phases, 9 plans, 3 tasks
+
+**Key accomplishments:**
+
+- CI가 RSS 빌드 실패를 숨기지 않음(실패 시 run 실패 + 기존 feed.xml 유지), 총보수 급락 3건 검증(원천 오류 아님), 실제 CI에서 node 검사 통과 확인
+- RSS 피드 중복 행 제거·정확한 수치·byte 단위 결정성 테스트·.gitattributes/.tmp 정리
+- /compare/ 차트 리사이즈 재그리기, 빈 th·?compare= 절단 수정, 계산기 로케일·단일 live region·재시도 포커스, `etf:lang-changed`로 언어 이벤트 통일, 320px 순위표
+- footer-links gap, SUMMARY `requirements-completed` 보정, 14~16 VERIFICATION status 정리
+
+**Delivered:** v1.4 감사에서 남은 기술 부채 해소 (요구사항 15/15). pytest 411 + node 9.
+
+**Known deferred items at close: 3** (STATE.md Deferred Items): Phase 19 사람 확인 2건(스크린리더 1회 낭독, Retry 포커스 링 모양), SEED-001 보류, debug knowledge-base(오탐). Phase 18~20 코드는 미push(실제 CI는 Phase 17까지만 실행).
+
+---
+
 ## v1.4 신뢰성·접근성·비교 도구 (Shipped: 2026-10-06)
 
 **Delivered:** 결측 수수료를 가짜 0이 아닌 null로 처리해 데이터 신뢰성을 높이고, 모바일 접근성을 보강했으며, 투자자용 비교 도구(ETF 2~4개 직접 비교·누적 비용 계산기·RSS 피드)를 추가.

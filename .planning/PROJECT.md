@@ -6,17 +6,11 @@
 
 ## Current State
 
-v1.4 신뢰성·접근성·비교 도구 shipped (2026-10-06). 결측 수수료 null 처리(가짜 0 제거), 모바일 접근성 보강, `/compare/` 직접 비교(2~4개, 겹침 차트, 누적 비용 계산기 순위표), 총보수·기타비용 변동 RSS 피드. 테스트: pytest 387 + node 9 (CI). 남은 부채는 milestones/v1.4-MILESTONE-AUDIT.md 참조 (RSS 실패 silent, 15-REVIEW info 항목, 320px 계산기 표 등).
+v1.5 기술 부채 정리 shipped (2026-11-11). CI가 RSS 빌드 실패를 드러내고, RSS 피드는 중복 없이 정확한 수치로 결정적 생성, /compare/ 리사이즈·접근성·320px 정리, 문서 메타데이터 보정. 테스트: pytest 411 + node 9. 남은 부채: milestones/v1.5-MILESTONE-AUDIT.md (Phase 19 스크린리더·포커스 링 확인, Phase 18~20 실제 CI 미확인).
 
-## Current Milestone: v1.5 기술 부채 정리
+## Next Milestone Goals
 
-**Goal:** v1.4 감사(milestones/v1.4-MILESTONE-AUDIT.md)에서 남은 기술 부채를 해소해 CI·피드·/compare/ 품질을 마감한다.
-
-**Target features:**
-- 데이터·CI 신뢰성: RSS 빌드 실패 silent 해소, 총보수 급락 3건 원천 확인, CI node 검사 단계 확인
-- RSS 피드 품질: 중복 행 제거, 유효숫자 포맷, 결정성 테스트 강화, .gitattributes·.tmp 잔여물
-- /compare/ UI·a11y 정리: 15-REVIEW 5건, 14-REVIEW aria-hidden, 320px 계산기 표, 언어 변경 seam 통일
-- 소소한 정리: footer-links gap, SUMMARY frontmatter 보정, VERIFICATION status 정리
+v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/seeds/SEED-001-portfolio-dashboard.md`, spike gate 0: 공공데이터 API 라이선스·이력 범위·수정주가).
 
 ## Core Value
 
@@ -26,6 +20,8 @@ v1.4 신뢰성·접근성·비교 도구 shipped (2026-10-06). 결측 수수료 
 
 ### Validated
 
+- ✓ RSS 실패 시 CI 실패·피드 중복 제거·정확한 수치·결정성 (DATA-11~12, CI-01, FEED-05~08) — v1.5
+- ✓ /compare/ 리사이즈·th·언어 이벤트·320px·a11y 정리, footer gap, 문서 보정 (CMP-07~11, A11Y-10, POLISH-01~02) — v1.5
 - ✓ 결측 수수료 null 처리, 가짜 변동 차단, 프런트 "-"·정렬·배지 (DATA-07~10) — v1.4
 - ✓ 총보수·기타비용 변동 RSS 2.0 피드 + 구독 링크 (FEED-01~04) — v1.4
 - ✓ 모바일 접근성 Critical/Major + 8개 언어 ARIA (A11Y-01~09) — v1.4
@@ -55,7 +51,7 @@ v1.4 신뢰성·접근성·비교 도구 shipped (2026-10-06). 결측 수수료 
 
 ### Active
 
-(v1.5 요구사항 정의 중)
+(다음 마일스톤에서 정의)
 
 ### Out of Scope
 
@@ -123,4 +119,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-24 after v1.5 milestone start*
+*Last updated: 2026-11-11 after v1.5 milestone*

@@ -105,6 +105,37 @@
 - 접히는 UI(details)는 펼친 상태로 폭 테스트할 것
 - 비교 도구는 N개 비교가 기본 기대치 — 2개 고정 비교는 처음부터 피할 것
 
+## Milestone: v1.5 — 기술 부채 정리
+
+**Shipped:** 2026-11-11
+**Phases:** 4 | **Plans:** 9
+
+### What Was Built
+- CI가 RSS 빌드 실패를 드러냄(run 실패 + feed.xml 유지), 총보수 급락 3건 검증, 실제 CI node 검사 통과 확인
+- RSS 중복 제거·정확한 수치·byte 단위 결정성 테스트
+- /compare/ 리사이즈·th·언어 이벤트·계산기 로케일·320px 순위표·a11y 정리
+- footer gap, SUMMARY frontmatter·VERIFICATION status 보정
+
+### What Worked
+- `/gsd:autonomous`로 17~20 연속 실행, 요구사항 15/15를 VERIFICATION·SUMMARY·체크박스 3중 대조로 감사
+- 헤드리스 Chrome(selenium + CDP)로 Phase 19 사람 확인 대부분을 직접 측정
+
+### What Was Inefficient
+- Phase 18~20 코드를 push하지 않고 마일스톤을 닫음 → 실제 CI 검증은 Phase 17까지만
+- 18~20은 코드 리뷰 미실행
+- 감사 도구 성과 자동 추출이 또 deviation 메모를 잡음(v1.4와 동일) → 수동 작성
+
+### Patterns Established
+- push는 사용자 승인 후, 마일스톤 종료와 별도 단계로 처리
+
+### Key Lessons
+- 마일스톤 종료 전에 push + CI 1회 확인까지 끝내면 부채가 줄어든다
+- 화면 접근성 항목 중 스크린리더·포커스 링 모양은 사람 확인이 남는다
+
+### Cost Observations
+- Model mix: 미집계
+- Notable: 서브에이전트 effort low
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Requirements | Deferred |
@@ -113,3 +144,4 @@
 | v1.2 | 2 | 2 | 3/3 | 1 |
 | v1.3 | 3 | 5 | 13/13 | 1 |
 | v1.4 | 7 | 21 | 28/28 | 1 |
+| v1.5 | 4 | 9 | 15/15 | 3 |
