@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.5
-milestone_name: 기술 부채 정리
-status: Awaiting next milestone
-last_updated: "2026-11-11T03:12:54.328Z"
-last_activity: 2026-11-11 — Milestone v1.5 completed and archived
+milestone: v1.6
+milestone_name: ETF 평가금액 추이 대시보드
+status: planning
+last_updated: "2026-11-11T04:42:55.332Z"
+last_activity: 2026-11-11
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-11-11)
 
 ## Current Position
 
-Phase: Milestone v1.5 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-11-11 — Milestone v1.5 completed and archived
+Status: Defining requirements
+Last activity: 2026-11-11 — Milestone v1.6 started
 
 ## Completed Milestones
 

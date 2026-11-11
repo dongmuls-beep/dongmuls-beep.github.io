@@ -12,6 +12,17 @@ v1.5 기술 부채 정리 shipped (2026-11-11). CI가 RSS 빌드 실패를 드�
 
 v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/seeds/SEED-001-portfolio-dashboard.md`, spike gate 0: 공공데이터 API 라이선스·이력 범위·수정주가).
 
+## Current Milestone: v1.6 ETF 평가금액 추이 대시보드
+
+**Goal:** 방문자가 로그인 없이 보유 ETF(종목·소수점 수량·보유 시작일)를 입력하면 시작일부터 오늘까지 일별 평가금액 추이를 `/portfolio/`에서 확인한다 (시드: SEED-001).
+
+**Target features:**
+- 게이트 0 스파이크: 공공데이터포털 주식시세 API 이용조건·과거 조회 범위·수정주가·영숫자 코드 확인 (불허면 계획 중단 후 사용자 확인)
+- 59개 종목 일별 종가 수집 파이프라인(별도 워크플로) + 과거 백필, 종목별 `prices/{code}.json` + `prices-meta.json`
+- 평가금액 계산 순수 JS 모듈 + 브라우저 로컬 저장(행 목록 `{code, qty, startDate}`), JSON 내보내기·가져오기
+- `/portfolio/` 독립 페이지: 입력, 추이 그래프, 합계·전일 대비·비중·기간 선택, 가중평균 보수·연간 예상 비용, 8개 언어
+- 백업 유도·고지·데이터 기준일 표시, 내비 링크는 마지막 단계(롤백 가능)
+
 ## Core Value
 
 투자자가 ETF 선택 시 숨겨진 비용까지 포함한 실질 부담 비용을 한눈에 비교할 수 있어야 한다.
@@ -51,7 +62,7 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 
 ### Active
 
-(다음 마일스톤에서 정의)
+- [ ] ETF 보유 평가금액 추이 대시보드 (v1.6, REQUIREMENTS.md 참조)
 
 ### Out of Scope
 
@@ -119,4 +130,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-11 after v1.5 milestone*
+*Last updated: 2026-11-11 after v1.6 milestone start*
