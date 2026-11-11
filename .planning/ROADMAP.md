@@ -92,8 +92,8 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   2. 59개 종목(영숫자 코드 포함) 조회 가능 여부가 기록된다 (서비스키 필요, 없으면 "미확인"과 사용자 조치 명시)
   3. 백필 호출량·시간과 스택 결정이 기록된다
   4. 분할 ETF 종가 불연속 확인과 처리 방침이 기록된다
-**Plans:** 2 plans
-- [ ] 21-01-PLAN.md — 공개문서 판정(이용허락·한도), 백필 추정, 스택 결정
+**Plans:** 1/2 plans executed
+- [x] 21-01-PLAN.md — 공개문서 판정(이용허락·한도), 백필 추정, 스택 결정
 - [ ] 21-02-PLAN.md — 서비스키 체크포인트, 마스킹 실호출(59개·분할), 종합 판정
 
 ### Phase 22: 로컬 가격 수집
@@ -162,7 +162,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 | 18. RSS 피드 품질 | v1.5 | 1/1 | Complete   | 2026-11-10 |
 | 19. /compare/ UI·접근성 정리 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 20. 소소한 정리·문서 보정 | v1.5 | 2/2 | Complete   | 2026-11-10 |
-| 21. 게이트 0 스파이크 | v1.6 | 0/? | Not started | - |
+| 21. 게이트 0 스파이크 | v1.6 | 1/2 | In Progress|  |
 | 22. 가격 수집 파이프라인 | v1.6 | 0/? | Not started | - |
 | 23. 계산·저장 코어 | v1.6 | 0/? | Not started | - |
 | 24. /portfolio/ UI·i18n | v1.6 | 0/? | Not started | - |

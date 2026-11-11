@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: ETF 평가금액 추이 대시보드
-status: planning
-last_updated: "2026-11-11T04:42:55.332Z"
-last_activity: 2026-11-11
+status: Defining requirements
+last_updated: "2026-11-11T04:56:32.590Z"
+last_activity: 2026-11-11 — Milestone v1.6 started
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
