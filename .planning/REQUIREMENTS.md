@@ -16,11 +16,11 @@
 
 ### 가격 데이터 (PRICE)
 
-- [ ] **PRICE-01**: 종목별 `prices/{code}.json`(날짜·종가 배열, `version` 필드, 최대 5년)과 `prices-meta.json`(기준일·수집 종목 수·누락 목록) 계약이 문서화되고 코드가 이를 따른다
-- [ ] **PRICE-02**: 과거 이력 백필 스크립트가 59개 종목을 1회 채운다
-- [ ] **PRICE-03**: 별도 워크플로가 매일 종가를 추가한다 (`concurrency` 그룹, 기존 Selenium ETL과 cron 분리, `serviceKey`는 GitHub secret, 로그·예외에 URL 마스킹)
-- [ ] **PRICE-04**: 누락 비율이 임계값을 넘으면 기존 파일을 덮어쓰지 않고 job이 실패한다
-- [ ] **PRICE-05**: 수집·병합·검증이 실제 API 호출 없이(monkeypatch) 단위 테스트된다
+- [x] **PRICE-01**: 종목별 `prices/{code}.json`(날짜·종가 배열, `version` 필드, 최대 5년)과 `prices-meta.json`(기준일·수집 종목 수·누락 목록) 계약이 문서화되고 코드가 이를 따른다
+- [x] **PRICE-02**: 과거 이력 백필 스크립트가 59개 종목을 1회 채운다
+- [x] **PRICE-03**: 별도 워크플로가 매일 종가를 추가한다 (`concurrency` 그룹, 기존 Selenium ETL과 cron 분리, `serviceKey`는 GitHub secret, 로그·예외에 URL 마스킹)
+- [x] **PRICE-04**: 누락 비율이 임계값을 넘으면 기존 파일을 덮어쓰지 않고 job이 실패한다
+- [x] **PRICE-05**: 수집·병합·검증이 실제 API 호출 없이(monkeypatch) 단위 테스트된다
 
 ### 계산·저장 (CALC / STORE)
 
@@ -65,11 +65,11 @@
 | SPIKE-03 | Phase 21 | Complete |
 | SPIKE-04 | Phase 21 | Complete |
 | SPIKE-05 | Phase 21 | Complete |
-| PRICE-01 | Phase 22 | Pending |
-| PRICE-02 | Phase 22 | Pending |
-| PRICE-03 | Phase 22 | Pending |
-| PRICE-04 | Phase 22 | Pending |
-| PRICE-05 | Phase 22 | Pending |
+| PRICE-01 | Phase 22 | Complete |
+| PRICE-02 | Phase 22 | Complete |
+| PRICE-03 | Phase 22 | Complete |
+| PRICE-04 | Phase 22 | Complete |
+| PRICE-05 | Phase 22 | Complete |
 | CALC-06 | Phase 23 | Pending |
 | STORE-01 | Phase 23 | Pending |
 | STORE-02 | Phase 23 | Pending |

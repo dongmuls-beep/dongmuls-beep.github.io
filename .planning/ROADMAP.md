@@ -74,7 +74,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 ### 🚧 v1.6 ETF 평가금액 추이 대시보드 (Phases 21-25) — IN PROGRESS
 
 - [x] **Phase 21: 게이트 0 스파이크** - API 이용조건·과거 범위·수정주가, 59개 종목 조회, 백필 규모, 스택 결정, 분할 불연속 (completed 2026-11-11)
-- [ ] **Phase 22: 가격 수집 파이프라인** - prices/{code}.json 계약, 백필, 별도 일일 워크플로, 누락 임계 실패, 테스트
+- [x] **Phase 22: 가격 수집 파이프라인** - prices/{code}.json 계약, 백필, 별도 일일 워크플로, 누락 임계 실패, 테스트 (completed 2026-11-11)
 - [ ] **Phase 23: 계산·저장 코어** - 순수 JS 평가금액 모듈, 로컬 저장 스키마, 내보내기·가져오기 검증
 - [ ] **Phase 24: /portfolio/ UI·i18n** - 입력, 추이 그래프, 합계·비중·기간, 가중평균 보수, 8개 언어, a11y
 - [ ] **Phase 25: 마감·배포 검증** - 고지·백업 유도·기준일, 내비/sitemap/RSS, 실제 CI 통과
@@ -106,10 +106,10 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   3. 별도 워크플로가 매일 추가하고 기존 Selenium ETL과 실패가 묶이지 않는다
   4. 누락 비율 초과 시 기존 파일이 유지되고 job이 실패한다
   5. 로그·예외에 serviceKey/URL이 노출되지 않고, 테스트는 실제 API 없이 통과한다
-**Plans:** 3 plans
-- [ ] 22-01-PLAN.md — 데이터 계약 + 코어 모듈(마스킹·파싱·병합·가드·원자적 쓰기) + 오프라인 테스트
-- [ ] 22-02-PLAN.md — backfill/incremental CLI + 별도 워크플로 price_update.yml + 배선 테스트
-- [ ] 22-03-PLAN.md — 실제 백필 1회 실행·로컬 커밋(push는 사용자 승인)
+**Plans:** 3/3 plans complete
+- [x] 22-01-PLAN.md — 데이터 계약 + 코어 모듈(마스킹·파싱·병합·가드·원자적 쓰기) + 오프라인 테스트
+- [x] 22-02-PLAN.md — backfill/incremental CLI + 별도 워크플로 price_update.yml + 배선 테스트
+- [x] 22-03-PLAN.md — 실제 백필 1회 실행·로컬 커밋(push는 사용자 승인)
 **Owns**: scripts/ 가격 스크립트, 새 워크플로, prices/, tests/test_price_*.py
 
 ### Phase 23: 계산·저장 코어
@@ -174,7 +174,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 | 19. /compare/ UI·접근성 정리 | v1.5 | 3/3 | Complete   | 2026-11-10 |
 | 20. 소소한 정리·문서 보정 | v1.5 | 2/2 | Complete   | 2026-11-10 |
 | 21. 게이트 0 스파이크 | v1.6 | 2/2 | Complete    | 2026-11-11 |
-| 22. 가격 수집 파이프라인 | v1.6 | 0/? | Not started | - |
+| 22. 가격 수집 파이프라인 | v1.6 | 3/3 | Complete    | 2026-11-11 |
 | 23. 계산·저장 코어 | v1.6 | 0/? | Not started | - |
 | 24. /portfolio/ UI·i18n | v1.6 | 0/? | Not started | - |
 | 25. 마감·배포 검증 | v1.6 | 0/? | Not started | - |
