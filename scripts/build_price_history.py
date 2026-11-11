@@ -274,3 +274,73 @@ def collect(codes: list[str], fetcher: Callable[[str], list], out_dir: str | Pat
     if not _meta_same(meta_path, meta):
         write_atomic(meta_path, meta)
     return 0
+
+
+# ---------------------------------------------------------------- CLI
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def fetch_series(code: str, begin: str) -> list[tuple[str, Any]]:
+    """Network fetch + parse for one code (monkeypatched in tests)."""
+    time.sleep(SLEEP_BETWEEN)
+    return parse_rows(fetch_rows(code, begin), code)
+
+
+def incremental_begin(path: Path, fallback: str) -> str:
+    existing = _read_existing(path)
+    if not existing:
+        return fallback
+    d = dt.date.fromisoformat(existing[-1][0]) - dt.timedelta(days=7)
+    return d.strftime("%Y%m%d")
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="ETF daily close collector")
+    ap.add_argument("--mode", required=True, choices=["backfill", "incremental"])
+    ap.add_argument("--data", default="data.json")
+    ap.add_argument("--out", default="prices")
+    ap.add_argument("--meta", default="prices-meta.json")
+    ap.add_argument("--begin", default=BEGIN_BASDT)
+    ap.add_argument("--max-missing-ratio", type=float, default=DEFAULT_THRESHOLD)
+    ap.add_argument("--codes", default=None)
+    args = ap.parse_args(argv)
+
+    if not os.environ.get(KEY_ENV):
+        print("DATA_GO_KR_KEY not set")
+        return 1
+
+    def rp(p: str) -> Path:
+        pp = Path(p)
+        return pp if pp.is_absolute() else ROOT / pp
+
+    out_dir, meta_path = rp(args.out), rp(args.meta)
+    if args.codes:
+        codes = [normalize_code(c) for c in args.codes.split(",") if c.strip()]
+    else:
+        codes = load_codes(rp(args.data))
+
+    if args.mode == "backfill":
+        fetcher = lambda code: fetch_series(code, args.begin)  # noqa: E731
+    else:
+        fetcher = lambda code: fetch_series(  # noqa: E731
+            code, incremental_begin(out_dir / (code + ".json"), args.begin))
+
+    return collect(codes, fetcher, out_dir, meta_path, args.begin,
+                   args.max_missing_ratio)
+
+
+def _run(argv: list[str] | None = None) -> int:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    try:
+        return main(argv)
+    except SystemExit:
+        raise
+    except BaseException as exc:  # noqa: BLE001
+        print(mask(type(exc).__name__ + ": " + str(exc), os.environ.get(KEY_ENV)))
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(_run())
