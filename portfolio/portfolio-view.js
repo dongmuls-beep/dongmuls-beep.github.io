@@ -228,10 +228,300 @@
         updateResults(liveText);
     }
 
-    // plan 08 replaces this body with price loading and rendering
+    // ---- results: price loading, compute, summary, fee line, weights, warnings ----
+    var fetchSeq = 0;
+    var chartWidth = 0;
+    var chartOpened = false;
+    var resizeTimer = null;
+
+    function won(v) { return t("pf_won", { amount: Format.formatWon(v, Shell.htmlLang()) }); }
+    // amount already formatted (signed) by Format.dayChange / tableRows
+    function wonText(amount) { return t("pf_won", { amount: amount }); }
+
+    function heldCodes() {
+        var seen = {};
+        var out = [];
+        state.rows.forEach(function (r) { if (!seen[r.code]) { seen[r.code] = true; out.push(r.code); } });
+        return out;
+    }
+
+    // per-code catch: one failed code never blocks the others; only codes from /data.json reach the URL
+    function loadPrices(codes) {
+        return Promise.all(codes.map(function (code) {
+            return fetch("/prices/" + code + ".json").then(function (r) {
+                if (!r.ok) throw new Error("http");
+                return r.json();
+            }).then(function (d) {
+                if (!d || !Array.isArray(d.dates)) throw new Error("shape");
+                state.prices[code] = d;
+                return null;
+            }).catch(function () { return code; });
+        })).then(function (res) { return res.filter(Boolean); });
+    }
+
+    function showEmpty(titleKey, bodyKey) {
+        if (titleKey) el("pf-empty-title").textContent = t(titleKey);
+        setHidden("pf-empty-title", !titleKey);
+        el("pf-empty-body").textContent = t(bodyKey);
+        setHidden("pf-empty", false);
+    }
+
+    function skeletons(id) {
+        var box = el(id);
+        box.textContent = "";
+        for (var i = 0; i < 3; i++) box.appendChild(mk("div", "cmp-skeleton"));
+    }
+
+    function readyText() {
+        var r = state.result;
+        return r.dates.length
+            ? t("pf_ready", { total: won(r.total[r.total.length - 1]), asof: r.asOf })
+            : t("pf_no_result");
+    }
+
     function updateResults(liveText) {
-        setHidden("pf-empty", state.rows.length > 0);
-        if (liveText) announce(liveText);
+        var seq = ++fetchSeq;
+        if (!state.rows.length) {
+            state.result = null;
+            state.failed = [];
+            el("pf-results").setAttribute("aria-busy", "false");
+            showEmpty("pf_empty_title", "pf_empty_body");
+            setHidden("pf-summary", true);
+            setHidden("pf-chart", true);
+            setHidden("pf-warnings", true);
+            if (liveText) announce(liveText);
+            return;
+        }
+        var need = heldCodes().filter(function (c) { return state.byCode[c] && !state.prices[c]; });
+        if (need.length) {
+            el("pf-results").setAttribute("aria-busy", "true");
+            setHidden("pf-empty", true);
+            skeletons("pf-summary-body");
+            skeletons("pf-chart-body");
+            setHidden("pf-summary", false);
+            setHidden("pf-chart", false);
+            announce(t("pf_loading_prices"));
+        }
+        loadPrices(need).then(function (failed) {
+            if (seq !== fetchSeq) return;
+            state.failed = failed;
+            recompute();
+            announce(liveText ? liveText + " " + readyText() : readyText());
+        });
+    }
+
+    function recompute() {
+        state.result = Calc.compute(state.rows, state.prices, { todayIso: state.todayIso });
+        el("pf-results").setAttribute("aria-busy", "false");
+        renderRows();
+        renderResults();
+    }
+
+    function stat(label, valueNode) {
+        var box = mk("div", "pf-stat");
+        box.appendChild(mk("p", "pf-stat-label", label));
+        box.appendChild(valueNode);
+        return box;
+    }
+
+    function feeOf(code, key) {
+        var v = state.byCode[code] && state.byCode[code][key];
+        return typeof v === "number" && isFinite(v) ? v : null;
+    }
+
+    function feeLine(r) {
+        var latest = Format.latestByCode(r);
+        var main = Format.weightedFee(latest, function (c) { return feeOf(c, "총보수"); });
+        var real = Format.weightedFee(latest, function (c) { return feeOf(c, "실부담비용"); });
+        var p = mk("p", "pf-fee-line");
+        if (!main) { p.textContent = t("pf_fee_none"); return p; }
+        var text = t("pf_fee_line", { fee: Format.formatFee(main.fee), cost: won(main.cost) });
+        if (real) text += " " + t("pf_fee_real", { fee: Format.formatFee(real.fee), cost: won(real.cost) });
+        if (main.excluded.length) text += " " + t("pf_fee_partial", { names: main.excluded.map(nameOf).join(", ") });
+        p.textContent = text;
+        return p;
+    }
+
+    function renderSummary(r) {
+        var body = el("pf-summary-body");
+        body.textContent = "";
+        var stats = mk("div", "pf-stats");
+        stats.appendChild(stat(t("pf_stat_total"), mk("p", "pf-stat-value", won(r.total[r.total.length - 1]))));
+
+        var dc = Format.dayChange(r.total, Shell.htmlLang());
+        var cv = mk("p", "pf-stat-value");
+        if (!dc) cv.textContent = "-";
+        else {
+            if (dc.dir !== "flat") cv.className += " pf-" + dc.dir;
+            var arrow = mk("span", "pf-arrow", dc.arrow);
+            arrow.setAttribute("aria-hidden", "true");
+            cv.appendChild(arrow);
+            cv.appendChild(mk("span", "cmp-sr-only", t("pf_" + dc.dir)));
+            cv.appendChild(document.createTextNode(" " + wonText(dc.amount) + " (" + dc.pct + ")"));
+        }
+        stats.appendChild(stat(t("pf_stat_change"), cv));
+
+        var cell = stat(t("pf_stat_asof"), mk("p", "pf-stat-value", r.asOf));
+        cell.appendChild(mk("p", "pf-asof-note", t("pf_asof_note")));
+        stats.appendChild(cell);
+        body.appendChild(stats);
+
+        body.appendChild(feeLine(r));
+        body.appendChild(mk("h3", "pf-weights-title", t("pf_weights_title")));
+        var ul = mk("ul", "pf-weights");
+        Format.weights(r).forEach(function (w) {
+            var li = document.createElement("li");
+            var head = mk("div", "pf-weight-head");
+            var nm = mk("span", "pf-weight-name", nameOf(w.code) + " ");
+            nm.appendChild(mk("span", "cmp-etf-code", w.code));
+            head.appendChild(nm);
+            head.appendChild(mk("span", "pf-weight-pct", (w.pct === null ? "-" : w.pct.toFixed(1) + "%") + " · " + won(w.value)));
+            li.appendChild(head);
+            var bar = mk("div", "pf-bar");
+            bar.setAttribute("aria-hidden", "true");
+            var fill = document.createElement("span");
+            fill.style.width = (w.pct === null ? 0 : Math.max(0, Math.min(100, w.pct))) + "%";
+            bar.appendChild(fill);
+            li.appendChild(bar);
+            ul.appendChild(li);
+        });
+        body.appendChild(ul);
+    }
+
+    function renderWarnings() {
+        var pre = [];
+        var seen = {};
+        state.rows.forEach(function (row) {
+            var first = Format.firstPriceDate(state.prices[row.code]);
+            if (first && row.startDate < first && !seen[row.code]) {
+                seen[row.code] = true;
+                pre.push({ code: row.code, date: first });
+            }
+        });
+        var items = Format.warningItems({
+            warnings: state.result ? state.result.warnings : [],
+            fetchFailed: state.failed, preListing: pre, nameOf: nameOf
+        });
+        var list = el("pf-warn-list");
+        list.textContent = "";
+        items.forEach(function (it) { list.appendChild(mk("li", "", t(it.key, it.vars))); });
+        var actions = el("pf-warn-actions");
+        var btn = el("pf-retry-prices");
+        if (state.failed.length) {
+            // the same button stays mounted across a retry so focus is kept
+            if (!btn) {
+                btn = mk("button", "cmp-btn pf-retry");
+                btn.id = "pf-retry-prices";
+                btn.type = "button";
+                btn.addEventListener("click", onRetryPrices);
+                actions.appendChild(btn);
+            }
+            if (btn.getAttribute("aria-disabled") !== "true") btn.textContent = t("pf_retry_prices");
+        } else if (btn && btn.getAttribute("aria-disabled") !== "true") {
+            actions.textContent = "";
+        }
+        setHidden("pf-warnings", items.length === 0);
+    }
+
+    function onRetryPrices() {
+        var btn = el("pf-retry-prices");
+        if (btn.getAttribute("aria-disabled") === "true") return;
+        btn.setAttribute("aria-disabled", "true");
+        btn.textContent = t("pf_loading_short");
+        var held = heldCodes();
+        var codes = state.failed.filter(function (c) { return held.indexOf(c) >= 0; });
+        state.failed = [];
+        loadPrices(codes).then(function (failed) {
+            state.failed = failed;
+            recompute();
+            btn.removeAttribute("aria-disabled");
+            if (failed.length) {
+                btn.textContent = t("pf_retry_prices");
+                btn.focus();
+            } else {
+                btn.remove();
+                (el("pf-warnings").hasAttribute("hidden") ? el("pf-chart-h") : el("pf-warnings-h")).focus();
+            }
+            announce(readyText());
+        });
+    }
+
+    function renderResults() {
+        var r = state.result;
+        if (!r) return;
+        if (!r.dates.length) {
+            showEmpty(null, "pf_no_result");
+            setHidden("pf-summary", true);
+            setHidden("pf-chart", true);
+        } else {
+            setHidden("pf-empty", true);
+            setHidden("pf-summary", false);
+            renderSummary(r);
+            renderChart();
+        }
+        renderWarnings();
+        updateScrollable();
+    }
+
+    // ---- chart ----
+    function renderChart() {
+        var r = state.result;
+        var lang = Shell.htmlLang();
+        setHidden("pf-chart", false);
+        var chips = el("pf-periods").querySelectorAll("button[data-period]");
+        for (var c = 0; c < chips.length; c++) {
+            chips[c].setAttribute("aria-pressed", chips[c].getAttribute("data-period") === state.period ? "true" : "false");
+        }
+        var i = Format.periodStartIndex(r.dates, state.period);
+        var dates = r.dates.slice(i);
+        var values = r.total.slice(i);
+        var body = el("pf-chart-body");
+        chartWidth = body.clientWidth;
+        window.PortfolioChart.render(body, {
+            dates: dates, values: values, width: chartWidth,
+            ariaLabel: t("pf_chart_aria", {
+                start: dates[0], end: dates[dates.length - 1],
+                first: won(values[0]), last: won(values[values.length - 1])
+            }),
+            keysLabel: t("pf_chart_keys"),
+            formatTick: function (v) { return Format.formatCompact(v, lang); },
+            formatReadout: function (d, v) { return t("pf_readout", { date: d, amount: won(v) }); }
+        });
+        var tbl = Format.tableRows(dates, values, lang);
+        var tbody = el("pf-chart-tbody");
+        tbody.textContent = "";
+        tbl.rows.forEach(function (row) {
+            var tr = document.createElement("tr");
+            var th = mk("th", "", row.date);
+            th.setAttribute("scope", "row");
+            tr.appendChild(th);
+            tr.appendChild(mk("td", "", won(row.value)));
+            tr.appendChild(mk("td", "", row.change ? wonText(row.change.amount) : "-"));
+            tbody.appendChild(tr);
+        });
+        setHidden("pf-table-monthly", !tbl.monthly);
+        if (!chartOpened) {
+            chartOpened = true;
+            if (window.matchMedia && window.matchMedia("(min-width: 640px)").matches) el("pf-chart-alt").setAttribute("open", "");
+        }
+    }
+
+    function onPeriodClick(e) {
+        var b = e.target.closest ? e.target.closest("button[data-period]") : null;
+        if (!b || !state.result || !state.result.dates.length) return;
+        state.period = b.getAttribute("data-period");
+        renderChart();
+        updateScrollable();
+        b.focus();
+        announce(t("pf_period_changed", { period: b.textContent }));
+    }
+
+    function onResize() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            var w = el("pf-chart-body").clientWidth;
+            if (w !== chartWidth && state.result && state.result.dates.length) renderChart();
+        }, 150);
     }
 
     function onRowsClick(e) {
@@ -459,6 +749,7 @@
         refreshErrors();
         showStorage(state.storageError ? { ok: false, error: state.storageError } : { ok: true });
         renderRows();
+        renderResults();
         if (!el("pf-code-list").hasAttribute("hidden")) closeList();
     }
 
@@ -473,6 +764,8 @@
         el("pf-date").addEventListener("input", function () { clearError("date"); });
         el("pf-form").addEventListener("submit", onSubmit);
         el("pf-cancel").addEventListener("click", onCancel);
+        el("pf-periods").addEventListener("click", onPeriodClick);
+        window.addEventListener("resize", onResize);
     }
 
     document.addEventListener("etf:lang-changed", renderAll);
