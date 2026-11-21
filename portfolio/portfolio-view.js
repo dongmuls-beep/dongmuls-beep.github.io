@@ -81,6 +81,18 @@
         announce(t("pf_load_error"));
     }
 
+    var FETCH_TIMEOUT_MS = 15000;
+
+    // fetch + json with a timeout, so a hung request rejects instead of wedging the page
+    function fetchJson(url) {
+        var ctl = window.AbortController ? new AbortController() : null;
+        var timer = ctl ? setTimeout(function () { ctl.abort(); }, FETCH_TIMEOUT_MS) : null;
+        return fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
+            if (!r.ok) throw new Error("http");
+            return r.json();
+        }).then(function (d) { clearTimeout(timer); return d; }, function (e) { clearTimeout(timer); throw e; });
+    }
+
     function loadData(isRetry) {
         if (loadingData) return;
         loadingData = true;
@@ -91,10 +103,7 @@
         } else {
             renderLoading();
         }
-        fetch("/data.json").then(function (r) {
-            if (!r.ok) throw new Error("http");
-            return r.json();
-        }).then(function (data) {
+        fetchJson("/data.json").then(function (data) {
             if (!Array.isArray(data)) throw new Error("shape");
             loadingData = false;
             start(data);
@@ -256,10 +265,7 @@
     // per-code catch: one failed code never blocks the others; only codes from /data.json reach the URL
     function loadPrices(codes) {
         return Promise.all(codes.map(function (code) {
-            return fetch("/prices/" + code + ".json").then(function (r) {
-                if (!r.ok) throw new Error("http");
-                return r.json();
-            }).then(function (d) {
+            return fetchJson("/prices/" + code + ".json").then(function (d) {
                 if (!d || !Array.isArray(d.dates)) throw new Error("shape");
                 state.prices[code] = d;
                 return null;
@@ -315,6 +321,13 @@
             state.failed = failed;
             recompute();
             announce(liveText ? liveText + " " + readyText() : readyText());
+        }).catch(function () {
+            if (seq !== fetchSeq) return;
+            el("pf-results").setAttribute("aria-busy", "false");
+            setHidden("pf-summary", true);
+            setHidden("pf-chart", true);
+            showEmpty(null, "pf_load_error");
+            announce(t("pf_load_error"));
         });
     }
 
