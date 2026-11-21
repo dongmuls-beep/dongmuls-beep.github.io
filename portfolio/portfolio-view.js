@@ -491,6 +491,15 @@
     }
 
     // ---- chart ----
+    var cursorTimer = null;
+    var cursorText = "";
+    // throttled: holding an arrow key must not flood the live region
+    function announceCursor(text) {
+        cursorText = text;
+        if (cursorTimer) return;
+        cursorTimer = setTimeout(function () { cursorTimer = null; announce(cursorText); }, 400);
+    }
+
     function renderChart() {
         var r = state.result;
         var lang = Shell.htmlLang();
@@ -512,7 +521,8 @@
             }),
             keysLabel: t("pf_chart_keys"),
             formatTick: function (v) { return Format.formatCompact(v, lang); },
-            formatReadout: function (d, v) { return t("pf_readout", { date: d, amount: won(v) }); }
+            formatReadout: function (d, v) { return t("pf_readout", { date: d, amount: won(v) }); },
+            onCursor: announceCursor
         });
         var tbl = Format.tableRows(dates, values, lang);
         var tbody = el("pf-chart-tbody");

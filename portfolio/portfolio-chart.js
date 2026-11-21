@@ -206,6 +206,8 @@
             e.preventDefault();
             cur = next;
             update();
+            // keyboard moves are announced through the page's single live region (no aria-live here)
+            if (opts.onCursor) opts.onCursor(readout.textContent);
         });
         group.addEventListener("pointermove", function (e) {
             if (cur < 0) return;

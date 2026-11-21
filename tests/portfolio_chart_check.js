@@ -100,6 +100,16 @@ assert.strictEqual(readout.textContent, "2024-01-02=200");
 assert.strictEqual(key("End"), true);
 assert.strictEqual(readout.textContent, "2024-01-03=300");
 assert.strictEqual(key("Tab"), false);
+{
+    const heard = [];
+    const b2 = fakeEl("div");
+    C.render(b2, Object.assign({}, opts, { onCursor: (t) => heard.push(t) }));
+    const g2 = b2.children[0];
+    g2.listeners.keydown.forEach((f) => f({ key: "ArrowLeft", preventDefault() {} }));
+    g2.listeners.keydown.forEach((f) => f({ key: "Tab", preventDefault() {} }));
+    g2.listeners.pointermove.forEach((f) => f({ clientX: 0 }));
+    assert.deepStrictEqual(heard, ["2024-01-02=200"]);
+}
 group.listeners.pointermove.forEach((f) => f({ clientX: 0 }));
 assert.strictEqual(readout.textContent, "2024-01-01=100");
 group.listeners.pointerleave.forEach((f) => f({}));
