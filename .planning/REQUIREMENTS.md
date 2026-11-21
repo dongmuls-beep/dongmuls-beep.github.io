@@ -43,6 +43,22 @@
 - [ ] **NAV-01**: 내비 링크·sitemap·RSS·structuredData 수정이 마지막 단계로 들어가고 링크 제거로 롤백된다
 - [ ] **VERIFY-01**: 새 코드가 실제 CI에서 통과한다(pytest + node + 새 워크플로 1회 실행)
 
+## v1.7 Requirements — 홈 서버 이전 (queued, v1.6과 독립)
+
+### 서버 실행 (SRV)
+
+- [x] **SRV-01**: 서버에서 `etl_process.py`가 실제 GAS URL로 종료 코드 0, `data.json`·`update-meta.json` 갱신까지 성공한다 (2026-11-21 수동 실행으로 확인)
+- [ ] **SRV-02**: 서버에서 `scripts/build_price_history.py --mode incremental`이 `DATA_GO_KR_KEY`로 성공한다
+- [ ] **SRV-03**: 일일 ETL과 시세 수집이 systemd timer로 실행된다 (KST 09:00 / 14:30, `EnvironmentFile=~/.etf-env`, `Persistent=true`, 동시 실행 방지, 실패 시 비정상 종료와 로그)
+- [ ] **SRV-04**: 서버 실행도 기존 CI와 같은 순서(pytest·node 검사 → ETL → changelog·RSS·fee-history 빌드)를 따른다
+- [ ] **SRV-05**: 서버 결과를 GitHub와 동기화하는 방식(서버 push 또는 pull)이 정해져 구현되고, GitHub Actions 일일 워크플로와 이중 실행되지 않는다
+
+### 공개·보안 (OPS)
+
+- [ ] **OPS-01**: 외부 공개 방식(Tailscale·포트포워딩+HTTPS 등)이 정해져 적용되고, 도메인 전환 전 GitHub Pages가 유지된다
+- [ ] **OPS-02**: 임시 `NOPASSWD` sudo 제거, ssh 비밀번호 로그인 차단, 자동 보안 업데이트 확인이 끝난다
+- [ ] **OPS-03**: 서버 운영 문서(접속·배포·복구·타이머 확인·비밀 값 위치)가 저장소에 있다 (비밀 값 자체는 커밋 금지)
+
 ## Future Requirements
 
 - 구글 Drive 저장·로그인 (다음 마일스톤 후보)
@@ -82,3 +98,11 @@
 | SAFE-02 | Phase 25 | Pending |
 | NAV-01 | Phase 25 | Pending |
 | VERIFY-01 | Phase 25 | Pending |
+| SRV-01 | Phase 26 | Complete |
+| SRV-02 | Phase 26 | Pending |
+| SRV-03 | Phase 27 | Pending |
+| SRV-04 | Phase 27 | Pending |
+| SRV-05 | Phase 27 | Pending |
+| OPS-01 | Phase 28 | Pending |
+| OPS-02 | Phase 28 | Pending |
+| OPS-03 | Phase 28 | Pending |

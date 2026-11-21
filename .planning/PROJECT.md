@@ -23,6 +23,20 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 - `/portfolio/` 독립 페이지: 입력, 추이 그래프, 합계·전일 대비·비중·기간 선택, 가중평균 보수·연간 예상 비용, 8개 언어
 - 백업 유도·고지·데이터 기준일 표시, 내비 링크는 마지막 단계(롤백 가능)
 
+## Queued Milestone: v1.7 홈 서버 이전 (v1.6 완료 후 진행, 병행 시작 가능)
+
+**Goal:** 일일 ETL(`etl_process.py`)과 시세 수집(`scripts/build_price_history.py`)을 집 Ubuntu 서버(dmserver, nginx)에서 스스로 실행하고, GitHub Actions 중복 실행 없이 안전하게 넘긴다.
+
+**Target features:**
+- 서버에서 ETL·시세 수집이 실데이터로 성공(GAS URL·`DATA_GO_KR_KEY`는 서버 `~/.etf-env`, 저장소에 커밋 금지)
+- systemd timer로 일일 실행(KST 09:00 ETL, 14:30 시세), 정전 후 누락 실행 보정, 테스트 게이트 유지
+- 서버 결과를 GitHub와 동기화하는 방식 결정·구현, GitHub Actions 이중 실행 방지
+- 외부 공개(HTTPS·도메인 전환) 방식 결정 후 적용, 보안 마감, 운영 문서
+
+**Already done outside the repo (2026-11-21):** SSH 키 접속, nginx·ufw·fail2ban 설치, 정전 시 자동 부팅(BIOS)·IP 고정(172.30.1.27, 공유기 예약 + 서버 고정), Chrome·xvfb·node·Python venv 설치, 사이트 clone(`/var/www/etfsave`), ETL 수동 실행으로 KOFIA 다운로드 성공 확인.
+
+**Note:** GitHub Pages 전용이라는 기존 Hosting 제약과 "자체 백엔드 서버" Out of Scope는 정적 파일 서빙 + 배치 실행 범위에서만 완화한다. 도메인 전환 전까지 GitHub Pages는 유지한다.
+
 ## Core Value
 
 투자자가 ETF 선택 시 숨겨진 비용까지 포함한 실질 부담 비용을 한눈에 비교할 수 있어야 한다.
@@ -112,6 +126,8 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 | 계산기는 기준/비교 2개 대신 전 종목 순위표 (v1.4 UAT) | 사용자 요청: 3~4개 비교가 어려움 | ✓ Good |
 | 파일 소유권 분리로 최대 병렬 실행, worktree 미사용 (v1.4) | OneDrive 환경 제약 | ✓ Good — `git commit --only` 필요 |
 
+| 홈 서버(nginx + systemd timer)로 ETL 이전 검토 (v1.7) | GitHub Actions 의존 축소, Selenium 실행 환경 직접 통제 | — Pending (동기화 방식·도메인 전환 미결정) |
+
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
@@ -130,4 +146,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-11 after v1.6 milestone start*
+*Last updated: 2026-11-21 after v1.7 (홈 서버 이전) queued; v1.6 untouched*
