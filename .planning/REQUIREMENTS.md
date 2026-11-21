@@ -48,7 +48,7 @@
 ### 서버 실행 (SRV)
 
 - [x] **SRV-01**: 서버에서 `etl_process.py`가 실제 GAS URL로 종료 코드 0, `data.json`·`update-meta.json` 갱신까지 성공한다 (2026-11-21 수동 실행으로 확인)
-- [ ] **SRV-02**: 서버에서 `scripts/build_price_history.py --mode incremental`이 `DATA_GO_KR_KEY`로 성공한다
+- [x] **SRV-02** (서버 로컬 보관 `~/etf-prices`, GitHub push 보류, user systemd timer 14:30 KST): 서버에서 `scripts/build_price_history.py --mode incremental`이 `DATA_GO_KR_KEY`로 성공한다
 - [x] **SRV-03** (ETL 한정, 시세 수집은 push 보류로 미이전): 일일 ETL과 시세 수집이 systemd timer로 실행된다 (KST 09:00 / 14:30, `EnvironmentFile=~/.etf-env`, `Persistent=true`, 동시 실행 방지, 실패 시 비정상 종료와 로그)
 - [x] **SRV-04**: 서버 실행도 기존 CI와 같은 순서(pytest·node 검사 → ETL → changelog·RSS·fee-history 빌드)를 따른다
 - [x] **SRV-05** (ETL 한정, deploy key로 push, GitHub `Daily ETF Data Update` 비활성화): 서버 결과를 GitHub와 동기화하는 방식(서버 push 또는 pull)이 정해져 구현되고, GitHub Actions 일일 워크플로와 이중 실행되지 않는다
@@ -99,7 +99,7 @@
 | NAV-01 | Phase 25 | Pending |
 | VERIFY-01 | Phase 25 | Pending |
 | SRV-01 | Phase 26 | Complete |
-| SRV-02 | Phase 26 | Pending |
+| SRV-02 | Phase 26 | Complete |
 | SRV-03 | Phase 27 | Complete |
 | SRV-04 | Phase 27 | Complete |
 | SRV-05 | Phase 27 | Complete |
