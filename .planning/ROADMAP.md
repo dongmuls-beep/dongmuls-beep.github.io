@@ -127,7 +127,9 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   1. 수량·휴장일·상장폐지·±40% 경고·영숫자 코드 케이스가 node 테스트로 검증된다
   2. 저장은 행 목록과 schemaVersion을 쓰고 저장 실패가 사용자에게 보인다
   3. 가져오기가 잘못된 수량·형식을 거부하고 덮어쓰기 전 확인한다
-**Plans**: TBD
+**Plans:** 2 plans
+- [ ] 23-01-PLAN.md — 순수 계산 모듈·공용 검증기, node 검사, CI·서버 글롭 추가
+- [ ] 23-02-PLAN.md — 로컬 저장(pf_v1)·오류 코드, 내보내기·가져오기 검증과 덮어쓰기 확인
 **Owns**: portfolio/ 순수 JS 모듈, tests/*_check.js
 
 ### Phase 24: /portfolio/ UI·i18n
