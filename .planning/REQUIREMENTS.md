@@ -49,14 +49,14 @@
 
 - [x] **SRV-01**: 서버에서 `etl_process.py`가 실제 GAS URL로 종료 코드 0, `data.json`·`update-meta.json` 갱신까지 성공한다 (2026-11-21 수동 실행으로 확인)
 - [ ] **SRV-02**: 서버에서 `scripts/build_price_history.py --mode incremental`이 `DATA_GO_KR_KEY`로 성공한다
-- [ ] **SRV-03**: 일일 ETL과 시세 수집이 systemd timer로 실행된다 (KST 09:00 / 14:30, `EnvironmentFile=~/.etf-env`, `Persistent=true`, 동시 실행 방지, 실패 시 비정상 종료와 로그)
-- [ ] **SRV-04**: 서버 실행도 기존 CI와 같은 순서(pytest·node 검사 → ETL → changelog·RSS·fee-history 빌드)를 따른다
-- [ ] **SRV-05**: 서버 결과를 GitHub와 동기화하는 방식(서버 push 또는 pull)이 정해져 구현되고, GitHub Actions 일일 워크플로와 이중 실행되지 않는다
+- [x] **SRV-03** (ETL 한정, 시세 수집은 push 보류로 미이전): 일일 ETL과 시세 수집이 systemd timer로 실행된다 (KST 09:00 / 14:30, `EnvironmentFile=~/.etf-env`, `Persistent=true`, 동시 실행 방지, 실패 시 비정상 종료와 로그)
+- [x] **SRV-04**: 서버 실행도 기존 CI와 같은 순서(pytest·node 검사 → ETL → changelog·RSS·fee-history 빌드)를 따른다
+- [x] **SRV-05** (ETL 한정, deploy key로 push, GitHub `Daily ETF Data Update` 비활성화): 서버 결과를 GitHub와 동기화하는 방식(서버 push 또는 pull)이 정해져 구현되고, GitHub Actions 일일 워크플로와 이중 실행되지 않는다
 
 ### 공개·보안 (OPS)
 
-- [ ] **OPS-01**: 외부 공개 방식(Tailscale·포트포워딩+HTTPS 등)이 정해져 적용되고, 도메인 전환 전 GitHub Pages가 유지된다
-- [ ] **OPS-02**: 임시 `NOPASSWD` sudo 제거, ssh 비밀번호 로그인 차단, 자동 보안 업데이트 확인이 끝난다
+- [x] **OPS-01**: 사이트는 GitHub Pages 유지, 서버는 Tailscale ssh로만 외부 접속(공개 서빙 안 함, 키 만료 해제). 2026-11-21 결정
+- [x] **OPS-02**: 임시 `NOPASSWD` sudo 제거, ssh 비밀번호 로그인 차단, 자동 보안 업데이트 확인이 끝난다
 - [ ] **OPS-03**: 서버 운영 문서(접속·배포·복구·타이머 확인·비밀 값 위치)가 저장소에 있다 (비밀 값 자체는 커밋 금지)
 
 ## Future Requirements
@@ -100,9 +100,9 @@
 | VERIFY-01 | Phase 25 | Pending |
 | SRV-01 | Phase 26 | Complete |
 | SRV-02 | Phase 26 | Pending |
-| SRV-03 | Phase 27 | Pending |
-| SRV-04 | Phase 27 | Pending |
-| SRV-05 | Phase 27 | Pending |
-| OPS-01 | Phase 28 | Pending |
-| OPS-02 | Phase 28 | Pending |
+| SRV-03 | Phase 27 | Complete |
+| SRV-04 | Phase 27 | Complete |
+| SRV-05 | Phase 27 | Complete |
+| OPS-01 | Phase 28 | Complete |
+| OPS-02 | Phase 28 | Complete |
 | OPS-03 | Phase 28 | Pending |
