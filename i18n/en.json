@@ -454,6 +454,7 @@
   "pf_storage_quota": "Not enough storage to save. What is on screen is unchanged but will be lost when you close the window, so please keep a copy with Export.",
   "pf_storage_corrupt": "The saved data is damaged and could not be loaded. We kept a separate copy of the original where possible. If you have a backup file, restore it with Import.",
   "pf_storage_version": "The version of the saved data cannot be read. If you have a backup file, restore it with Import.",
+  "pf_storage_invalid": "Some saved rows are no longer valid (for example, a delisted ETF) and were left out. We kept a separate copy of the original.",
   "pf_loading": "Loading ETF information…",
   "pf_loading_prices": "Loading prices…",
   "pf_loading_short": "Loading…",

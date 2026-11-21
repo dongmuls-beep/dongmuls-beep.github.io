@@ -454,6 +454,7 @@
   "pf_storage_quota": "Kulang ang storage kaya hindi na-save. Nasa screen pa rin ang laman pero mawawala ito kapag isinara ang window, kaya mag-export para may kopya ka.",
   "pf_storage_corrupt": "Sira ang naka-save na data kaya hindi ito ma-load. Nagtabi kami ng hiwalay na kopya ng orihinal hangga't maaari. Kung may backup file ka, ibalik ito gamit ang Import.",
   "pf_storage_version": "Hindi mabasa ang bersyon ng naka-save na data. Kung may backup file ka, ibalik ito gamit ang Import.",
+  "pf_storage_invalid": "May ilang naka-save na row na hindi na valid (halimbawa, delisted na ETF) kaya inalis ang mga ito. Nakatabi ang hiwalay na kopya ng orihinal.",
   "pf_loading": "Nilo-load ang impormasyon ng stock…",
   "pf_loading_prices": "Nilo-load ang mga presyo…",
   "pf_loading_short": "Nilo-load…",

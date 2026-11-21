@@ -158,7 +158,8 @@ assert.strictEqual(F.dayChange([7], "ko-KR"), null);
     assert.strictEqual(F.storageErrorKey("QUOTA_EXCEEDED"), "pf_storage_quota");
     assert.strictEqual(F.storageErrorKey("CORRUPT"), "pf_storage_corrupt");
     assert.strictEqual(F.storageErrorKey("UNSUPPORTED_VERSION"), "pf_storage_version");
-    assert.strictEqual(F.storageErrorKey("INVALID_ROWS"), null);
+    assert.strictEqual(F.storageErrorKey("INVALID_ROWS"), "pf_storage_invalid");
+    assert.strictEqual(F.storageErrorKey("ROWS_DROPPED"), "pf_storage_invalid");
     assert.strictEqual(F.storageErrorKey(undefined), null);
 }
 

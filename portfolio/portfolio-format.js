@@ -230,7 +230,9 @@
         STORAGE_UNAVAILABLE: "pf_storage_unavailable",
         QUOTA_EXCEEDED: "pf_storage_quota",
         CORRUPT: "pf_storage_corrupt",
-        UNSUPPORTED_VERSION: "pf_storage_version"
+        UNSUPPORTED_VERSION: "pf_storage_version",
+        ROWS_DROPPED: "pf_storage_invalid",
+        INVALID_ROWS: "pf_storage_invalid"
     };
 
     function storageErrorKey(error) {

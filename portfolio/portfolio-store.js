@@ -67,7 +67,8 @@
 
     function create(opts) {
         var storage = opts.storage;
-        var todayIso = opts.todayIso;
+        var todayOpt = opts.todayIso;
+        function currentToday() { return typeof todayOpt === "function" ? todayOpt() : todayOpt; }
         var now = opts.now || function () { return new Date(); };
         var allowedCodes = (opts.allowedCodes || []).map(Calc.normalizeCode);
 
@@ -112,11 +113,22 @@
                 backupCorrupt(raw);
                 return { ok: false, error: "CORRUPT", rows: [] };
             }
-            return { ok: true, rows: m.rows };
+            // rows no longer valid (delisted code, tampered, over the cap) are dropped, not kept in memory;
+            // otherwise every later save() would fail. The raw value is backed up and the UI is told.
+            var kept = [];
+            m.rows.forEach(function (r) {
+                var v = kept.length < Calc.LIMITS.MAX_ROWS ? validateRows([r], { allowedCodes: allowedCodes, todayIso: currentToday() }) : null;
+                if (v && v.ok) kept.push(v.rows[0]);
+            });
+            if (kept.length !== m.rows.length) {
+                backupCorrupt(raw);
+                return { ok: false, error: "ROWS_DROPPED", rows: kept };
+            }
+            return { ok: true, rows: kept };
         }
 
         function save(rows) {
-            var v = validateRows(rows, { allowedCodes: allowedCodes, todayIso: todayIso });
+            var v = validateRows(rows, { allowedCodes: allowedCodes, todayIso: currentToday() });
             if (!v.ok) return { ok: false, error: "INVALID_ROWS", errors: v.errors };
             return write(KEYS.DATA, JSON.stringify({
                 schemaVersion: LIMITS.SCHEMA_VERSION,
@@ -162,7 +174,7 @@
             if (!obj || typeof obj !== "object" || obj.app !== LIMITS.APP) return { ok: false, error: "FORMAT" };
             var m = migrate(obj);
             if (!m) return { ok: false, error: "UNSUPPORTED_VERSION" };
-            var v = validateRows(m.rows, { allowedCodes: allowedCodes, todayIso: todayIso });
+            var v = validateRows(m.rows, { allowedCodes: allowedCodes, todayIso: currentToday() });
             if (!v.ok) return { ok: false, error: "INVALID_ROWS", errors: v.errors };
             var cur = load();
             if (cur.rows.length > 0 && !(o && o.replace === true)) {

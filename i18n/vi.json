@@ -454,6 +454,7 @@
   "pf_storage_quota": "Không đủ dung lượng để lưu. Nội dung trên màn hình vẫn giữ nguyên nhưng sẽ mất khi bạn đóng cửa sổ, vì vậy hãy lưu giữ bằng cách xuất tệp.",
   "pf_storage_corrupt": "Dữ liệu đã lưu bị hỏng nên không thể tải. Chúng tôi đã giữ riêng một bản gốc nếu có thể. Nếu có tệp sao lưu, hãy khôi phục bằng cách nhập tệp.",
   "pf_storage_version": "Không thể đọc phiên bản của dữ liệu đã lưu. Nếu có tệp sao lưu, hãy khôi phục bằng cách nhập tệp.",
+  "pf_storage_invalid": "Một số dòng đã lưu không còn hợp lệ (ví dụ ETF bị hủy niêm yết) nên đã bị loại. Bản gốc đã được giữ riêng.",
   "pf_loading": "Đang tải thông tin ETF…",
   "pf_loading_prices": "Đang tải giá…",
   "pf_loading_short": "Đang tải…",

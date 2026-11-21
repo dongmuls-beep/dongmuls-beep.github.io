@@ -82,6 +82,7 @@ KO_EXPECTED = {
     'pf_storage_quota': '저장 공간이 부족해 저장하지 못했어요. 화면의 내용은 그대로지만 창을 닫으면 사라지니 내보내기로 보관해 주세요.',
     'pf_storage_corrupt': '저장된 데이터가 손상돼 불러오지 못했어요. 가능하면 원본을 따로 보관해 두었어요. 백업 파일이 있으면 가져오기로 복원해 주세요.',
     'pf_storage_version': '저장된 데이터의 버전을 읽을 수 없어요. 백업 파일이 있으면 가져오기로 복원해 주세요.',
+    'pf_storage_invalid': '저장된 행 중 일부가 더 이상 유효하지 않아(상장폐지 등) 제외했어요. 원본은 따로 보관해 두었어요.',
     'pf_loading': '종목 정보를 불러오는 중이에요…',
     'pf_loading_prices': '시세를 불러오는 중이에요…',
     'pf_loading_short': '불러오는 중…',
@@ -201,6 +202,7 @@ EN_EXPECTED = {
     'pf_storage_quota': 'Not enough storage to save. What is on screen is unchanged but will be lost when you close the window, so please keep a copy with Export.',
     'pf_storage_corrupt': 'The saved data is damaged and could not be loaded. We kept a separate copy of the original where possible. If you have a backup file, restore it with Import.',
     'pf_storage_version': 'The version of the saved data cannot be read. If you have a backup file, restore it with Import.',
+    'pf_storage_invalid': 'Some saved rows are no longer valid (for example, a delisted ETF) and were left out. We kept a separate copy of the original.',
     'pf_loading': 'Loading ETF information…',
     'pf_loading_prices': 'Loading prices…',
     'pf_loading_short': 'Loading…',
@@ -265,8 +267,8 @@ def _load(lang):
 
 
 def test_new_keys_count():
-    assert len(NEW_KEYS) == 116
-    assert len(set(NEW_KEYS)) == 116
+    assert len(NEW_KEYS) == 117
+    assert len(set(NEW_KEYS)) == 117
     assert set(KO_EXPECTED) == set(NEW_KEYS) == set(EN_EXPECTED)
 
 

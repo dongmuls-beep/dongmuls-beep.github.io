@@ -210,4 +210,24 @@ function file(rowsArr, extra) {
     assert.deepStrictEqual(mk(cst).exportText(), { ok: false, error: "CORRUPT" });
 }
 
+// stored rows that are no longer valid are dropped on load, flagged, and later saves still work
+{
+    const st = fakeStorage();
+    st.m.set(K.DATA, JSON.stringify({ schemaVersion: 1, rows: [row("069500", "1"), row("999999", "2"), row("0026s0", "3")] }));
+    const s = mk(st);
+    const r = s.load();
+    assert.strictEqual(r.ok, false);
+    assert.strictEqual(r.error, "ROWS_DROPPED");
+    assert.deepStrictEqual(r.rows.map((x) => x.code), ["069500", "0026S0"]);
+    assert.ok(st.m.has(K.CORRUPT), "raw value backed up");
+    assert.deepStrictEqual(s.save(r.rows), { ok: true });
+    assert.strictEqual(s.load().ok, true);
+    // todayIso may be a getter evaluated at use time
+    let today = "2025-01-01";
+    const g = mk(fakeStorage(), { todayIso: () => today });
+    assert.strictEqual(g.save([row("069500", "1", "2025-01-02")]).error, "INVALID_ROWS");
+    today = "2025-01-03";
+    assert.deepStrictEqual(g.save([row("069500", "1", "2025-01-02")]), { ok: true });
+}
+
 console.log("portfolio_store_check OK");
