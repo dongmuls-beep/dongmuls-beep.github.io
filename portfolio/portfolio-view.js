@@ -849,16 +849,25 @@
         var input = e.target;
         var file = input.files && input.files[0];
         if (!file) return;
+        var fail = function (key) {
+            input.value = "";
+            resultMsg(key);
+            announce(t(key));
+        };
+        // size is checked before reading: a huge file must never be loaded into memory
+        if (file.size > window.PortfolioStore.LIMITS.MAX_IMPORT_CHARS) { fail("pf_import_too_large"); return; }
         var done = function (text) {
             input.value = "";
             el("pf-import-result").textContent = "";
             setHidden("pf-import-result", true);
-            handleImport(text, false);
+            try { handleImport(text, false); } catch (err) { fail("pf_import_format"); }
         };
-        if (file.text) file.text().then(done);
+        var broken = function () { fail("pf_import_format"); };
+        if (file.text) file.text().then(done, broken);
         else {
             var fr = new FileReader();
             fr.onload = function () { done(String(fr.result)); };
+            fr.onerror = broken;
             fr.readAsText(file);
         }
     }
