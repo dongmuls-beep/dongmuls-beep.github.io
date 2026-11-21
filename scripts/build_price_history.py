@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Core library for ETF daily close collection (data.go.kr getETFPriceInfo).
 
-Stdlib only. Contract: .planning/phases/22-price-pipeline/PRICES-CONTRACT.md
+Stdlib only. Contract: .planning/milestones/v1.6-phases/22-price-pipeline/PRICES-CONTRACT.md
 """
 
 from __future__ import annotations
