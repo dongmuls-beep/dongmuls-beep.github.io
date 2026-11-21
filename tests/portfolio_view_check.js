@@ -163,4 +163,29 @@ assert.strictEqual(F.dayChange([7], "ko-KR"), null);
     assert.strictEqual(F.storageErrorKey(undefined), null);
 }
 
+// ---- backup / notice (25-02) ----
+{
+    const iso = (y, m, d, h, mi) => new Date(y, m, d, h, mi).toISOString();
+    const T = "2026-11-21";
+    assert.strictEqual(F.backupAgeDays(null, T), null);
+    assert.strictEqual(F.backupAgeDays("garbage", T), null);
+    assert.strictEqual(F.backupAgeDays(iso(2026, 10, 21, 0, 5), "bad"), null);
+    assert.strictEqual(F.backupAgeDays(iso(2026, 10, 21, 0, 5), T), 0);
+    assert.strictEqual(F.backupAgeDays(iso(2026, 10, 20, 23, 59), T), 1);
+    assert.strictEqual(F.backupAgeDays(iso(2026, 10, 14, 12, 0), T), 7);
+    assert.strictEqual(F.backupAgeDays(iso(2026, 1, 28, 12, 0), "2026-03-01"), 1);
+    assert.strictEqual(F.backupAgeDays(iso(2026, 11, 25, 12, 0), T), 0); // clock skew never negative
+    assert.strictEqual(F.BACKUP_STALE_DAYS, 7);
+    assert.strictEqual(F.backupStatus(null, T, 0), null);
+    assert.deepStrictEqual(F.backupStatus(null, T, 2), { key: "pf_backup_never", vars: {}, stale: false });
+    assert.deepStrictEqual(F.backupStatus(iso(2026, 10, 21, 9, 0), T, 1), { key: "pf_backup_today", vars: {}, stale: false });
+    assert.deepStrictEqual(F.backupStatus(iso(2026, 10, 15, 12, 0), T, 1), { key: "pf_backup_days", vars: { days: 6 }, stale: false });
+    assert.deepStrictEqual(F.backupStatus(iso(2026, 10, 14, 12, 0), T, 1), { key: "pf_backup_stale", vars: { days: 7 }, stale: true });
+    assert.strictEqual(F.backupStatus(iso(2026, 10, 14, 12, 0), T, 0).key, "pf_backup_stale");
+    assert.deepStrictEqual(F.noticeLines(true, false), []);
+    assert.deepStrictEqual(F.noticeLines(false, null), ["pf_notice_text"]);
+    assert.deepStrictEqual(F.noticeLines(false, true), ["pf_notice_text"]);
+    assert.deepStrictEqual(F.noticeLines(false, false), ["pf_notice_text", "pf_notice_persist_denied"]);
+}
+
 console.log("portfolio_view_check OK");
