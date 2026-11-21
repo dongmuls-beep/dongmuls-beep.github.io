@@ -438,9 +438,15 @@
         btn.textContent = t("pf_loading_short");
         var held = heldCodes();
         var codes = state.failed.filter(function (c) { return held.indexOf(c) >= 0; });
-        state.failed = [];
+        var seq = fetchSeq;
         loadPrices(codes).then(function (failed) {
-            state.failed = failed;
+            if (seq !== fetchSeq) {
+                // rows changed meanwhile: a newer updateResults owns the state; only release the button
+                btn.removeAttribute("aria-disabled");
+                if (state.result) renderWarnings();
+                return;
+            }
+            state.failed = state.failed.filter(function (c) { return codes.indexOf(c) < 0; }).concat(failed);
             recompute();
             btn.removeAttribute("aria-disabled");
             if (failed.length) {
