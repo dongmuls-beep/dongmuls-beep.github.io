@@ -121,6 +121,14 @@
         });
     }
 
+    // evaluated at use time: a tab left open across local midnight must not keep yesterday's date
+    function refreshToday() {
+        state.todayIso = Format.localTodayIso();
+        var d = el("pf-date");
+        if (d && d.getAttribute("max") !== state.todayIso) d.setAttribute("max", state.todayIso);
+        return state.todayIso;
+    }
+
     function start(data) {
         state.list = [];
         state.byCode = {};
@@ -131,12 +139,11 @@
             state.byCode[code] = r;
             state.list.push({ code: code, name: String(r["종목명"]) });
         });
-        state.todayIso = Format.localTodayIso();
-        el("pf-date").setAttribute("max", state.todayIso);
+        refreshToday();
         store = window.PortfolioStore.create({
             storage: getStorage(),
             allowedCodes: state.list.map(function (x) { return x.code; }),
-            todayIso: state.todayIso
+            todayIso: refreshToday
         });
         var loaded = store.load();
         state.rows = loaded.rows || [];
@@ -332,6 +339,7 @@
     }
 
     function recompute() {
+        refreshToday();
         state.result = Calc.compute(state.rows, state.prices, { todayIso: state.todayIso });
         el("pf-results").setAttribute("aria-busy", "false");
         renderRows();
@@ -742,6 +750,7 @@
 
     function onSubmit(e) {
         e.preventDefault();
+        refreshToday();
         FIELDS.concat(["form"]).forEach(clearError);
         var editing = state.editIndex >= 0;
         if (!editing && state.rows.length >= Calc.LIMITS.MAX_ROWS) {
@@ -785,6 +794,7 @@
             announce(t("pf_export_empty"));
             return;
         }
+        refreshToday();
         var r = store.exportText(state.rows);
         var url = URL.createObjectURL(new Blob([r.text], { type: "application/json" }));
         var a = document.createElement("a");
@@ -811,6 +821,7 @@
     }
 
     function handleImport(text, replace) {
+        refreshToday();
         if (!replace && state.rows.length > 0) { openConfirm(text); return; }
         var r = store.importRows(text, replace ? { replace: true } : undefined);
         if (r.ok) {
@@ -940,6 +951,7 @@
         window.addEventListener("resize", onResize);
     }
 
+    document.addEventListener("visibilitychange", function () { if (booted && !document.hidden) refreshToday(); });
     document.addEventListener("etf:lang-changed", renderAll);
     Shell.ready.then(boot);
 })();
