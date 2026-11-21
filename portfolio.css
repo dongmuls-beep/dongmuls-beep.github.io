@@ -274,6 +274,24 @@ tr[aria-current="true"] td {
   font-variant-numeric: tabular-nums;
 }
 
+.pf-asof-note {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.pf-weights-title {
+  margin: 24px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.pf-weight-name {
+  overflow-wrap: anywhere;
+}
+
 .pf-weights {
   list-style: none;
   margin: 8px 0 0;
