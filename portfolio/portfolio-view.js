@@ -761,6 +761,102 @@
         announce(t("pf_export_done"));
     }
 
+    function resultMsg(key, vars) {
+        var box = el("pf-import-result");
+        box.textContent = "";
+        box.appendChild(mk("p", "", t(key, vars)));
+        box.removeAttribute("hidden");
+        return box;
+    }
+
+    function importDone(count) {
+        var msg = t("pf_import_done", { count: count });
+        rowsChanged(msg);
+        resultMsg("pf_import_done", { count: count });
+    }
+
+    function handleImport(text, replace) {
+        if (!replace && state.rows.length > 0) { openConfirm(text); return; }
+        var r = store.importRows(text, replace ? { replace: true } : undefined);
+        if (r.ok) {
+            if (state.editIndex >= 0) resetForm();
+            var loaded = store.load();
+            if (loaded.ok) {
+                state.rows = loaded.rows;
+                showStorage({ ok: true });
+                importDone(r.imported);
+                return;
+            }
+            r = { ok: false, error: "STORAGE_UNAVAILABLE" };
+        }
+        if (r.error === "CONFIRM_REQUIRED") { openConfirm(text); return; }
+        if (r.error === "STORAGE_UNAVAILABLE" || r.error === "QUOTA_EXCEEDED") {
+            // importRows already passed parse/format/version/row validation before the save failed
+            var v = window.PortfolioStore.validateRows(window.PortfolioStore.migrate(JSON.parse(text)).rows, {
+                allowedCodes: state.list.map(function (x) { return x.code; }), todayIso: state.todayIso
+            });
+            if (state.editIndex >= 0) resetForm();
+            state.rows = v.rows;
+            showStorage(r);
+            renderRows();
+            updateResults(t("pf_import_done", { count: v.rows.length }));
+            resultMsg("pf_import_done", { count: v.rows.length });
+            return;
+        }
+        if (r.error === "INVALID_ROWS") {
+            var e = Format.importErrorItems(r.errors, 20);
+            var box = el("pf-import-result");
+            box.textContent = "";
+            box.appendChild(mk("p", "", t("pf_import_invalid")));
+            var ul = mk("ul", "", "");
+            e.items.forEach(function (it) {
+                var vars = it.messageKey === "pf_import_rows_limit" ? { max: 200 } : it.vars;
+                var text2 = it.withRow
+                    ? t("pf_import_row_error", { row: it.vars.row, field: it.fieldKey ? t(it.fieldKey) : "", message: it.messageKey ? t(it.messageKey, vars) : "" })
+                    : (it.messageKey ? t(it.messageKey, vars) : t("pf_import_invalid"));
+                ul.appendChild(mk("li", "", text2));
+            });
+            box.appendChild(ul);
+            if (e.more > 0) box.appendChild(mk("p", "", t("pf_import_more", { count: e.more })));
+            box.removeAttribute("hidden");
+            announce(t("pf_import_invalid"));
+            return;
+        }
+        var key = { PARSE_ERROR: "pf_import_parse", TOO_LARGE: "pf_import_too_large", UNSUPPORTED_VERSION: "pf_import_version" }[r.error] || "pf_import_format";
+        resultMsg(key);
+        announce(t(key));
+    }
+
+    function openConfirm(text) {
+        state.pendingImport = text;
+        el("pf-confirm-body").textContent = t("pf_confirm_body", { count: state.rows.length });
+        el("pf-confirm").showModal();
+    }
+
+    function cancelConfirm() {
+        state.pendingImport = null;
+        if (el("pf-confirm").open) el("pf-confirm").close();
+        announce(t("pf_import_cancelled"));
+    }
+
+    function onImportFile(e) {
+        var input = e.target;
+        var file = input.files && input.files[0];
+        if (!file) return;
+        var done = function (text) {
+            input.value = "";
+            el("pf-import-result").textContent = "";
+            setHidden("pf-import-result", true);
+            handleImport(text, false);
+        };
+        if (file.text) file.text().then(done);
+        else {
+            var fr = new FileReader();
+            fr.onload = function () { done(String(fr.result)); };
+            fr.readAsText(file);
+        }
+    }
+
     // ---- language ----
     function renderAll() {
         if (!booted) return;
@@ -769,6 +865,7 @@
         showStorage(state.storageError ? { ok: false, error: state.storageError } : { ok: true });
         renderRows();
         renderResults();
+        if (el("pf-confirm").open) el("pf-confirm-body").textContent = t("pf_confirm_body", { count: state.rows.length });
         if (!el("pf-code-list").hasAttribute("hidden")) closeList();
     }
 
@@ -785,6 +882,17 @@
         el("pf-cancel").addEventListener("click", onCancel);
         el("pf-periods").addEventListener("click", onPeriodClick);
         el("pf-export").addEventListener("click", onExport);
+        el("pf-import").addEventListener("change", onImportFile);
+        var dlg = el("pf-confirm");
+        el("pf-confirm-cancel").addEventListener("click", cancelConfirm);
+        dlg.addEventListener("cancel", cancelConfirm);
+        dlg.addEventListener("close", function () { el("pf-import").focus(); });
+        el("pf-confirm-ok").addEventListener("click", function () {
+            var text = state.pendingImport;
+            state.pendingImport = null;
+            dlg.close();
+            handleImport(text, true);
+        });
         window.addEventListener("resize", onResize);
     }
 
