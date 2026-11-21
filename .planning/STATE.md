@@ -20,15 +20,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-11)
 
 **Core value:** 투자자가 ETF 실질 부담 비용을 한눈에 비교할 수 있어야 한다
-**Current milestone:** none (v1.5 shipped 2026-11-11)
-**Current focus:** Phase 23 — 계산·저장 코어
+**Current milestone:** v1.6 (Phase 23 complete 2026-11-21; v1.7 서버 이전은 별도 완료)
+**Current focus:** Phase 24 — /portfolio/ UI·i18n
 
 ## Current Position
 
-Phase: 23
+Phase: 24
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-11-11
+Status: Ready to discuss/plan
+Last activity: 2026-11-21 — Phase 23 verified (passed)
 
 ## Completed Milestones
 
