@@ -503,5 +503,14 @@
   "pf_warn_non_finite": "Hanay {row} {name} ({code}): may halagang hindi makalkula kaya hindi isinama.",
   "pf_warn_delisted": "{name} ({code}): walang presyo pagkatapos ng {date} kaya ginamit ang huling closing price.",
   "pf_warn_jump": "{name} ({code}): nagbago nang higit sa 40% ang closing price noong {date}. Maaaring split o merger ito, kaya pakisuri.",
-  "pf_warn_pre_listing": "{name} ({code}): ang panahong bago ang petsa ng listing ({date}) ay ipapakita bilang 0 won."
+  "pf_warn_pre_listing": "{name} ({code}): ang panahong bago ang petsa ng listing ({date}) ay ipapakita bilang 0 won.",
+  "pf_notice_text": "Ang inilagay mo ay naka-save lang sa browser na ito. Para ilipat ito sa ibang device o browser, gumamit ng na-export na file.",
+  "pf_notice_persist_denied": "Maaaring burahin ng browser ang data na ito. Mag-backup paminsan-minsan.",
+  "pf_notice_close": "Isara ang paalala",
+  "pf_backup_never": "Hindi pa nagba-backup.",
+  "pf_backup_today": "Huling backup: ngayong araw",
+  "pf_backup_days": "Huling backup: {days} araw na ang nakalipas",
+  "pf_backup_stale": "Luma na ang backup. Huling backup: {days} araw na ang nakalipas",
+  "pf_disclaimer_text": "Batay sa closing price at hindi kasama ang mga distribution, split o merger. Hindi ito payo sa pamumuhunan; ikaw ang may pananagutan sa iyong mga desisyon sa pamumuhunan.",
+  "pf_disclaimer_asof": "Datos hanggang {date}."
 }

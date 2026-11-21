@@ -503,5 +503,14 @@
   "pf_warn_non_finite": "{row}行目 {name}({code}): 計算できない値が含まれているため除外しました。",
   "pf_warn_delisted": "{name}({code}): {date}以降の価格がないため、最後の終値で計算しました。",
   "pf_warn_jump": "{name}({code}): {date}に終値が40%以上変動しました。分割・併合の可能性があるため、ご確認ください。",
-  "pf_warn_pre_listing": "{name}({code}): 上場日({date})より前の期間は0ウォンと表示されます。"
+  "pf_warn_pre_listing": "{name}({code}): 上場日({date})より前の期間は0ウォンと表示されます。",
+  "pf_notice_text": "入力した内容はこのブラウザにのみ保存されます。ほかの端末やブラウザへ移すには、書き出したファイルを使ってください。",
+  "pf_notice_persist_denied": "ブラウザがデータを消去することがあります。ときどきバックアップしてください。",
+  "pf_notice_close": "案内を閉じる",
+  "pf_backup_never": "まだバックアップしていません。",
+  "pf_backup_today": "最後のバックアップ: 今日",
+  "pf_backup_days": "最後のバックアップ: {days}日前",
+  "pf_backup_stale": "バックアップが古くなっています。最後のバックアップ: {days}日前",
+  "pf_disclaimer_text": "終値ベースで、分配金・分割・併合は反映されません。投資助言ではなく、投資判断の責任はご自身にあります。",
+  "pf_disclaimer_asof": "データ基準日: {date}。"
 }

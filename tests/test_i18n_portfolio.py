@@ -1,6 +1,7 @@
 """Parity test: pf_ i18n block in the language packs (I18N-01).
 
 Plan 24-05 fills ko, en, vi, zh; plan 24-06 extends LANGS/OTHER to all 8 languages.
+Plan 25-01 appends notice/backup/disclaimer keys (SAFE-01, SAFE-02).
 """
 import json
 import re
@@ -132,6 +133,15 @@ KO_EXPECTED = {
     'pf_warn_delisted': '{name}({code}): {date} 이후 시세가 없어 마지막 종가로 계산했어요.',
     'pf_warn_jump': '{name}({code}): {date}에 종가가 40% 넘게 바뀌었어요. 분할·병합일 수 있으니 확인해 주세요.',
     'pf_warn_pre_listing': '{name}({code}): 상장일({date}) 이전 기간은 0원으로 표시돼요.',
+    'pf_notice_text': '입력한 내용은 이 브라우저에만 저장돼요. 다른 기기나 브라우저로 옮기려면 내보내기 파일을 쓰세요.',
+    'pf_notice_persist_denied': '브라우저가 데이터를 지울 수 있어요. 가끔 백업하세요.',
+    'pf_notice_close': '안내 닫기',
+    'pf_backup_never': '아직 백업하지 않았어요.',
+    'pf_backup_today': '마지막 백업: 오늘',
+    'pf_backup_days': '마지막 백업 {days}일 전',
+    'pf_backup_stale': '백업이 오래됐어요. 마지막 백업 {days}일 전',
+    'pf_disclaimer_text': '종가 기준이며 분배금·분할·병합은 반영되지 않아요. 투자 자문이 아니며 투자 판단의 책임은 본인에게 있어요.',
+    'pf_disclaimer_asof': '데이터 기준일: {date}.',
 }
 
 EN_EXPECTED = {
@@ -252,6 +262,15 @@ EN_EXPECTED = {
     'pf_warn_delisted': '{name} ({code}): no prices after {date}, so the last closing price was used.',
     'pf_warn_jump': '{name} ({code}): the closing price changed by more than 40% on {date}. This may be a split or merger, so please check.',
     'pf_warn_pre_listing': '{name} ({code}): the period before the listing date ({date}) is shown as 0 KRW.',
+    'pf_notice_text': 'Your entries are saved only in this browser. To move them to another device or browser, use an exported file.',
+    'pf_notice_persist_denied': 'The browser may clear this data. Back up now and then.',
+    'pf_notice_close': 'Close notice',
+    'pf_backup_never': 'Not backed up yet.',
+    'pf_backup_today': 'Last backup: today',
+    'pf_backup_days': 'Last backup: {days} day(s) ago',
+    'pf_backup_stale': 'Backup is out of date. Last backup: {days} day(s) ago',
+    'pf_disclaimer_text': 'Values use closing prices and do not reflect distributions, splits or mergers. This is not investment advice; you are responsible for your investment decisions.',
+    'pf_disclaimer_asof': 'Data as of {date}.',
 }
 
 NEW_KEYS = list(KO_EXPECTED)
@@ -267,8 +286,8 @@ def _load(lang):
 
 
 def test_new_keys_count():
-    assert len(NEW_KEYS) == 117
-    assert len(set(NEW_KEYS)) == 117
+    assert len(NEW_KEYS) == 126
+    assert len(set(NEW_KEYS)) == 126
     assert set(KO_EXPECTED) == set(NEW_KEYS) == set(EN_EXPECTED)
 
 

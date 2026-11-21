@@ -503,5 +503,14 @@
   "pf_warn_non_finite": "第{row}行 {name}（{code}）：存在无法计算的值，已剔除。",
   "pf_warn_delisted": "{name}（{code}）：{date}之后没有行情，已按最后收盘价计算。",
   "pf_warn_jump": "{name}（{code}）：{date}收盘价变动超过40%。可能是拆分或合并，请确认。",
-  "pf_warn_pre_listing": "{name}（{code}）：上市日（{date}）之前的期间显示为0韩元。"
+  "pf_warn_pre_listing": "{name}（{code}）：上市日（{date}）之前的期间显示为0韩元。",
+  "pf_notice_text": "您输入的内容仅保存在此浏览器中。如需转移到其他设备或浏览器，请使用导出的文件。",
+  "pf_notice_persist_denied": "浏览器可能会清除这些数据。请不时备份。",
+  "pf_notice_close": "关闭提示",
+  "pf_backup_never": "尚未备份。",
+  "pf_backup_today": "上次备份：今天",
+  "pf_backup_days": "上次备份：{days}天前",
+  "pf_backup_stale": "备份已过期。上次备份：{days}天前",
+  "pf_disclaimer_text": "数值以收盘价为准，未反映分配金、拆分或合并。本内容不构成投资建议，投资决策由您自行负责。",
+  "pf_disclaimer_asof": "数据截至：{date}。"
 }

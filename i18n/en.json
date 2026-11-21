@@ -503,5 +503,14 @@
   "pf_warn_non_finite": "Row {row} {name} ({code}): contains a value that cannot be calculated, so it was left out.",
   "pf_warn_delisted": "{name} ({code}): no prices after {date}, so the last closing price was used.",
   "pf_warn_jump": "{name} ({code}): the closing price changed by more than 40% on {date}. This may be a split or merger, so please check.",
-  "pf_warn_pre_listing": "{name} ({code}): the period before the listing date ({date}) is shown as 0 KRW."
+  "pf_warn_pre_listing": "{name} ({code}): the period before the listing date ({date}) is shown as 0 KRW.",
+  "pf_notice_text": "Your entries are saved only in this browser. To move them to another device or browser, use an exported file.",
+  "pf_notice_persist_denied": "The browser may clear this data. Back up now and then.",
+  "pf_notice_close": "Close notice",
+  "pf_backup_never": "Not backed up yet.",
+  "pf_backup_today": "Last backup: today",
+  "pf_backup_days": "Last backup: {days} day(s) ago",
+  "pf_backup_stale": "Backup is out of date. Last backup: {days} day(s) ago",
+  "pf_disclaimer_text": "Values use closing prices and do not reflect distributions, splits or mergers. This is not investment advice; you are responsible for your investment decisions.",
+  "pf_disclaimer_asof": "Data as of {date}."
 }

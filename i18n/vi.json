@@ -503,5 +503,14 @@
   "pf_warn_non_finite": "Dòng {row} {name} ({code}): có giá trị không thể tính nên đã loại bỏ.",
   "pf_warn_delisted": "{name} ({code}): không có giá sau {date} nên dùng giá đóng cửa cuối cùng để tính.",
   "pf_warn_jump": "{name} ({code}): giá đóng cửa thay đổi hơn 40% vào {date}. Có thể là chia tách hoặc sáp nhập, vui lòng kiểm tra.",
-  "pf_warn_pre_listing": "{name} ({code}): giai đoạn trước ngày niêm yết ({date}) hiển thị là 0 KRW."
+  "pf_warn_pre_listing": "{name} ({code}): giai đoạn trước ngày niêm yết ({date}) hiển thị là 0 KRW.",
+  "pf_notice_text": "Nội dung bạn nhập chỉ được lưu trong trình duyệt này. Để chuyển sang thiết bị hoặc trình duyệt khác, hãy dùng tệp đã xuất.",
+  "pf_notice_persist_denied": "Trình duyệt có thể xóa dữ liệu này. Hãy sao lưu thỉnh thoảng.",
+  "pf_notice_close": "Đóng thông báo",
+  "pf_backup_never": "Chưa sao lưu.",
+  "pf_backup_today": "Sao lưu gần nhất: hôm nay",
+  "pf_backup_days": "Sao lưu gần nhất: {days} ngày trước",
+  "pf_backup_stale": "Bản sao lưu đã cũ. Sao lưu gần nhất: {days} ngày trước",
+  "pf_disclaimer_text": "Giá trị dựa trên giá đóng cửa và không phản ánh phân phối, chia tách hay sáp nhập. Đây không phải lời khuyên đầu tư; bạn tự chịu trách nhiệm với quyết định đầu tư của mình.",
+  "pf_disclaimer_asof": "Dữ liệu tính đến {date}."
 }
