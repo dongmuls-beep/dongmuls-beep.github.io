@@ -9,8 +9,8 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-LANGS = ["ko", "en", "vi", "zh"]
-OTHER = ["zh", "vi"]
+LANGS = ["ko", "en", "vi", "zh", "ja", "th", "tl", "km"]
+OTHER = ["ja", "zh", "vi", "th", "tl", "km"]
 ANCHOR = "calc_disclaimer"
 PLACEHOLDER_RE = re.compile(r"\{[a-z]+\}")
 
