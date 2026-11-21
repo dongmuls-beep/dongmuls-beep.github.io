@@ -14,6 +14,7 @@ PAGES = [
     "isa/index.html",
     "methodology/index.html",
     "pension/index.html",
+    "portfolio/index.html",
 ]
 FOCUSABLE = {"a", "button", "select", "input", "textarea"}
 
@@ -135,3 +136,57 @@ def test_changelog_status():
     lst = by_id(tags, "changelogList")
     assert len(lst) == 1 and lst[0][1].get("aria-busy") == "false"
     assert _pos(tags, "changelogStatus") < _pos(tags, "changelogList")
+
+
+def test_portfolio_static():
+    page = "portfolio/index.html"
+    tags = parse(page)
+    raw = (ROOT / page).read_text(encoding="utf-8")
+
+    live = [a for _, a in tags if "aria-live" in a]
+    assert len(live) == 1 and live[0].get("id") == "pf-live" and live[0].get("role") == "status"
+    assert not [a for _, a in tags if a.get("role") == "alert"]
+    assert all("scope" in a for t, a in tags if t == "th")
+    for _, a in tags:
+        if "cmp-table-wrap" in classes(a):
+            assert a.get("role") == "region" and a.get("tabindex") == "0"
+            assert a.get("data-i18n-aria") or a.get("aria-label")
+
+    code = by_id(tags, "pf-code")
+    assert len(code) == 1
+    a = code[0][1]
+    assert a.get("role") == "combobox" and a.get("aria-controls") == "pf-code-list"
+    assert "aria-expanded" in a and a.get("aria-autocomplete") == "list"
+    lst = by_id(tags, "pf-code-list")
+    assert len(lst) == 1 and lst[0][1].get("role") == "listbox"
+
+    label_for = {a.get("for") for t, a in tags if t == "label"}
+    for i in ("pf-code", "pf-qty", "pf-date", "pf-import"):
+        assert i in label_for, i
+
+    assert not [a for _, a in tags if "disabled" in a]
+    for _, a in tags:
+        ti = a.get("tabindex", "")
+        assert not (ti.isdigit() and int(ti) > 0)
+
+    body = next(a for t, a in tags if t == "body")
+    assert body.get("data-page") == "portfolio"
+    robots = [a for t, a in tags if t == "meta" and a.get("name") == "robots"]
+    assert len(robots) == 1 and robots[0]["content"] == "noindex,follow"
+
+    for banned in ("adsbygoogle", "gtag"):
+        assert banned not in raw
+    srcs = [a.get("src") for t, a in tags if t == "script" and a.get("src")]
+    assert "/script.js" not in srcs
+    assert srcs == [
+        "/portfolio/portfolio-calc.js",
+        "/portfolio/portfolio-store.js",
+        "/portfolio/portfolio-format.js",
+        "/portfolio/portfolio-chart.js",
+        "/portfolio/portfolio-shell.js",
+        "/portfolio/portfolio-view.js",
+    ]
+
+    dlg = by_id(tags, "pf-confirm")
+    assert len(dlg) == 1 and dlg[0][0] == "dialog" and dlg[0][1].get("aria-labelledby") == "pf-confirm-h"
+    assert not [a for t, a in tags if t == "a" and a.get("href") == "/portfolio/"]
