@@ -1,5 +1,44 @@
 # Milestones
 
+## v1.7 홈 서버 이전 (Shipped: 2026-11-21)
+
+**Phases completed:** 3 phases (26-28), direct 실행(계획 문서 없음)
+**Requirements:** 8/8 (SRV-01~05, OPS-01~03)
+
+**Key accomplishments:**
+
+- 서버(Ubuntu, nginx)에서 `etl_process.py`·`build_price_history.py --mode incremental`을 실데이터로 실행, 비밀 값은 서버 `~/.etf-env`(600)에만 보관 (Phase 26)
+- systemd timer: ETL 09:00 KST(system), 시세 14:30 KST(user), `Persistent=true`, 공용 lock, 실행 전 pytest·node 검사 (Phase 27)
+- ETL과 시세 모두 서버가 deploy key로 `main`에 push, GitHub `Daily ETF Data Update`·`Daily ETF Price Update` 워크플로 비활성화로 이중 실행 방지 (Phase 27)
+- 서버는 공개 서빙 없이 Tailscale ssh로만 접속(OPS-01), NOPASSWD sudo 제거·ssh 비밀번호 로그인 차단, 운영 문서 `server_ops.md`·`deploy/` (Phase 28)
+
+**Delivered:** GitHub Actions 의존 없이 집 서버가 매일 ETL·시세 수집을 돌리고 결과를 push한다. 사이트 서빙은 GitHub Pages 유지.
+
+**Known deferred items at close:** 서버 `~/etf-prices` 잔존, 비활성 워크플로 중복 파일, Tailscale 키 만료 해제 확인, ufw 80/443 열림 (STATE.md Deferred Items). 별도 마일스톤 감사 없음.
+
+---
+
+## v1.6 ETF 평가금액 추이 대시보드 (Shipped: 2026-11-21)
+
+**Phases completed:** 5 phases (21-25), 22 plans
+**Requirements:** 22/22 (SPIKE-01~05, PRICE-01~05, CALC-06, STORE-01~02, PF-01~03, I18N-01, A11Y-11, SAFE-01~02, NAV-01, VERIFY-01); NAV-01·VERIFY-01은 조정된 해석으로 충족
+**Audit:** tech_debt (integration 6/6, E2E 1/1 정적 추적, 차단 갭 없음) — milestones/v1.6-MILESTONE-AUDIT.md
+**Tests:** pytest 483 + node 15
+
+**Key accomplishments:**
+
+- 게이트 0 스파이크: API 이용조건·59개 종목(영숫자 코드 포함)·백필 규모·바닐라 JS 스택 결정, 재배포 위험은 소유자 수용 (Phase 21)
+- `prices/{code}.json`·`prices-meta.json` 계약, 59개 종목 백필, 누락 임계 시 기존 파일 유지·실패, serviceKey 마스킹 (Phase 22)
+- 순수 JS 평가금액 계산(휴장일 forward-fill, 상장폐지 고정, ±40% 경고)과 로컬 저장 `pf_v1`, 검증된 내보내기·가져오기·덮어쓰기 확인 (Phase 23)
+- `/portfolio/`: 종목 검색·수량·시작일, 추이 SVG 차트, 합계·전일 대비·비중·기간, 가중평균 총보수, 8개 언어, a11y (Phase 24)
+- 첫 진입 고지·persist 요청·마지막 백업 경과·상시 면책, 헤더 내비 링크(롤백 가능한 단일 커밋), 서버 DRY_RUN·라이브 URL 검증 (Phase 25)
+
+**Delivered:** 로그인 없이 보유 ETF의 일별 평가금액 추이를 브라우저 로컬 저장으로 확인하는 `/portfolio/` 페이지.
+
+**Known deferred items at close:** 24-HUMAN-CHECK.md 브라우저 확인, vi/zh/ja/th/tl/km 고지 문구 원어민 검수, NAV-01 noindex 소유자 수용, data.go.kr 재배포 약관 확인, ±40% 경고 오탐(레버리지·인버스), price_update.yml 중복 (STATE.md Deferred Items).
+
+---
+
 ## v1.5 기술 부채 정리 (Shipped: 2026-11-11)
 
 **Phases completed:** 4 phases, 9 plans, 3 tasks

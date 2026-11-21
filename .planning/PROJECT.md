@@ -2,40 +2,16 @@
 
 ## What This Is
 
-한국 투자자를 위한 ETF 실부담비용 자동 비교 웹사이트. KOFIA(금융투자협회)에서 매일 자동으로 수수료 데이터를 수집하여 총보수·기타비용·매매중개수수료를 합산한 실부담비용 기준으로 ETF를 비교해준다. GitHub Pages에 정적 사이트로 배포되며 별도 서버 없이 운영된다.
+한국 투자자를 위한 ETF 실부담비용 자동 비교 웹사이트. KOFIA(금융투자협회)에서 매일 자동으로 수수료 데이터를 수집하여 총보수·기타비용·매매중개수수료를 합산한 실부담비용 기준으로 ETF를 비교해준다. GitHub Pages에 정적 사이트로 배포되고, 데이터 수집은 집 서버가 매일 실행한다.
 
 ## Current State
 
-v1.5 기술 부채 정리 shipped (2026-11-11). CI가 RSS 빌드 실패를 드러내고, RSS 피드는 중복 없이 정확한 수치로 결정적 생성, /compare/ 리사이즈·접근성·320px 정리, 문서 메타데이터 보정. 테스트: pytest 411 + node 9. 남은 부채: milestones/v1.5-MILESTONE-AUDIT.md (Phase 19 스크린리더·포커스 링 확인, Phase 18~20 실제 CI 미확인).
+v1.6(ETF 평가금액 추이 대시보드)와 v1.7(홈 서버 이전)이 shipped (2026-11-21). `/portfolio/`에서 보유 ETF의 일별 평가금액 추이를 브라우저 로컬 저장으로 확인한다(59개 종목 종가는 `prices/`). 일일 ETL(09:00 KST)과 시세 수집(14:30 KST)은 집 서버의 systemd timer가 실행하고 deploy key로 `main`에 push하며, GitHub Actions 일일 워크플로는 비활성이다. 사이트 서빙은 GitHub Pages 유지. 테스트: pytest 483 + node 15. 남은 부채: milestones/v1.6-MILESTONE-AUDIT.md, STATE.md Deferred Items.
 
 ## Next Milestone Goals
 
-v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/seeds/SEED-001-portfolio-dashboard.md`, spike gate 0: 공공데이터 API 라이선스·이력 범위·수정주가).
-
-## Current Milestone: v1.6 ETF 평가금액 추이 대시보드
-
-**Goal:** 방문자가 로그인 없이 보유 ETF(종목·소수점 수량·보유 시작일)를 입력하면 시작일부터 오늘까지 일별 평가금액 추이를 `/portfolio/`에서 확인한다 (시드: SEED-001).
-
-**Target features:**
-- 게이트 0 스파이크: 공공데이터포털 주식시세 API 이용조건·과거 조회 범위·수정주가·영숫자 코드 확인 (불허면 계획 중단 후 사용자 확인)
-- 59개 종목 일별 종가 수집 파이프라인(별도 워크플로) + 과거 백필, 종목별 `prices/{code}.json` + `prices-meta.json`
-- 평가금액 계산 순수 JS 모듈 + 브라우저 로컬 저장(행 목록 `{code, qty, startDate}`), JSON 내보내기·가져오기
-- `/portfolio/` 독립 페이지: 입력, 추이 그래프, 합계·전일 대비·비중·기간 선택, 가중평균 보수·연간 예상 비용, 8개 언어
-- 백업 유도·고지·데이터 기준일 표시, 내비 링크는 마지막 단계(롤백 가능)
-
-## Queued Milestone: v1.7 홈 서버 이전 (v1.6 완료 후 진행, 병행 시작 가능)
-
-**Goal:** 일일 ETL(`etl_process.py`)과 시세 수집(`scripts/build_price_history.py`)을 집 Ubuntu 서버(dmserver, nginx)에서 스스로 실행하고, GitHub Actions 중복 실행 없이 안전하게 넘긴다.
-
-**Target features:**
-- 서버에서 ETL·시세 수집이 실데이터로 성공(GAS URL·`DATA_GO_KR_KEY`는 서버 `~/.etf-env`, 저장소에 커밋 금지)
-- systemd timer로 일일 실행(KST 09:00 ETL, 14:30 시세), 정전 후 누락 실행 보정, 테스트 게이트 유지
-- 서버 결과를 GitHub와 동기화하는 방식 결정·구현, GitHub Actions 이중 실행 방지
-- 외부 공개(HTTPS·도메인 전환) 방식 결정 후 적용, 보안 마감, 운영 문서
-
-**Already done outside the repo (2026-11-21):** SSH 키 접속, nginx·ufw·fail2ban 설치, 정전 시 자동 부팅(BIOS)·IP 고정(172.30.1.27, 공유기 예약 + 서버 고정), Chrome·xvfb·node·Python venv 설치, 사이트 clone(`/var/www/etfsave`), ETL 수동 실행으로 KOFIA 다운로드 성공 확인.
-
-**Note:** GitHub Pages 전용이라는 기존 Hosting 제약과 "자체 백엔드 서버" Out of Scope는 정적 파일 서빙 + 배치 실행 범위에서만 완화한다. 도메인 전환 전까지 GitHub Pages는 유지한다.
+- 구글 Drive 저장·로그인 (시드 후보)
+- 부채 정리: 24-HUMAN-CHECK 브라우저 확인, 6개 언어 고지 문구 검수, NAV-01 noindex 수용 확인, 재배포 약관 확인, 비활성 워크플로 중복·서버 잔존 디렉터리 정리, ufw 80/443, 미해결 UI 리뷰 항목
 
 ## Core Value
 
@@ -45,6 +21,8 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 
 ### Validated
 
+- ✓ 홈 서버 ETL·시세 수집·systemd timer·서버 push·Tailscale ssh·운영 문서 (SRV-01~05, OPS-01~03) — v1.7
+- ✓ 공공데이터 시세 스파이크·가격 수집 파이프라인·평가금액 계산·로컬 저장·`/portfolio/` UI 8개 언어·고지·백업 유도·내비 링크 (SPIKE-01~05, PRICE-01~05, CALC-06, STORE-01~02, PF-01~03, I18N-01, A11Y-11, SAFE-01~02, NAV-01, VERIFY-01) — v1.6
 - ✓ RSS 실패 시 CI 실패·피드 중복 제거·정확한 수치·결정성 (DATA-11~12, CI-01, FEED-05~08) — v1.5
 - ✓ /compare/ 리사이즈·th·언어 이벤트·320px·a11y 정리, footer gap, 문서 보정 (CMP-07~11, A11Y-10, POLISH-01~02) — v1.5
 - ✓ 결측 수수료 null 처리, 가짜 변동 차단, 프런트 "-"·정렬·배지 (DATA-07~10) — v1.4
@@ -76,13 +54,13 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 
 ### Active
 
-- [ ] ETF 보유 평가금액 추이 대시보드 (v1.6, REQUIREMENTS.md 참조)
+(다음 마일스톤에서 정의 — Next Milestone Goals 참조)
 
 ### Out of Scope
 
-- 사용자 로그인/계정 — 공개 서비스, 개인화 불필요
+- 사용자 로그인/계정 — 공개 서비스, 개인화 불필요 (구글 Drive 저장·로그인은 다음 마일스톤 후보)
 - 실시간 데이터 스트리밍 — 월 1회 업데이트로 충분한 투자 정보
-- 자체 백엔드 서버 — GitHub Pages 무료 정적 호스팅이 핵심 비용 절감 전략
+- 자체 백엔드 서버(API·공개 서빙) — 사이트는 GitHub Pages 정적 호스팅 유지. 집 서버는 배치 실행·push 전용(Tailscale ssh만, 공개 서빙 없음)
 - 모바일 네이티브 앱 — 반응형 웹으로 충분
 
 ## Context
@@ -90,16 +68,16 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 - 도메인: `etfsave.life` (GitHub Pages + CNAME)
 - 데이터 원천: KOFIA 공시 사이트 (dis.kofia.or.kr) — Selenium 스크래핑
 - 종목 관리: Google Sheets + Google Apps Script Web App
-- 배포: GitHub Actions (매일 UTC 00:00 = KST 09:00 자동 실행)
+- 배포: 집 서버 systemd timer가 ETL(09:00 KST)·시세 수집(14:30 KST) 실행 후 deploy key로 push → GitHub Pages 배포. GitHub Actions 일일 워크플로는 비활성(`server_ops.md`)
 - 브라우저: 프레임워크 없는 바닐라 JS (의존성 최소화)
 - Python 3.9, pandas, selenium, webdriver-manager
 
 ## Constraints
 
 - **Tech Stack**: 바닐라 JS/HTML/CSS — 프레임워크 도입 금지, 의존성 최소화 원칙
-- **Hosting**: GitHub Pages (정적 파일만) — 서버 사이드 런타임 사용 불가
+- **Hosting**: 사이트는 GitHub Pages(정적 파일만, 서버 사이드 런타임 불가). ETL·시세 배치만 집 서버에서 실행
 - **Data Source**: KOFIA 웹사이트 구조 변경에 취약 — Selenium 선택자 깨질 수 있음
-- **Automation**: GitHub Actions 무료 플랜 제한 — ETL 실행 시간 최적화 필요
+- **Automation**: 서버 systemd timer(정전 시 Persistent 보정), 서버 키·비밀 값은 `~/.etf-env`만. 서버 deploy key·Tailscale 키 만료 관리 필요
 - **Language**: 한국어 JSON 필드명 유지 — ETL 출력과 프론트엔드 키 일치 필요
 
 ## Key Decisions
@@ -126,7 +104,9 @@ v1.6 후보: SEED-001 ETF 보유 평가금액 추이 대시보드 (`.planning/se
 | 계산기는 기준/비교 2개 대신 전 종목 순위표 (v1.4 UAT) | 사용자 요청: 3~4개 비교가 어려움 | ✓ Good |
 | 파일 소유권 분리로 최대 병렬 실행, worktree 미사용 (v1.4) | OneDrive 환경 제약 | ✓ Good — `git commit --only` 필요 |
 
-| 홈 서버(nginx + systemd timer)로 ETL 이전 검토 (v1.7) | GitHub Actions 의존 축소, Selenium 실행 환경 직접 통제 | — Pending (동기화 방식·도메인 전환 미결정) |
+| 홈 서버(systemd timer)로 ETL·시세 이전 (v1.7) | GitHub Actions 의존 축소, Selenium 실행 환경 직접 통제 | ✓ Good — 서버 push(deploy key), 공개 서빙 없음, Pages 유지 |
+| 평가금액 대시보드는 바닐라 JS, 로컬 저장 `pf_v1`, noindex (v1.6) | 의존성 0, 개인 보유 정보 서버 미전송 | ✓ Good — NAV-01 noindex 해석 소유자 수용 대기 |
+| 공공데이터 종가를 `prices/`로 공개 커밋 (v1.6, 소유자 수용 2026-11-11) | 비영리·무광고 전제, 철회는 `prices/` 삭제 | ⚠️ Revisit — 재배포 약관 기관 확인 미결 |
 
 ## Evolution
 
@@ -146,4 +126,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-21 after v1.7 (홈 서버 이전) queued; v1.6 untouched*
+*Last updated: 2026-11-21 after v1.6 and v1.7 milestones archived*
