@@ -166,7 +166,12 @@ Plans:
   3. 보유 정보는 분석 이벤트로 가지 않고 이 페이지에 AdSense가 없다
   4. 내비·sitemap·RSS·structuredData 링크가 마지막에 추가되고 링크 제거로 롤백된다
   5. 새 코드가 실제 CI(pytest·node·새 워크플로 1회)에서 통과한다
-**Plans**: TBD
+**Plans:** 5 plans
+- [ ] 25-01-PLAN.md — 고지·백업 상태·상시 고지 i18n 키 9개(8개 언어) + 테스트
+- [ ] 25-02-PLAN.md — PortfolioFormat 순수 함수(백업 경과일·백업 상태·고지 줄) TDD
+- [ ] 25-03-PLAN.md — /portfolio/ 첫 진입 고지·persist·마지막 백업·상시 고지 연결 + 정적·브라우저 검사
+- [ ] 25-04-PLAN.md — 9개 페이지 헤더 내비 링크 + nav_portfolio (단일 커밋, revert로 롤백)
+- [ ] 25-05-PLAN.md — 푸시, 서버 DRY_RUN ETL·시세 1회, 라이브 URL 확인, 롤백 기록
 **Owns**: 내비·sitemap·RSS, 관측·고지 문구
 
 ### Phase 26: 서버 실행 검증
