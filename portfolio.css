@@ -65,6 +65,11 @@
   flex: 1 1 auto;
 }
 
+/* an empty error slot keeps its element (aria-describedby target) but must not add flex-gap dead space */
+.portfolio-page .cmp-field-error:empty {
+  display: none;
+}
+
 .pf-rows-empty {
   margin-top: 16px;
   font-size: 14px;
@@ -180,6 +185,10 @@
   position: static;
   width: auto;
   min-width: 128px;
+}
+
+#pf-rows-wrap {
+  margin-top: 24px;
 }
 
 .pf-rows-table td {
@@ -339,6 +348,10 @@ tr[aria-current="true"] td {
   font-size: 14px;
   font-weight: 400;
   fill: var(--text-muted);
+  /* surface halo keeps the label readable where the line/area runs under it */
+  stroke: var(--surface);
+  stroke-width: 4px;
+  paint-order: stroke;
 }
 
 .pf-grid {
@@ -514,6 +527,7 @@ tr[aria-current="true"] td {
     white-space: normal;
   }
 
+  .pf-rows-table th:nth-child(2),
   .pf-rows-table td:nth-child(3) {
     white-space: nowrap;
   }
