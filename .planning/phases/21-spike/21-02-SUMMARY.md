@@ -13,6 +13,7 @@ decisions:
   - "Closing price stored raw, split handled by warning only; CALC-06 40% threshold false-positives on leveraged/inverse ETFs"
 metrics:
   completed: 2026-11-11
+requirements-completed: [SPIKE-01, SPIKE-02, SPIKE-03, SPIKE-05]
 ---
 
 # Phase 21 Plan 02: Live probe and gate-0 verdict Summary

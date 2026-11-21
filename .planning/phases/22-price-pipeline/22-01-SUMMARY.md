@@ -15,6 +15,7 @@ metrics:
   tests_added: 15
   tests_total: 426
 completed: 2026-11-11
+requirements-completed: [PRICE-01, PRICE-04, PRICE-05]
 ---
 
 # Phase 22 Plan 01: Price core Summary

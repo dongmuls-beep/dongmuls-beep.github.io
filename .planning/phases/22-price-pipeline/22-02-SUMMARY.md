@@ -10,6 +10,7 @@ key-files:
   modified: [scripts/build_price_history.py]
 metrics:
   completed: 2026-11-11
+requirements-completed: [PRICE-02, PRICE-03, PRICE-04, PRICE-05]
 ---
 
 # Phase 22 Plan 02: CLI modes and daily workflow Summary

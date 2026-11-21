@@ -14,6 +14,7 @@ decisions:
   - "Backfill: scenario A (per-ticker range), 118-767 calls"
 metrics:
   completed: 2026-11-11
+requirements-completed: [SPIKE-01, SPIKE-03, SPIKE-04]
 ---
 
 # Phase 21 Plan 01: Gate-0 public evidence Summary
