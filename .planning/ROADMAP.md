@@ -141,7 +141,18 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   2. 추이 그래프·합계·전일 대비·비중·기간 선택이 표시된다
   3. 가중평균 총보수와 연간 예상 비용이 한 줄로 표시된다
   4. 8개 언어 패리티 테스트와 a11y 검사를 통과한다
-**Plans**: TBD
+**Plans:** 10 plans
+Plans:
+- [ ] 24-01-PLAN.md — PortfolioFormat helpers + exportText(rows) (wave 1)
+- [ ] 24-02-PLAN.md — PortfolioChart SVG chart + geometry checks (wave 1)
+- [ ] 24-03-PLAN.md — portfolio/index.html, portfolio.css, a11y static checks (wave 1)
+- [ ] 24-04-PLAN.md — PortfolioShell header/i18n loader without script.js (wave 1)
+- [ ] 24-05-PLAN.md — pf_ i18n block ko/en/vi/zh + parity test (wave 1)
+- [ ] 24-06-PLAN.md — pf_ i18n block ja/th/tl/km (wave 2)
+- [ ] 24-07-PLAN.md — view: boot, states, storage, combobox, form, rows (wave 2)
+- [ ] 24-08-PLAN.md — view: prices, summary, fee line, weights, chart, warnings (wave 3)
+- [ ] 24-09-PLAN.md — view: export/import + overwrite dialog (wave 4)
+- [ ] 24-10-PLAN.md — integration gates + human browser check (wave 5)
 **UI hint**: yes
 **Owns**: portfolio/index.html·JS·CSS, i18n/*.json
 
