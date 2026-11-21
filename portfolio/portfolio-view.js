@@ -214,6 +214,8 @@
         var empty = state.rows.length === 0;
         setHidden("pf-rows-wrap", empty);
         setHidden("pf-rows-empty", !empty);
+        if (empty) el("pf-export").setAttribute("aria-disabled", "true");
+        else el("pf-export").removeAttribute("aria-disabled");
         updateScrollable();
         updateSubmitState();
     }
@@ -742,6 +744,23 @@
         }
     }
 
+    // ---- export / import ----
+    function onExport() {
+        if (el("pf-export").getAttribute("aria-disabled") === "true") {
+            announce(t("pf_export_empty"));
+            return;
+        }
+        var r = store.exportText(state.rows);
+        var url = URL.createObjectURL(new Blob([r.text], { type: "application/json" }));
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "etfsave-portfolio-" + state.todayIso + ".json";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () { a.remove(); URL.revokeObjectURL(url); }, 0);
+        announce(t("pf_export_done"));
+    }
+
     // ---- language ----
     function renderAll() {
         if (!booted) return;
@@ -765,6 +784,7 @@
         el("pf-form").addEventListener("submit", onSubmit);
         el("pf-cancel").addEventListener("click", onCancel);
         el("pf-periods").addEventListener("click", onPeriodClick);
+        el("pf-export").addEventListener("click", onExport);
         window.addEventListener("resize", onResize);
     }
 
