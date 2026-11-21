@@ -8,7 +8,7 @@
 - ✅ **v1.4 신뢰성·접근성·비교 도구** — Phases 10-16 (shipped 2026-10-06)
 - ✅ **v1.5 기술 부채 정리** — Phases 17-20 (shipped 2026-11-11)
 - 🚧 **v1.6 ETF 평가금액 추이 대시보드** — Phases 21-25 (in progress)
-- 🕓 **v1.7 홈 서버 이전** — Phases 26-28 (queued, v1.6과 독립)
+- ✅ **v1.7 홈 서버 이전** — Phases 26-28 (구현 완료 2026-11-21, 요구사항 8/8, 로컬 커밋 미push)
 
 ## Phases
 
@@ -80,11 +80,11 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 - [ ] **Phase 24: /portfolio/ UI·i18n** - 입력, 추이 그래프, 합계·비중·기간, 가중평균 보수, 8개 언어, a11y
 - [ ] **Phase 25: 마감·배포 검증** - 고지·백업 유도·기준일, 내비/sitemap/RSS, 실제 CI 통과
 
-### 🕓 v1.7 홈 서버 이전 (Phases 26-28) — QUEUED
+### ✅ v1.7 홈 서버 이전 (Phases 26-28) — DONE 2026-11-21
 
-- [ ] **Phase 26: 서버 실행 검증** - ETL(완료)·시세 수집을 서버에서 실데이터로 실행
-- [ ] **Phase 27: 스케줄·동기화** - systemd timer, 테스트 게이트, GitHub 동기화·이중 실행 방지
-- [ ] **Phase 28: 공개·보안 마감** - 외부 공개 방식, 보안 정리, 운영 문서
+- [x] **Phase 26: 서버 실행 검증** - ETL(완료)·시세 수집을 서버에서 실데이터로 실행
+- [x] **Phase 27: 스케줄·동기화** - systemd timer, 테스트 게이트, GitHub 동기화·이중 실행 방지
+- [x] **Phase 28: 공개·보안 마감** - 외부 공개 방식, 보안 정리, 운영 문서
 
 ## Phase Details
 
@@ -218,6 +218,6 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 | 23. 계산·저장 코어 | v1.6 | 0/? | Not started | - |
 | 24. /portfolio/ UI·i18n | v1.6 | 0/? | Not started | - |
 | 25. 마감·배포 검증 | v1.6 | 0/? | Not started | - |
-| 26. 서버 실행 검증 | v1.7 | 0/? | In progress (SRV-01 확인) | - |
-| 27. 스케줄·동기화 | v1.7 | 0/? | Not started | - |
-| 28. 공개·보안 마감 | v1.7 | 0/? | Not started | - |
+| 26. 서버 실행 검증 | v1.7 | direct | Complete | 2026-11-21 |
+| 27. 스케줄·동기화 | v1.7 | direct | Complete (ETL push, 시세는 서버 로컬) | 2026-11-21 |
+| 28. 공개·보안 마감 | v1.7 | direct | Complete (Tailscale ssh만, 공개 서빙 없음) | 2026-11-21 |
