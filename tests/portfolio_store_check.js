@@ -93,5 +93,90 @@ const row = (code, qty, d) => ({ code, qty, startDate: d || "2025-01-02" });
 }
 
 // ---- Task 2: export / import ----
+{
+    const st = fakeStorage();
+    const s = mk(st);
+    assert.strictEqual(s.lastBackup(), null);
+    const rows = [row("069500", "1.25"), row("0026S0", "3", "2025-06-30")];
+    s.save(rows);
+    const ex = s.exportText();
+    assert.strictEqual(ex.ok, true);
+    assert.strictEqual(ex.backupRecorded, true);
+    assert.ok(ex.text.includes("\n  \"app\""));
+    const parsed = JSON.parse(ex.text);
+    assert.strictEqual(parsed.app, "etfsave-portfolio");
+    assert.strictEqual(parsed.schemaVersion, 1);
+    assert.strictEqual(s.lastBackup(), parsed.exportedAt);
+    assert.strictEqual(st.m.get(K.LAST_BACKUP), parsed.exportedAt);
+
+    // export -> import round trip into an empty store (no replace flag needed)
+    const s2 = mk(fakeStorage());
+    assert.deepStrictEqual(s2.importRows(ex.text), { ok: true, imported: 2 });
+    assert.deepStrictEqual(s2.load().rows, rows);
+
+    // lastBackup write failure still returns text
+    const bad = mk(fakeStorage({ throwOnSet: { name: "SecurityError" } }));
+    assert.strictEqual(bad.exportText().ok, true);
+    assert.strictEqual(bad.exportText().backupRecorded, false);
+    assert.strictEqual(mk(fakeStorage({ throwOnGet: new Error("x") })).lastBackup(), null);
+
+    // never export a corrupt store as an empty list
+    const cst = fakeStorage();
+    cst.m.set(K.DATA, "{bad");
+    assert.deepStrictEqual(mk(cst).exportText(), { ok: false, error: "CORRUPT" });
+}
+
+function file(rowsArr, extra) {
+    return JSON.stringify(Object.assign({ app: "etfsave-portfolio", schemaVersion: 1, exportedAt: "x", rows: rowsArr }, extra));
+}
+
+// invalid imports change nothing
+{
+    const st = fakeStorage();
+    const s = mk(st);
+    s.save([row("069500", "1")]);
+    const before = st.m.get(K.DATA);
+    const R = { replace: true };
+
+    ["1e-7", "-1", "NaN", "Infinity", "1,5", 1.5].forEach((q) => {
+        const r = s.importRows(file([row("069500", "1"), row("069500", q)]), R);
+        assert.strictEqual(r.error, "INVALID_ROWS", String(q));
+        assert.strictEqual(r.errors.length, 1, String(q));
+        assert.strictEqual(r.errors[0].row, 2);
+        assert.strictEqual(r.errors[0].field, "qty");
+        assert.strictEqual(st.m.get(K.DATA), before);
+    });
+
+    assert.strictEqual(s.importRows(file([row("069500", "1", "2025-02-30")]), R).errors[0].error, "DATE_INVALID");
+    assert.strictEqual(s.importRows(file([row("069500", "1", "2026-11-22")]), R).errors[0].error, "DATE_FUTURE");
+    assert.strictEqual(s.importRows(file([row("123456", "1")]), R).errors[0].error, "CODE_NOT_ALLOWED");
+    assert.strictEqual(s.importRows(file(Array.from({ length: 201 }, () => row("069500", "1"))), R).errors[0].error, "ROWS_LIMIT");
+    assert.strictEqual(s.importRows(file([], { app: "other" }), R).error, "FORMAT");
+    assert.strictEqual(s.importRows("[]", R).error, "FORMAT");
+    assert.strictEqual(s.importRows(5, R).error, "FORMAT");
+    assert.strictEqual(s.importRows(file([], { schemaVersion: 2 }), R).error, "UNSUPPORTED_VERSION");
+    assert.strictEqual(s.importRows("{bad", R).error, "PARSE_ERROR");
+    assert.strictEqual(s.importRows(" ".repeat(1048577), R).error, "TOO_LARGE");
+    assert.strictEqual(st.m.get(K.DATA), before);
+}
+
+// overwrite confirmation
+{
+    const st = fakeStorage();
+    const s = mk(st);
+    s.save([row("069500", "1"), row("069500", "2"), row("0069M0", "3")]);
+    const before = st.m.get(K.DATA);
+    const incoming = [row("0026S0", "5")];
+    assert.deepStrictEqual(s.importRows(file(incoming)), { ok: false, error: "CONFIRM_REQUIRED", existing: 3 });
+    assert.deepStrictEqual(s.importRows(file(incoming), { replace: false }).error, "CONFIRM_REQUIRED");
+    assert.strictEqual(st.m.get(K.DATA), before);
+    // invalid file is rejected before the confirm step
+    assert.strictEqual(s.importRows(file([row("069500", "-1")])).error, "INVALID_ROWS");
+    assert.deepStrictEqual(s.importRows(file(incoming), { replace: true }), { ok: true, imported: 1 });
+    assert.deepStrictEqual(s.load().rows, incoming);
+    // save failure surfaces on import
+    const q = mk(fakeStorage({ throwOnSet: { name: "QuotaExceededError" } }));
+    assert.strictEqual(q.importRows(file(incoming)).error, "QUOTA_EXCEEDED");
+}
 
 console.log("portfolio_store_check OK");
