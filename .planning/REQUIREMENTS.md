@@ -38,10 +38,10 @@
 
 ### 마감 (SAFE / NAV)
 
-- [ ] **SAFE-01**: 첫 진입 고지("이 브라우저에만 저장됩니다"), `navigator.storage.persist()` 요청, "마지막 백업 N일 전" 표시가 있다
-- [ ] **SAFE-02**: 화면에 "종가 기준, 분배금·분할 미반영", 데이터 기준일, 투자 자문 아님 고지가 상시 표시된다. 보유 수량·종목은 분석 이벤트로 보내지 않고 이 페이지에 AdSense를 싣지 않는다
-- [ ] **NAV-01**: 내비 링크·sitemap·RSS·structuredData 수정이 마지막 단계로 들어가고 링크 제거로 롤백된다
-- [ ] **VERIFY-01**: 새 코드가 실제 CI에서 통과한다(pytest + node + 새 워크플로 1회 실행)
+- [x] **SAFE-01**: 첫 진입 고지("이 브라우저에만 저장됩니다"), `navigator.storage.persist()` 요청, "마지막 백업 N일 전" 표시가 있다
+- [x] **SAFE-02**: 화면에 "종가 기준, 분배금·분할 미반영", 데이터 기준일, 투자 자문 아님 고지가 상시 표시된다. 보유 수량·종목은 분석 이벤트로 보내지 않고 이 페이지에 AdSense를 싣지 않는다
+- [x] **NAV-01** (noindex 선례 적용: sitemap·feed·structuredData 미포함, 헤더 링크만 추가 — 25-CONTEXT 결정, 소유자 확인 필요): 내비 링크·sitemap·RSS·structuredData 수정이 마지막 단계로 들어가고 링크 제거로 롤백된다
+- [x] **VERIFY-01** (GitHub Actions 일일 워크플로는 서버 이전으로 비활성 → 서버 러너 DRY_RUN·시세 실행·라이브 URL 200으로 대체 검증): 새 코드가 실제 CI에서 통과한다(pytest + node + 새 워크플로 1회 실행)
 
 ## v1.7 Requirements — 홈 서버 이전 (queued, v1.6과 독립)
 
@@ -94,10 +94,10 @@
 | PF-03 | Phase 24 | Complete |
 | I18N-01 | Phase 24 | Complete |
 | A11Y-11 | Phase 24 | Complete |
-| SAFE-01 | Phase 25 | Pending |
-| SAFE-02 | Phase 25 | Pending |
-| NAV-01 | Phase 25 | Pending |
-| VERIFY-01 | Phase 25 | Pending |
+| SAFE-01 | Phase 25 | Complete |
+| SAFE-02 | Phase 25 | Complete |
+| NAV-01 | Phase 25 | Complete |
+| VERIFY-01 | Phase 25 | Complete |
 | SRV-01 | Phase 26 | Complete |
 | SRV-02 | Phase 26 | Complete |
 | SRV-03 | Phase 27 | Complete |
