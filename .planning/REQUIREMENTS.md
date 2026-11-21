@@ -25,8 +25,8 @@
 ### 계산·저장 (CALC / STORE)
 
 - [ ] **CALC-06**: 평가금액 계산이 UI와 분리된 순수 JS 모듈이다 — 수량(문자열, 소수 최대 8자리) 변환, 휴장일 forward-fill, 상장폐지 마지막 종가 고정, 전일 대비 ±40% 경고, 영숫자 코드 처리. node 테스트가 CI 글롭에 걸린다
-- [ ] **STORE-01**: 브라우저 로컬 저장이 행 목록 `{code, qty(string), startDate}`와 `schemaVersion`(키 접두사 `pf_v1`)이고, `setItem` 예외(시크릿 모드·용량 초과)가 사용자에게 보이는 오류로 처리된다
-- [ ] **STORE-02**: JSON 내보내기·가져오기가 검증(`1e-7` 표기·음수·NaN·Infinity·쉼표 소수점 거부)과 덮어쓰기 확인을 갖는다
+- [x] **STORE-01**: 브라우저 로컬 저장이 행 목록 `{code, qty(string), startDate}`와 `schemaVersion`(키 접두사 `pf_v1`)이고, `setItem` 예외(시크릿 모드·용량 초과)가 사용자에게 보이는 오류로 처리된다
+- [x] **STORE-02**: JSON 내보내기·가져오기가 검증(`1e-7` 표기·음수·NaN·Infinity·쉼표 소수점 거부)과 덮어쓰기 확인을 갖는다
 
 ### 화면 (PF / I18N / A11Y)
 
@@ -87,8 +87,8 @@
 | PRICE-04 | Phase 22 | Complete |
 | PRICE-05 | Phase 22 | Complete |
 | CALC-06 | Phase 23 | Pending |
-| STORE-01 | Phase 23 | Pending |
-| STORE-02 | Phase 23 | Pending |
+| STORE-01 | Phase 23 | Complete |
+| STORE-02 | Phase 23 | Complete |
 | PF-01 | Phase 24 | Pending |
 | PF-02 | Phase 24 | Pending |
 | PF-03 | Phase 24 | Pending |

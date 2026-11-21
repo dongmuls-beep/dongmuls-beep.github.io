@@ -76,7 +76,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 
 - [x] **Phase 21: 게이트 0 스파이크** - API 이용조건·과거 범위·수정주가, 59개 종목 조회, 백필 규모, 스택 결정, 분할 불연속 (completed 2026-11-11)
 - [x] **Phase 22: 가격 수집 파이프라인** - prices/{code}.json 계약, 백필, 별도 일일 워크플로, 누락 임계 실패, 테스트 (completed 2026-11-11)
-- [ ] **Phase 23: 계산·저장 코어** - 순수 JS 평가금액 모듈, 로컬 저장 스키마, 내보내기·가져오기 검증
+- [x] **Phase 23: 계산·저장 코어** - 순수 JS 평가금액 모듈, 로컬 저장 스키마, 내보내기·가져오기 검증 (completed 2026-11-21)
 - [ ] **Phase 24: /portfolio/ UI·i18n** - 입력, 추이 그래프, 합계·비중·기간, 가중평균 보수, 8개 언어, a11y
 - [ ] **Phase 25: 마감·배포 검증** - 고지·백업 유도·기준일, 내비/sitemap/RSS, 실제 CI 통과
 
@@ -127,9 +127,9 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
   1. 수량·휴장일·상장폐지·±40% 경고·영숫자 코드 케이스가 node 테스트로 검증된다
   2. 저장은 행 목록과 schemaVersion을 쓰고 저장 실패가 사용자에게 보인다
   3. 가져오기가 잘못된 수량·형식을 거부하고 덮어쓰기 전 확인한다
-**Plans:** 2 plans
-- [ ] 23-01-PLAN.md — 순수 계산 모듈·공용 검증기, node 검사, CI·서버 글롭 추가
-- [ ] 23-02-PLAN.md — 로컬 저장(pf_v1)·오류 코드, 내보내기·가져오기 검증과 덮어쓰기 확인
+**Plans:** 2/2 plans complete
+- [x] 23-01-PLAN.md — 순수 계산 모듈·공용 검증기, node 검사, CI·서버 글롭 추가
+- [x] 23-02-PLAN.md — 로컬 저장(pf_v1)·오류 코드, 내보내기·가져오기 검증과 덮어쓰기 확인
 **Owns**: portfolio/ 순수 JS 모듈, tests/*_check.js
 
 ### Phase 24: /portfolio/ UI·i18n
@@ -217,7 +217,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 | 20. 소소한 정리·문서 보정 | v1.5 | 2/2 | Complete   | 2026-11-10 |
 | 21. 게이트 0 스파이크 | v1.6 | 2/2 | Complete    | 2026-11-11 |
 | 22. 가격 수집 파이프라인 | v1.6 | 3/3 | Complete    | 2026-11-11 |
-| 23. 계산·저장 코어 | v1.6 | 0/? | Not started | - |
+| 23. 계산·저장 코어 | v1.6 | 2/2 | Complete   | 2026-11-21 |
 | 24. /portfolio/ UI·i18n | v1.6 | 0/? | Not started | - |
 | 25. 마감·배포 검증 | v1.6 | 0/? | Not started | - |
 | 26. 서버 실행 검증 | v1.7 | direct | Complete | 2026-11-21 |
