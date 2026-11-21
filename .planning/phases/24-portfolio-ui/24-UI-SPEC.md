@@ -1,7 +1,8 @@
 ---
 phase: 24
 slug: portfolio-ui
-status: draft
+status: approved
+reviewed_at: 2026-11-21
 shadcn_initialized: false
 preset: none
 created: 2026-11-21
@@ -129,7 +130,7 @@ main.portfolio-page
 ├─ p.cmp-intro                      pf_intro
 ├─ noscript
 ├─ div#pf-live.cmp-sr-only role=status aria-live=polite   (the ONLY live region)
-├─ div#pf-state.cmp-state           page-level loading/error for /data.json
+├─ div#pf-state.cmp-state.cmp-card           page-level loading/error for /data.json
 ├─ p#pf-storage-msg.cmp-notice      storage error banner (hidden when none)
 └─ div#pf-app.pf-layout
    ├─ section#pf-holdings.cmp-card  (A) 보유 종목
@@ -346,7 +347,7 @@ All keys go into all 8 `i18n/*.json` files in the same order with identical `{pl
 | pf_date_hint | 오늘까지 고를 수 있어요. 상장 전 기간은 0원으로 표시돼요. |
 | pf_add | 종목 추가 |
 | pf_save_edit | 변경 저장 |
-| pf_cancel_edit | 취소 |
+| pf_cancel_edit | 수정 취소 |
 | pf_err_code | 목록에 있는 종목을 골라 주세요. |
 | pf_err_qty_format | 수량은 숫자로 입력해 주세요. 쉼표는 쓸 수 없고 소수는 8자리까지예요. |
 | pf_err_qty_nonpositive | 수량은 0보다 커야 해요. |
@@ -376,7 +377,7 @@ All keys go into all 8 `i18n/*.json` files in the same order with identical `{pl
 | pf_export | 내보내기(JSON) |
 | pf_export_done | 파일을 내보냈어요. |
 | pf_export_empty | 내보낼 종목이 없어요. |
-| pf_import | 가져오기 |
+| pf_import | 파일 가져오기 |
 | pf_import_done | {count}개 행을 가져왔어요. |
 | pf_import_cancelled | 가져오기를 취소했어요. |
 | pf_import_parse | 파일을 읽을 수 없어요. 이 사이트에서 내보낸 JSON 파일인지 확인해 주세요. |
@@ -393,17 +394,17 @@ All keys go into all 8 `i18n/*.json` files in the same order with identical `{pl
 | pf_field_date | 보유 시작일 |
 | pf_confirm_title | 보유 목록을 덮어쓸까요? |
 | pf_confirm_body | 지금 목록의 {count}개 행이 지워지고 파일 내용으로 바뀌어요. 되돌릴 수 없으니 필요하면 먼저 내보내기로 보관해 두세요. |
-| pf_confirm_cancel | 취소 |
-| pf_confirm_ok | 덮어쓰기 |
+| pf_confirm_cancel | 그대로 두기 |
+| pf_confirm_ok | 파일로 덮어쓰기 |
 | pf_storage_unavailable | 이 브라우저에 저장할 수 없어요. 창을 닫으면 입력한 내용이 사라지니 내보내기로 보관해 주세요. |
 | pf_storage_quota | 저장 공간이 부족해 저장하지 못했어요. 화면의 내용은 그대로지만 창을 닫으면 사라지니 내보내기로 보관해 주세요. |
-| pf_storage_corrupt | 저장된 데이터가 손상돼 불러오지 못했어요. 원본은 따로 보관해 두었어요. 백업 파일이 있으면 가져오기로 복원해 주세요. |
+| pf_storage_corrupt | 저장된 데이터가 손상돼 불러오지 못했어요. 가능하면 원본을 따로 보관해 두었어요. 백업 파일이 있으면 가져오기로 복원해 주세요. |
 | pf_storage_version | 저장된 데이터의 버전을 읽을 수 없어요. 백업 파일이 있으면 가져오기로 복원해 주세요. |
 | pf_loading | 종목 정보를 불러오는 중이에요… |
 | pf_loading_prices | 시세를 불러오는 중이에요… |
 | pf_loading_short | 불러오는 중… |
 | pf_load_error | 종목 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요. |
-| pf_retry | 다시 시도 |
+| pf_retry | 목록 다시 불러오기 |
 | pf_retry_prices | 실패한 종목 다시 불러오기 |
 | pf_ready | 평가금액 합계 {total}, {asof} 기준이에요. |
 | pf_empty_title | 아직 추가한 종목이 없어요 |
@@ -483,3 +484,11 @@ Copy rules: polite 해요체, no exclamation marks, no word "총자산" (SEED-00
 - [ ] Dimension 6 Registry Safety: PASS
 
 **Approval:** pending
+
+## Checker amendments (2026-11-21)
+
+- Focal point: `#pf-summary` 합계 값 + 차트. 빈 상태에서는 `#pf-form` 첫 필드.
+- `#pf-state`는 `--surface` 배경(`.cmp-card`)을 가진다. `--danger` 텍스트는 `--bg` 위에서 4.11:1로 AA 미달이므로 카드 위에서만 쓴다.
+- 증감 색 대비 실측: `--pf-up` #b91c1c / `--pf-down` #1d4ed8 이 `.pf-stat` 배경 `--surface-soft`(#f5f8fd) 위에서 각각 6.08 / 6.30:1 (통과).
+- `pf_asof_note`는 "종가 기준" 두 단어만 허용한다. 분배금·분할 미반영 등 상시 고지 전문은 Phase 25(SAFE-02)에서 추가한다.
+- `.pf-btn-primary`, `.pf-btn-danger`, 콤보박스 옵션에 `:focus-visible` 스타일을 명시한다(전역 규칙에만 의존하지 않는다).
