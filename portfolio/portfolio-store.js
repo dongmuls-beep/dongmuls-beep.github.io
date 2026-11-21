@@ -1,6 +1,6 @@
 // portfolio-store.js - local save/load, JSON export and all-or-nothing import for portfolio rows.
 // Works in node (module.exports) and in the browser (global PortfolioStore).
-// Storage is injected; no DOM, network or direct localStorage access here.
+// Storage is injected; no DOM, network or global storage access here.
 (function () {
     "use strict";
 
