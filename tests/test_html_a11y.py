@@ -212,4 +212,4 @@ def test_portfolio_static():
         for banned in ("gtag", "adsbygoogle", "dataLayer", "googletagmanager", "sendBeacon"):
             assert banned not in text, (js.name, banned)
 
-    assert not [a for t, a in tags if t == "a" and a.get("href") == "/portfolio/"]
+    assert len([a for t, a in tags if t == "a" and a.get("href") == "/portfolio/" and a.get("data-i18n") == "nav_portfolio"]) == 1
