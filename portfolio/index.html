@@ -97,6 +97,10 @@
 
         <div id="pf-state" class="cmp-state cmp-card"></div>
         <p id="pf-storage-msg" class="cmp-notice pf-storage-msg" hidden></p>
+        <div id="pf-notice" class="cmp-notice pf-notice" hidden>
+            <p id="pf-notice-text"></p>
+            <button id="pf-notice-close" class="cmp-btn" type="button" data-i18n="pf_notice_close">안내 닫기</button>
+        </div>
 
         <div id="pf-app" class="pf-layout" hidden>
             <section id="pf-holdings" class="cmp-card" aria-labelledby="pf-holdings-h">
@@ -151,6 +155,7 @@
                 <div class="pf-backup">
                     <h3 data-i18n="pf_backup_title">백업</h3>
                     <p class="cmp-hint" data-i18n="pf_backup_hint">다른 기기로 옮기거나 보관하려면 파일로 내보내세요.</p>
+                    <p id="pf-backup-status" class="cmp-hint pf-backup-status" hidden></p>
                     <div class="pf-backup-actions">
                         <button id="pf-export" class="cmp-btn" type="button" data-i18n="pf_export">내보내기(JSON)</button>
                         <label class="cmp-btn pf-file" for="pf-import"><span data-i18n="pf_import">파일 가져오기</span><input id="pf-import" class="cmp-sr-only" type="file" accept=".json,application/json"></label>
@@ -205,6 +210,8 @@
                     <ul id="pf-warn-list" class="pf-warn-list"></ul>
                     <div id="pf-warn-actions"></div>
                 </section>
+
+                <p id="pf-disclaimer" class="cmp-disclaimer pf-disclaimer"><span data-i18n="pf_disclaimer_text">종가 기준이며 분배금·분할·병합은 반영하지 않아요. 투자 자문이 아니며 투자 판단과 책임은 본인에게 있어요.</span> <span id="pf-disclaimer-asof"></span></p>
             </div>
         </div>
 

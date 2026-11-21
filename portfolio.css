@@ -547,8 +547,40 @@ tr[aria-current="true"] td {
   display: block;
 }
 
+/* ---------- notice / backup status / disclaimer (25) ---------- */
+.pf-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pf-notice[hidden] {
+  display: none;
+}
+
+.pf-notice p {
+  margin: 0;
+}
+
+.pf-backup-status {
+  margin-top: 8px;
+}
+
+.pf-backup-stale {
+  color: var(--text);
+  border-left: 4px solid var(--danger);
+  padding-left: 8px;
+}
+
 /* ---------- forced colors ---------- */
 @media (forced-colors: active) {
+  .pf-backup-stale {
+    border-left-color: CanvasText;
+  }
+
   .pf-line {
     stroke: CanvasText;
   }

@@ -9,8 +9,11 @@
     var state = {
         list: [], byCode: {}, rows: [], editIndex: -1, selected: null,
         prices: {}, failed: [], result: null, period: "all",
-        storageError: null, lastAnnouncedStorage: null, pendingImport: null, todayIso: ""
+        storageError: null, lastAnnouncedStorage: null, pendingImport: null, todayIso: "",
+        noticeDismissed: false, persisted: null
     };
+    var NOTICE_KEY = "pf_v1_noticeDismissed";
+    var persistAsked = false;
     var store = null;
     var booted = false;
     var loadingData = false;
@@ -151,6 +154,8 @@
         el("pf-state").textContent = "";
         setHidden("pf-state", true);
         setHidden("pf-app", false);
+        state.noticeDismissed = readNoticeDismissed();
+        renderNotice();
         booted = true;
         renderRows();
         updateResults(null);
@@ -176,7 +181,61 @@
         }
     }
 
-    function saveRows() { showStorage(store.save(state.rows)); }
+    function saveRows() {
+        var r = store.save(state.rows);
+        showStorage(r);
+        if (r && r.ok && state.rows.length) requestPersist();
+    }
+
+    // ---- first-visit notice, persist request, backup status, disclaimer ----
+    function readNoticeDismissed() {
+        try { return getStorage().getItem(NOTICE_KEY) === "1"; } catch (e) { return false; }
+    }
+
+    function renderNotice() {
+        var lines = Format.noticeLines(state.noticeDismissed, state.persisted);
+        if (!lines.length) { setHidden("pf-notice", true); return; }
+        el("pf-notice-text").textContent = lines.map(function (k) { return t(k); }).join(" ");
+        setHidden("pf-notice", false);
+    }
+
+    function onNoticeClose() {
+        state.noticeDismissed = true;
+        try { getStorage().setItem(NOTICE_KEY, "1"); } catch (e) { /* closed for this session only */ }
+        renderNotice();
+        el("pf-title").focus();
+    }
+
+    function requestPersist() {
+        if (persistAsked) return;
+        persistAsked = true;
+        var s = navigator.storage;
+        if (!s || typeof s.persist !== "function") return;
+        try {
+            s.persist().then(function (granted) {
+                state.persisted = !!granted;
+                renderNotice();
+            }, function () {});
+        } catch (e) { /* unsupported: stay silent */ }
+    }
+
+    function renderBackup() {
+        var s = Format.backupStatus(store.lastBackup(), state.todayIso, state.rows.length);
+        var box = el("pf-backup-status");
+        if (!s) {
+            box.classList.remove("pf-backup-stale");
+            setHidden("pf-backup-status", true);
+            return;
+        }
+        box.textContent = t(s.key, s.vars);
+        box.classList.toggle("pf-backup-stale", !!s.stale);
+        setHidden("pf-backup-status", false);
+    }
+
+    function renderDisclaimer() {
+        el("pf-disclaimer-asof").textContent = state.result && state.result.asOf
+            ? t("pf_disclaimer_asof", { date: state.result.asOf }) : "";
+    }
 
     // ---- rows table ----
     function updateScrollable() {
@@ -238,6 +297,7 @@
         else el("pf-export").removeAttribute("aria-disabled");
         updateScrollable();
         updateSubmitState();
+        renderBackup();
         var again = keep && rowBtn(keep.index, keep.action);
         if (again) again.focus();
     }
@@ -304,6 +364,7 @@
         var seq = ++fetchSeq;
         if (!state.rows.length) {
             state.result = null;
+            renderDisclaimer();
             state.failed = [];
             el("pf-results").setAttribute("aria-busy", "false");
             showEmpty("pf_empty_title", "pf_empty_body");
@@ -483,6 +544,7 @@
 
     function renderResults() {
         var r = state.result;
+        renderDisclaimer();
         if (!r) return;
         if (!r.dates.length) {
             showEmpty(null, "pf_no_result");
@@ -796,6 +858,7 @@
         }
         refreshToday();
         var r = store.exportText(state.rows);
+        renderBackup();
         var url = URL.createObjectURL(new Blob([r.text], { type: "application/json" }));
         var a = document.createElement("a");
         a.href = url;
@@ -941,6 +1004,7 @@
         formTexts();
         refreshErrors();
         showStorage(state.storageError ? { ok: false, error: state.storageError } : { ok: true });
+        renderNotice();
         renderRows();
         renderResults();
         if (el("pf-confirm").open) el("pf-confirm-body").textContent = t("pf_confirm_body", { count: state.rows.length });
@@ -960,6 +1024,7 @@
         el("pf-cancel").addEventListener("click", onCancel);
         el("pf-periods").addEventListener("click", onPeriodClick);
         el("pf-export").addEventListener("click", onExport);
+        el("pf-notice-close").addEventListener("click", onNoticeClose);
         el("pf-import").addEventListener("change", onImportFile);
         var dlg = el("pf-confirm");
         el("pf-confirm-cancel").addEventListener("click", cancelConfirm);

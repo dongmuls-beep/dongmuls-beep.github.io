@@ -189,4 +189,27 @@ def test_portfolio_static():
 
     dlg = by_id(tags, "pf-confirm")
     assert len(dlg) == 1 and dlg[0][0] == "dialog" and dlg[0][1].get("aria-labelledby") == "pf-confirm-h"
+    assert "pagead2.googlesyndication" not in raw
+
+    notice = by_id(tags, "pf-notice")
+    assert len(notice) == 1 and "hidden" in notice[0][1]
+    assert "aria-live" not in notice[0][1] and "role" not in notice[0][1]
+    close = by_id(tags, "pf-notice-close")
+    assert len(close) == 1 and close[0][0] == "button" and close[0][1].get("type") == "button"
+    assert close[0][1].get("data-i18n") == "pf_notice_close"
+
+    assert len(by_id(tags, "pf-backup-status")) == 1
+    assert _pos(tags, "pf-backup-status") < _pos(tags, "pf-export")
+
+    disc = by_id(tags, "pf-disclaimer")
+    assert len(disc) == 1 and "hidden" not in disc[0][1]
+    assert _pos(tags, "pf-warnings") < _pos(tags, "pf-disclaimer") < _pos(tags, "pf-confirm")
+    assert [a for t, a in tags if t == "span" and a.get("data-i18n") == "pf_disclaimer_text"]
+    assert len(by_id(tags, "pf-disclaimer-asof")) == 1
+
+    for js in sorted((ROOT / "portfolio").glob("*.js")):
+        text = js.read_text(encoding="utf-8")
+        for banned in ("gtag", "adsbygoogle", "dataLayer", "googletagmanager", "sendBeacon"):
+            assert banned not in text, (js.name, banned)
+
     assert not [a for t, a in tags if t == "a" and a.get("href") == "/portfolio/"]
