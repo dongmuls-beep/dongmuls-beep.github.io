@@ -806,12 +806,20 @@
         announce(t("pf_export_done"));
     }
 
-    function resultMsg(key, vars) {
+    // the renderer is kept so the box can be rebuilt in the new language on etf:lang-changed
+    var lastResult = null;
+
+    function showResult(fn) {
+        lastResult = fn;
         var box = el("pf-import-result");
         box.textContent = "";
-        box.appendChild(mk("p", "", t(key, vars)));
+        fn(box);
         box.removeAttribute("hidden");
         return box;
+    }
+
+    function resultMsg(key, vars) {
+        return showResult(function (box) { box.appendChild(mk("p", "", t(key, vars))); });
     }
 
     function importDone(count) {
@@ -851,20 +859,19 @@
         }
         if (r.error === "INVALID_ROWS") {
             var e = Format.importErrorItems(r.errors, 20);
-            var box = el("pf-import-result");
-            box.textContent = "";
-            box.appendChild(mk("p", "", t("pf_import_invalid")));
-            var ul = mk("ul", "", "");
-            e.items.forEach(function (it) {
-                var vars = it.messageKey === "pf_import_rows_limit" ? { max: 200 } : it.vars;
-                var text2 = it.withRow
-                    ? t("pf_import_row_error", { row: it.vars.row, field: it.fieldKey ? t(it.fieldKey) : "", message: it.messageKey ? t(it.messageKey, vars) : "" })
-                    : (it.messageKey ? t(it.messageKey, vars) : t("pf_import_invalid"));
-                ul.appendChild(mk("li", "", text2));
+            showResult(function (box) {
+                box.appendChild(mk("p", "", t("pf_import_invalid")));
+                var ul = mk("ul", "", "");
+                e.items.forEach(function (it) {
+                    var vars = it.messageKey === "pf_import_rows_limit" ? { max: 200 } : it.vars;
+                    var text2 = it.withRow
+                        ? t("pf_import_row_error", { row: it.vars.row, field: it.fieldKey ? t(it.fieldKey) : "", message: it.messageKey ? t(it.messageKey, vars) : "" })
+                        : (it.messageKey ? t(it.messageKey, vars) : t("pf_import_invalid"));
+                    ul.appendChild(mk("li", "", text2));
+                });
+                box.appendChild(ul);
+                if (e.more > 0) box.appendChild(mk("p", "", t("pf_import_more", { count: e.more })));
             });
-            box.appendChild(ul);
-            if (e.more > 0) box.appendChild(mk("p", "", t("pf_import_more", { count: e.more })));
-            box.removeAttribute("hidden");
             announce(t("pf_import_invalid"));
             return;
         }
@@ -899,6 +906,7 @@
         var done = function (text) {
             input.value = "";
             el("pf-import-result").textContent = "";
+            lastResult = null;
             setHidden("pf-import-result", true);
             try { handleImport(text, false); } catch (err) { fail("pf_import_format"); }
         };
@@ -914,7 +922,21 @@
 
     // ---- language ----
     function renderAll() {
-        if (!booted) return;
+        if (!booted) {
+            // pre-boot panels: re-translate the load error text in place (no re-announce, focus kept)
+            var errP = el("pf-state").querySelector(".cmp-error");
+            if (errP) {
+                errP.textContent = t("pf_load_error");
+                var rb = el("pf-retry");
+                if (rb && rb.getAttribute("aria-disabled") !== "true") rb.textContent = t("pf_retry");
+            }
+            return;
+        }
+        if (lastResult) {
+            var rbox = el("pf-import-result");
+            rbox.textContent = "";
+            lastResult(rbox);
+        }
         formTexts();
         refreshErrors();
         showStorage(state.storageError ? { ok: false, error: state.storageError } : { ok: true });
