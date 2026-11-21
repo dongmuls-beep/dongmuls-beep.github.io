@@ -239,6 +239,31 @@
         return Object.prototype.hasOwnProperty.call(STORAGE_KEYS, error) ? STORAGE_KEYS[error] : null;
     }
 
+    var BACKUP_STALE_DAYS = 7;
+
+    function backupAgeDays(lastIso, todayIso) {
+        if (typeof lastIso !== "string" || !lastIso) return null;
+        if (typeof todayIso !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(todayIso)) return null;
+        var t = new Date(lastIso);
+        if (isNaN(t.getTime())) return null;
+        function utcDay(iso) { return Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)); }
+        var days = Math.round((utcDay(todayIso) - utcDay(localTodayIso(t))) / 86400000);
+        return Math.max(0, days); // clamp: clock skew can put the backup in the future
+    }
+
+    function backupStatus(lastIso, todayIso, rowCount) {
+        var days = backupAgeDays(lastIso, todayIso);
+        if (days === null) return rowCount > 0 ? { key: "pf_backup_never", vars: {}, stale: false } : null;
+        if (days === 0) return { key: "pf_backup_today", vars: {}, stale: false };
+        if (days < BACKUP_STALE_DAYS) return { key: "pf_backup_days", vars: { days: days }, stale: false };
+        return { key: "pf_backup_stale", vars: { days: days }, stale: true };
+    }
+
+    function noticeLines(dismissed, persisted) {
+        if (dismissed === true) return [];
+        return persisted === false ? ["pf_notice_text", "pf_notice_persist_denied"] : ["pf_notice_text"];
+    }
+
     var PortfolioFormat = {
         localTodayIso: localTodayIso,
         formatWon: formatWon,
@@ -256,7 +281,11 @@
         resolveCode: resolveCode,
         warningItems: warningItems,
         importErrorItems: importErrorItems,
-        storageErrorKey: storageErrorKey
+        storageErrorKey: storageErrorKey,
+        BACKUP_STALE_DAYS: BACKUP_STALE_DAYS,
+        backupAgeDays: backupAgeDays,
+        backupStatus: backupStatus,
+        noticeLines: noticeLines
     };
 
     if (typeof module !== "undefined" && module.exports) module.exports = PortfolioFormat;
