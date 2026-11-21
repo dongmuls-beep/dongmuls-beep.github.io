@@ -10,11 +10,11 @@
 | 접속 | 키 로그인만 허용(비밀번호·root 차단). 집 밖은 Tailscale: `ssh <user>@<tailscale-ip>` (접속 기기에도 Tailscale 필요) |
 | 사이트 clone | `/var/www/etfsave` (+ `.venv`) |
 | 일일 ETL | `~/etf-deploy/run-etl.sh`, system timer `etf-etl.timer` (09:00 KST), 결과를 deploy key로 `main`에 push |
-| 시세 수집 | `~/etf-deploy/run-prices.sh`, user timer `etf-prices.timer` (14:30 KST), 결과는 서버 `~/etf-prices`에만 보관(push 없음) |
+| 시세 수집 | `~/etf-deploy/run-prices.sh`, user timer `etf-prices.timer` (14:30 KST), `prices/*.json`·`prices-meta.json`을 deploy key로 `main`에 push (ETL과 같은 lock 사용) |
 | 비밀 값 | `~/.etf-env` (권한 600): `GAS_WEB_APP_URL`, `DATA_GO_KR_KEY` — 저장소 커밋 금지 |
 | 유닛·스크립트 원본 | 이 저장소 `deploy/` |
 
-GitHub Actions `Daily ETF Data Update`는 비활성화 상태다. 다시 켜면 서버와 이중 실행되어 커밋이 충돌한다.
+GitHub Actions `Daily ETF Data Update`와 `Daily ETF Price Update`는 비활성화 상태다. 다시 켜면 서버와 이중 실행되어 커밋이 충돌한다.
 
 ## 자주 쓰는 명령 (서버에서)
 
@@ -26,7 +26,7 @@ journalctl --user -u etf-prices.service -n 50 --no-pager
 sudo systemctl start etf-etl.service                # ETL 수동 실행
 ~/etf-deploy/run-prices.sh                          # 시세 수집 수동 실행
 DRY_RUN=1 ~/etf-deploy/run-etl.sh                   # push 없이 ETL 전체 시험
-cat ~/etf-prices/prices-meta.json                   # 시세 기준일·누락
+cat /var/www/etfsave/prices-meta.json               # 시세 기준일·누락
 ```
 
 ## 복구
@@ -41,4 +41,4 @@ cat ~/etf-prices/prices-meta.json                   # 시세 기준일·누락
 
 - 서버 `sudo`는 비밀번호가 필요하다(임시 NOPASSWD 제거됨).
 - 로컬 개발 PC에서 push할 때는 먼저 `git pull --rebase origin main` (서버가 매일 커밋한다).
-- 시세 데이터(`prices/`)를 GitHub에 올릴지는 별도 결정(공공데이터 재배포 위험, v1.6 결정 참조).
+- 시세 데이터(`prices/`)는 공개 저장소에 올라간다(공공데이터 재배포 위험은 v1.6 결정 참조: 문제 시 `prices/` 삭제로 대응).

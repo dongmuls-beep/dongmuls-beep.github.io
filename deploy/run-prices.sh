@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
-# Daily ETF close collection on the home server. Results stay on the server
-# (~/etf-prices); nothing is pushed to GitHub.
+# Daily ETF close collection on the home server. Mirrors .github/workflows/price_update.yml
+# and pushes prices/*.json + prices-meta.json to main.
 set -euo pipefail
-cd "$HOME/etf-prices"
-exec 9>/tmp/etf-prices.lock
-flock -n 9 || { echo "another run in progress"; exit 0; }
+REPO=/var/www/etfsave
+cd "$REPO"
+exec 9>/tmp/etf-etl.lock
+flock -w 900 9 || { echo "lock busy"; exit 1; }
 set -a; . "$HOME/.etf-env"; set +a
 export PYTHONUNBUFFERED=1
-/var/www/etfsave/.venv/bin/python scripts/build_price_history.py --mode incremental \
-  --data /var/www/etfsave/data.json --out prices --meta prices-meta.json
+
+git pull --rebase --autostash -q origin main
+.venv/bin/python scripts/build_price_history.py --mode incremental
+
+git add prices prices-meta.json
+if ! git diff --cached --quiet; then
+  git commit -q -m "Auto-update ETF prices (Daily)"
+  git pull --rebase -q origin main
+  git push -q origin HEAD:main
+fi
 echo "PRICES OK $(date -Is)"
