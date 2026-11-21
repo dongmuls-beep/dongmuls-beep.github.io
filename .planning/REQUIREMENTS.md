@@ -30,11 +30,11 @@
 
 ### 화면 (PF / I18N / A11Y)
 
-- [ ] **PF-01**: `/portfolio/` 독립 페이지에서 종목 검색(이름·코드), 수량, 보유 시작일을 입력하고 같은 종목 여러 행을 허용하며, 목록 밖 코드는 명시적으로 거절한다
-- [ ] **PF-02**: 시작일부터 오늘까지 평가금액 추이 그래프, 현재 합계, 전일 대비, 종목별 비중, 기간 선택이 표시된다
-- [ ] **PF-03**: 보유분 가중평균 총보수와 연간 예상 비용이 한 줄로 표시된다
-- [ ] **I18N-01**: 새 UI 문자열이 8개 언어 JSON에 들어가고 기존 패리티 테스트를 통과한다
-- [ ] **A11Y-11**: 새 페이지가 기존 a11y 검사 기준(표·live region·포커스·aria)을 통과한다
+- [x] **PF-01**: `/portfolio/` 독립 페이지에서 종목 검색(이름·코드), 수량, 보유 시작일을 입력하고 같은 종목 여러 행을 허용하며, 목록 밖 코드는 명시적으로 거절한다
+- [x] **PF-02**: 시작일부터 오늘까지 평가금액 추이 그래프, 현재 합계, 전일 대비, 종목별 비중, 기간 선택이 표시된다
+- [x] **PF-03**: 보유분 가중평균 총보수와 연간 예상 비용이 한 줄로 표시된다
+- [x] **I18N-01**: 새 UI 문자열이 8개 언어 JSON에 들어가고 기존 패리티 테스트를 통과한다
+- [x] **A11Y-11**: 새 페이지가 기존 a11y 검사 기준(표·live region·포커스·aria)을 통과한다
 
 ### 마감 (SAFE / NAV)
 
@@ -89,11 +89,11 @@
 | CALC-06 | Phase 23 | Complete |
 | STORE-01 | Phase 23 | Complete |
 | STORE-02 | Phase 23 | Complete |
-| PF-01 | Phase 24 | Pending |
-| PF-02 | Phase 24 | Pending |
-| PF-03 | Phase 24 | Pending |
-| I18N-01 | Phase 24 | Pending |
-| A11Y-11 | Phase 24 | Pending |
+| PF-01 | Phase 24 | Complete |
+| PF-02 | Phase 24 | Complete |
+| PF-03 | Phase 24 | Complete |
+| I18N-01 | Phase 24 | Complete |
+| A11Y-11 | Phase 24 | Complete |
 | SAFE-01 | Phase 25 | Pending |
 | SAFE-02 | Phase 25 | Pending |
 | NAV-01 | Phase 25 | Pending |

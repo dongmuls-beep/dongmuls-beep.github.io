@@ -77,7 +77,7 @@ Full details: [milestones/v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
 - [x] **Phase 21: 게이트 0 스파이크** - API 이용조건·과거 범위·수정주가, 59개 종목 조회, 백필 규모, 스택 결정, 분할 불연속 (completed 2026-11-11)
 - [x] **Phase 22: 가격 수집 파이프라인** - prices/{code}.json 계약, 백필, 별도 일일 워크플로, 누락 임계 실패, 테스트 (completed 2026-11-11)
 - [x] **Phase 23: 계산·저장 코어** - 순수 JS 평가금액 모듈, 로컬 저장 스키마, 내보내기·가져오기 검증 (completed 2026-11-21)
-- [ ] **Phase 24: /portfolio/ UI·i18n** - 입력, 추이 그래프, 합계·비중·기간, 가중평균 보수, 8개 언어, a11y
+- [x] **Phase 24: /portfolio/ UI·i18n** - 입력, 추이 그래프, 합계·비중·기간, 가중평균 보수, 8개 언어, a11y
 - [ ] **Phase 25: 마감·배포 검증** - 고지·백업 유도·기준일, 내비/sitemap/RSS, 실제 CI 통과
 
 ### ✅ v1.7 홈 서버 이전 (Phases 26-28) — DONE 2026-11-21
@@ -229,7 +229,7 @@ Plans:
 | 21. 게이트 0 스파이크 | v1.6 | 2/2 | Complete    | 2026-11-11 |
 | 22. 가격 수집 파이프라인 | v1.6 | 3/3 | Complete    | 2026-11-11 |
 | 23. 계산·저장 코어 | v1.6 | 2/2 | Complete   | 2026-11-21 |
-| 24. /portfolio/ UI·i18n | v1.6 | 0/? | Not started | - |
+| 24. /portfolio/ UI·i18n | v1.6 | 10/10 | Complete (사람 확인 항목 보류: 24-HUMAN-CHECK.md) | 2026-11-21 |
 | 25. 마감·배포 검증 | v1.6 | 0/? | Not started | - |
 | 26. 서버 실행 검증 | v1.7 | direct | Complete | 2026-11-21 |
 | 27. 스케줄·동기화 | v1.7 | direct | Complete (ETL push, 시세는 서버 로컬) | 2026-11-21 |
