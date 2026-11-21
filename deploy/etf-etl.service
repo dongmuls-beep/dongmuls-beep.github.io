@@ -1,0 +1,10 @@
+[Unit]
+Description=ETF daily ETL (KOFIA -> data.json -> git push)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=<server-user>
+ExecStart=/home/<server-user>/etf-deploy/run-etl.sh
+TimeoutStartSec=45min

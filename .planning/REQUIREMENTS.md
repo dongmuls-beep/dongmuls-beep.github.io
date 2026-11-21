@@ -57,7 +57,7 @@
 
 - [x] **OPS-01**: 사이트는 GitHub Pages 유지, 서버는 Tailscale ssh로만 외부 접속(공개 서빙 안 함, 키 만료 해제). 2026-11-21 결정
 - [x] **OPS-02**: 임시 `NOPASSWD` sudo 제거, ssh 비밀번호 로그인 차단, 자동 보안 업데이트 확인이 끝난다
-- [ ] **OPS-03**: 서버 운영 문서(접속·배포·복구·타이머 확인·비밀 값 위치)가 저장소에 있다 (비밀 값 자체는 커밋 금지)
+- [x] **OPS-03** (`server_ops.md`, `deploy/`): 서버 운영 문서(접속·배포·복구·타이머 확인·비밀 값 위치)가 저장소에 있다 (비밀 값 자체는 커밋 금지)
 
 ## Future Requirements
 
@@ -105,4 +105,4 @@
 | SRV-05 | Phase 27 | Complete |
 | OPS-01 | Phase 28 | Complete |
 | OPS-02 | Phase 28 | Complete |
-| OPS-03 | Phase 28 | Pending |
+| OPS-03 | Phase 28 | Complete |

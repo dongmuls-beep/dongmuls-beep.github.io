@@ -1,0 +1,10 @@
+[Unit]
+Description=Run ETF price collection daily at 14:30 KST
+
+[Timer]
+OnCalendar=*-*-* 14:30:00 Asia/Seoul
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target
