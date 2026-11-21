@@ -182,6 +182,10 @@
 
     function renderRows() {
         var body = el("pf-rows-body");
+        // the rebuild detaches the focused button; remember it and refocus the same action afterwards
+        var ae = document.activeElement;
+        var keep = ae && ae.getAttribute && body.contains(ae) && ae.getAttribute("data-action")
+            ? { action: ae.getAttribute("data-action"), index: ae.getAttribute("data-index") } : null;
         body.textContent = "";
         var asOf = state.result && state.result.asOf;
         state.rows.forEach(function (row, i) {
@@ -218,6 +222,8 @@
         else el("pf-export").removeAttribute("aria-disabled");
         updateScrollable();
         updateSubmitState();
+        var again = keep && rowBtn(keep.index, keep.action);
+        if (again) again.focus();
     }
 
     function rowBtn(index, action) {
