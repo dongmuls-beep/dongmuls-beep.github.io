@@ -802,7 +802,8 @@
         a.download = "etfsave-portfolio-" + state.todayIso + ".json";
         document.body.appendChild(a);
         a.click();
-        setTimeout(function () { a.remove(); URL.revokeObjectURL(url); }, 0);
+        // Firefox/Safari start the download asynchronously after click(); revoking at once can cancel it
+        setTimeout(function () { a.remove(); URL.revokeObjectURL(url); }, 4000);
         announce(t("pf_export_done"));
     }
 
