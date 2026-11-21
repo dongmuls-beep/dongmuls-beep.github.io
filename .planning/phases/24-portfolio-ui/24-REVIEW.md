@@ -22,7 +22,8 @@ findings:
   warning: 6
   info: 5
   total: 14
-status: issues_found
+status: fixes_applied
+fixes_applied: 2026-11-21
 ---
 
 # Phase 24: Code Review Report
@@ -142,3 +143,24 @@ if (file.size > 2 * 1048576) { input.value = ""; resultMsg("pf_import_too_large"
 _Reviewed: 2026-11-21_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
+
+## Fixes applied
+
+Fixed (one commit each, `git log --grep "fix(24)"`):
+
+- CR-01: `load()` drops rows no longer valid (unknown code, over cap), backs up the raw value and returns `ROWS_DROPPED`; `storageErrorKey` maps `ROWS_DROPPED` and `INVALID_ROWS` to the new key `pf_storage_invalid` (all 8 packs, parity tests updated to 117 keys). Valid rows stay saveable.
+- CR-02: `renderRows()` remembers the focused row button and refocuses the same action/index after the rebuild (delete, edit-save, language change, late prices). Verified in headless Chrome.
+- CR-03: size cap (1 MiB) checked before reading; read error and handler exceptions show `pf_import_format`, input is reset.
+- WR-01: `onRetryPrices` captures `fetchSeq`, releases the button when superseded, and merges failed codes instead of overwriting. Deviation: it does not bump `fetchSeq` (bumping would discard an in-flight `updateResults` and leave the skeleton up).
+- WR-02: `fetchJson` with `AbortController` (15 s); `.catch` on the `updateResults` chain shows `pf_load_error`.
+- WR-03: chart `onCursor` callback (keyboard only); view announces through `#pf-live`, throttled 400 ms. No second live region.
+- WR-04: `refreshToday()` at submit, import, export, recompute and `visibilitychange`; store accepts a `todayIso` getter (bundled into the CR-01 commit).
+- WR-05: load-error panel retranslated in place; import-result box rebuilt from a stored renderer on language change.
+- WR-06: Blob URL revoked after 4000 ms.
+- UI review: holdings table fits at >=1024px (tight padding, stacked actions, scroll hint whenever `.is-scrollable`); `pf-asof-note` / `pf-weights-title` / `pf-weight-name` styled; `.cmp-field-error:empty` hidden on the portfolio page; axis label halo.
+
+Skipped:
+
+- Info IN-01..IN-05: out of scope (critical and warning only).
+- UI: chart gap above the plot. The CSS gap between chips and chart is already 16 px (measured); the remaining space is the SVG's internal top padding in `portfolio-chart.js`.
+- UI: `.pf-btn-primary` hover state and cursor-line-on-edge: not in the requested list.
