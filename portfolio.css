@@ -483,6 +483,36 @@ tr[aria-current="true"] td {
   .pf-layout > * + * {
     margin-top: 0;
   }
+
+  /* the holdings column is ~320px wide: wrap cells and stack the actions so the value and buttons stay visible */
+  .pf-rows-table th,
+  .pf-rows-table td {
+    padding-left: 4px;
+    padding-right: 4px;
+    word-break: keep-all;
+  }
+
+  .pf-rows-table td {
+    white-space: normal;
+  }
+
+  .pf-rows-table td:nth-child(3) {
+    white-space: nowrap;
+  }
+
+  .pf-rows-table th[scope="row"],
+  .pf-rows-table th[scope="col"] {
+    min-width: 0;
+  }
+
+  .pf-row-actions {
+    flex-direction: column;
+  }
+}
+
+/* show the scroll hint on any width whenever the table really overflows */
+.portfolio-page .cmp-table-wrap.is-scrollable + .cmp-scroll-hint {
+  display: block;
 }
 
 /* ---------- forced colors ---------- */
