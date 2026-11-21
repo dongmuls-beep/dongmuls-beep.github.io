@@ -1,0 +1,509 @@
+/*
+ * portfolio.css - Phase 24 styles for /portfolio/ (holdings form, summary, chart, dialog).
+ * Reads style.css root tokens read-only. Custom properties are page-scoped only.
+ * Weights: 400/600 only. Sizes: 14/16/20/28px only. Static: nothing moves or fades.
+ */
+
+/* ---------- page ---------- */
+.portfolio-page {
+  --pf-up: #b91c1c;
+  --pf-down: #1d4ed8;
+  padding-top: 48px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.portfolio-page > * + * {
+  margin-top: 24px;
+}
+
+.portfolio-page h1 {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* beats display rules (grid/flex) of the same elements, also inside media queries */
+.pf-layout[hidden],
+.portfolio-page [hidden] {
+  display: none;
+}
+
+.pf-layout {
+  display: block;
+}
+
+.pf-layout > * + * {
+  margin-top: 24px;
+}
+
+#pf-results > * + * {
+  margin-top: 24px;
+}
+
+/* ---------- form ---------- */
+#pf-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.pf-combo {
+  position: relative;
+}
+
+.pf-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pf-form-actions .pf-btn-primary,
+.pf-form-actions .cmp-btn {
+  flex: 1 1 auto;
+}
+
+.pf-rows-empty {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.pf-btn-primary,
+.pf-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pf-btn-primary {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.pf-btn-danger {
+  background: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.pf-btn-primary[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cmp-btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+
+.pf-btn-primary:focus-visible,
+.pf-btn-danger:focus-visible,
+.pf-option:focus-visible,
+.pf-chart-focus:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.pf-file:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.pf-file {
+  position: relative;
+}
+
+.pf-storage-msg {
+  border-left: 4px solid var(--danger);
+}
+
+/* ---------- combobox listbox ---------- */
+.pf-listbox {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 352px;
+  overflow-y: auto;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.pf-option {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 400;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+.pf-option[aria-selected="true"] {
+  background: var(--primary-soft);
+  border-left: 2px solid var(--primary);
+}
+
+.pf-option[aria-disabled="true"] {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.pf-option-code {
+  color: var(--text-muted);
+}
+
+/* ---------- holdings table ---------- */
+.pf-rows-table th[scope="row"] {
+  position: static;
+  width: auto;
+  min-width: 128px;
+}
+
+.pf-rows-table td {
+  white-space: nowrap;
+}
+
+tr[aria-current="true"] th,
+tr[aria-current="true"] td {
+  background: var(--primary-soft);
+}
+
+.pf-row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- backup ---------- */
+.pf-backup {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.pf-backup h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.pf-backup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ---------- summary ---------- */
+.pf-empty-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.cmp-empty #pf-empty-body {
+  color: var(--text-muted);
+}
+
+.pf-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.pf-stat {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.pf-stat-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.pf-stat-value {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-up {
+  color: var(--pf-up);
+}
+
+.pf-down {
+  color: var(--pf-down);
+}
+
+.pf-fee-line {
+  margin-top: 16px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 400;
+  background: var(--surface-muted);
+  border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-weights {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-weight-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pf-bar {
+  height: 8px;
+  margin-top: 4px;
+  background: var(--surface-muted);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pf-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+/* ---------- chart ---------- */
+.pf-chart-focus {
+  margin-top: 16px;
+}
+
+.pf-chart-focus .cmp-chart-svg {
+  height: 240px;
+}
+
+.pf-axis {
+  font-size: 14px;
+  font-weight: 400;
+  fill: var(--text-muted);
+}
+
+.pf-grid {
+  stroke: var(--border);
+  stroke-dasharray: 2 4;
+}
+
+.pf-area {
+  fill: var(--primary);
+  fill-opacity: 0.12;
+  stroke: none;
+}
+
+.pf-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.pf-cursor-line {
+  stroke: var(--text-muted);
+  stroke-width: 1px;
+}
+
+.pf-cursor-dot {
+  fill: var(--primary);
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+.pf-readout {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- warnings ---------- */
+.pf-warn-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pf-warn-list .cmp-warning {
+  margin-top: 0;
+}
+
+#pf-warn-actions {
+  margin-top: 16px;
+}
+
+.pf-retry {
+  margin-top: 8px;
+}
+
+/* ---------- confirm dialog ---------- */
+.pf-dialog {
+  max-width: min(480px, 100% - 32px);
+  padding: 24px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.pf-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.pf-dialog h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.pf-dialog p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.pf-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+/* ---------- < 640px ---------- */
+@media (max-width: 639px) {
+  .portfolio-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .portfolio-page .cmp-table-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    max-width: none;
+  }
+}
+
+/* ---------- >= 640px ---------- */
+@media (min-width: 640px) {
+  .portfolio-page > * + *,
+  .pf-layout > * + *,
+  #pf-results > * + * {
+    margin-top: 32px;
+  }
+
+  #pf-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pf-field-code,
+  .pf-form-actions,
+  #pf-form-err {
+    grid-column: 1 / -1;
+  }
+
+  .pf-form-actions .pf-btn-primary,
+  .pf-form-actions .cmp-btn {
+    flex: 0 0 auto;
+  }
+
+  .pf-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pf-backup-actions,
+  .pf-dialog-actions {
+    flex-direction: row;
+  }
+
+  .pf-dialog-actions {
+    justify-content: flex-end;
+  }
+
+  .pf-chart-focus .cmp-chart-svg {
+    height: 320px;
+  }
+}
+
+/* ---------- >= 1024px ---------- */
+@media (min-width: 1024px) {
+  .pf-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 32px;
+    align-items: start;
+  }
+
+  .pf-layout > * + * {
+    margin-top: 0;
+  }
+}
+
+/* ---------- forced colors ---------- */
+@media (forced-colors: active) {
+  .pf-line {
+    stroke: CanvasText;
+  }
+
+  .pf-area {
+    fill: none;
+  }
+
+  .pf-bar > span {
+    background: CanvasText;
+  }
+
+  .cmp-chip[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+  }
+
+  .pf-option[aria-selected="true"] {
+    outline: 2px solid Highlight;
+  }
+}
