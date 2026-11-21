@@ -179,4 +179,35 @@ function file(rowsArr, extra) {
     assert.strictEqual(q.importRows(file(incoming)).error, "QUOTA_EXCEEDED");
 }
 
+// ---- Phase 24: exportText(rows) ----
+{
+    const mem = [row("069500", "2"), row("0026S0", "1.5", "2025-06-30")];
+    const dead = mk(fakeStorage({ throwOnGet: new Error("x"), throwOnSet: new Error("y") }));
+    const ex = dead.exportText(mem);
+    assert.strictEqual(ex.ok, true);
+    assert.strictEqual(ex.backupRecorded, false);
+    const p = JSON.parse(ex.text);
+    assert.strictEqual(p.app, "etfsave-portfolio");
+    assert.strictEqual(p.schemaVersion, 1);
+    assert.ok(p.exportedAt);
+    assert.deepStrictEqual(p.rows, mem);
+
+    // working storage: backup recorded, corrupt stored value is not read
+    const st = fakeStorage();
+    st.m.set(K.DATA, "{bad");
+    const ok = mk(st).exportText(mem);
+    assert.strictEqual(ok.ok, true);
+    assert.strictEqual(ok.backupRecorded, true);
+    assert.strictEqual(st.m.get(K.LAST_BACKUP), JSON.parse(ok.text).exportedAt);
+
+    // extra keys dropped
+    const extra = mk(fakeStorage()).exportText([{ code: "069500", qty: "1", startDate: "2025-01-02", junk: 1 }]);
+    assert.deepStrictEqual(JSON.parse(extra.text).rows, [row("069500", "1")]);
+
+    // no argument: Phase 23 behavior
+    const cst = fakeStorage();
+    cst.m.set(K.DATA, "{bad");
+    assert.deepStrictEqual(mk(cst).exportText(), { ok: false, error: "CORRUPT" });
+}
+
 console.log("portfolio_store_check OK");

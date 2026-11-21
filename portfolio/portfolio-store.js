@@ -125,8 +125,12 @@
             }));
         }
 
-        function exportText() {
-            var cur = load();
+        // rows argument lets the UI export memory rows when storage is unavailable.
+        function exportText(rows) {
+            var cur = Array.isArray(rows) ? {
+                ok: true,
+                rows: rows.map(function (r) { return { code: r.code, qty: r.qty, startDate: r.startDate }; })
+            } : load();
             if (!cur.ok) return { ok: false, error: cur.error };
             var exportedAt = now().toISOString();
             var text = JSON.stringify({
