@@ -80,7 +80,6 @@ Items acknowledged and deferred at milestone close on 2026-11-21 (v1.6, v1.7):
 | review | vi/zh/ja/th/tl/km 고지·백업·내비 문구 | 원어민 검수 대기 (기계 번역 면책 문구) |
 | decision | NAV-01 noindex 해석 | 소유자 수용 대기 (sitemap·RSS·structuredData 미포함) |
 | legal | data.go.kr 재배포 약관 | 기관 확인 미결, 철회 방법: `prices/`·`prices-meta.json` 삭제 |
-| server | stale `~/etf-prices` | 서버에 잔존, 삭제 필요 |
 | ci | `price_update.yml`·`daily_update.yml` | 비활성 중복 (서버 스크립트와 드리프트 가능) |
 | server | 서버 키 만료 | 만료 알림 설정 필요 (deploy key, Tailscale 키 만료 해제 상태 확인) |
 | server | ufw 80/443 | 공개 서빙 없음과 달리 아직 열림, 닫기 검토 |
