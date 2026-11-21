@@ -14,7 +14,7 @@ PY="$REPO/.venv/bin/python"
 
 "$PY" -m pytest tests/ -q
 node tests/fee_chart_check.js
-for f in tests/compare_*_check.js tests/a11y_*_check.js; do node "$f"; done
+for f in tests/compare_*_check.js tests/a11y_*_check.js tests/portfolio_*_check.js; do node "$f"; done
 
 xvfb-run --server-args="-screen 0 1920x1080x24" "$PY" etl_process.py
 "$PY" scripts/build_changelog.py

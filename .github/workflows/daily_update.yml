@@ -34,11 +34,11 @@ jobs:
       - name: Run fee chart check
         run: node tests/fee_chart_check.js
 
-      - name: Run compare and a11y node checks
+      - name: Run compare, a11y and portfolio node checks
         shell: bash
         run: |
           set -e
-          for f in tests/compare_*_check.js tests/a11y_*_check.js; do echo "== $f"; node "$f"; done
+          for f in tests/compare_*_check.js tests/a11y_*_check.js tests/portfolio_*_check.js; do echo "== $f"; node "$f"; done
 
       - name: Run ETL Script
         env:
