@@ -65,7 +65,6 @@
                     <li><a href="/isa/" class="nav-link" data-i18n="nav_isa">ISA 중개형</a></li>
                     <li><a href="/changelog/" class="nav-link" data-i18n="nav_changelog">ETF 비용 변경이력</a></li>
                     <li><a href="/fomo/" class="nav-link" data-i18n="nav_fomo">포모(FOMO)</a></li>
-                    <li><a href="/portfolio/" class="nav-link" data-i18n="nav_portfolio">ETF 평가금액 추이</a></li>
                     <li><a href="/guide/" class="nav-link" data-i18n="nav_guide">사이트 이용안내</a></li>
                 </ul>
             </nav>
@@ -96,7 +95,9 @@
 
         <div id="pf-live" class="cmp-sr-only" role="status" aria-live="polite"></div>
 
-        <div id="pf-state" class="cmp-state cmp-card"></div>
+        <!-- ponytail: paused 2026-11-25 pending KRX price redistribution review; restore = revert this commit -->
+        <p id="pf-paused" class="cmp-notice" role="status">시세 데이터 이용 범위를 확인하는 동안 이 기능을 잠시 쉬어요. 입력해 둔 보유 종목은 이 브라우저에 그대로 남아 있어요. (Paused while we confirm price data licensing. Your saved holdings stay in this browser.)</p>
+        <div id="pf-state" class="cmp-state cmp-card" hidden></div>
         <p id="pf-storage-msg" class="cmp-notice pf-storage-msg" hidden></p>
         <div id="pf-notice" class="cmp-notice pf-notice" hidden>
             <p id="pf-notice-text"></p>
@@ -263,6 +264,5 @@
     <script src="/portfolio/portfolio-format.js" defer></script>
     <script src="/portfolio/portfolio-chart.js" defer></script>
     <script src="/portfolio/portfolio-shell.js" defer></script>
-    <script src="/portfolio/portfolio-view.js" defer></script>
 </body>
 </html>

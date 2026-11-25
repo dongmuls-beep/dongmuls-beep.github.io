@@ -184,7 +184,7 @@ def test_portfolio_static():
         "/portfolio/portfolio-format.js",
         "/portfolio/portfolio-chart.js",
         "/portfolio/portfolio-shell.js",
-        "/portfolio/portfolio-view.js",
+        # portfolio-view.js unloaded while prices are unpublished (2026-11-25)
     ]
 
     dlg = by_id(tags, "pf-confirm")
@@ -212,4 +212,4 @@ def test_portfolio_static():
         for banned in ("gtag", "adsbygoogle", "dataLayer", "googletagmanager", "sendBeacon"):
             assert banned not in text, (js.name, banned)
 
-    assert len([a for t, a in tags if t == "a" and a.get("href") == "/portfolio/" and a.get("data-i18n") == "nav_portfolio"]) == 1
+    assert len([a for t, a in tags if t == "a" and a.get("href") == "/portfolio/" and a.get("data-i18n") == "nav_portfolio"]) == 0  # nav link hidden while prices unpublished (2026-11-25)

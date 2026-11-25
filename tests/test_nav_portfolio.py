@@ -35,13 +35,9 @@ def test_nav_page_set_is_complete():
 
 
 @pytest.mark.parametrize("page", NAV_PAGES)
-def test_link_present_once_and_ordered(page):
-    text = _text(page)
-    assert text.count(LI) == 1
-    fomo = text.index('href="/fomo/" class="nav-link"')
-    port = text.index('href="/portfolio/" class="nav-link"')
-    guide = text.index('href="/guide/" class="nav-link"')
-    assert fomo < port < guide
+def test_link_hidden_while_paused(page):
+    # ponytail: nav link removed 2026-11-25 while prices are unpublished (KRX review); restore old assertion on revert
+    assert 'href="/portfolio/" class="nav-link"' not in _text(page)
 
 
 @pytest.mark.parametrize("lang", LANGS)
