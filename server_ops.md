@@ -41,4 +41,4 @@ cat /var/www/etfsave/prices-meta.json               # 시세 기준일·누락
 
 - 서버 `sudo`는 비밀번호가 필요하다(임시 NOPASSWD 제거됨).
 - 로컬 개발 PC에서 push할 때는 먼저 `git pull --rebase origin main` (서버가 매일 커밋한다).
-- 시세 데이터(`prices/`, `prices-meta.json`)는 2026-11-25부터 비공개: KRX 재배포 허용 확인 전까지 저장소에서 제거하고 `.gitignore`에 넣었다. 서버 `run-prices.sh`는 `git add` 단계에서 실패해 push하지 않는다(타이머는 그대로라 매일 실패 로그가 남음). 포트폴리오 페이지(`/portfolio/`)는 시세를 못 불러와 계산이 비는 상태.
+- 시세 데이터(`prices/`, `prices-meta.json`)는 2026-11-25부터 비공개: KRX 재배포 허용 확인 전까지 저장소에서 제거하고 `.gitignore`에 넣었다. 서버 `run-prices.sh`는 `git add` 단계에서 실패해 push하지 않는다. 시세 타이머 `etf-prices.timer`는 2026-11-25에 `systemctl --user disable --now`로 꺼둠(재개: `enable --now`). 포트폴리오 페이지(`/portfolio/`)는 시세를 못 불러와 계산이 비는 상태.
