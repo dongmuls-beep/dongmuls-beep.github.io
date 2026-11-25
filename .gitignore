@@ -4,3 +4,7 @@ __pycache__/
 .venv/
 .DS_Store
 selenium_error.png
+
+# KRX 재배포 확인 전까지 시세 비공개 (2026-11-25). 서버 run-prices.sh의 git add가 여기서 실패해 push되지 않음
+prices/
+prices-meta.json
